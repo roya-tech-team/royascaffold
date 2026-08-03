@@ -1,6 +1,6 @@
 {
   "name": "royascaff",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "AI-Control engine — drives AI from product description through planning, specs, code generation, and verification",
   "bin": {
     "royascaff": "bin/royascaff.js"
