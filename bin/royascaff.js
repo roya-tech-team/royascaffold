@@ -6,6 +6,12 @@ const { execSync } = require("child_process");
 
 const PACKAGE_ROOT = path.resolve(__dirname, "..");
 
+const AGENT_TARGETS = {
+  cursor: ".cursor",
+  claude: ".claude",
+};
+const DEFAULT_TARGET = "cursor";
+
 function printHelp() {
   console.log(`
 royascaff — scaffold the AI-Control engine into your project
@@ -13,13 +19,19 @@ royascaff — scaffold the AI-Control engine into your project
 Usage:
   royascaff init [targetDir] [options]
 
+Agent targets (combinable, defaults to --cursor):
+  --cursor  Install skills into .cursor/skills/
+  --claude  Install skills into .claude/skills/
+
 Options:
-  --force   Overwrite existing royascaff/engine/ or .cursor/skills/ if present
+  --force   Overwrite existing royascaff/engine/ or <agent>/skills/ if present
   --git     Run git init inside royascaff/ only (skipped if royascaff/.git exists)
   --help    Show this help
 
 Examples:
   npx royascaff init
+  npx royascaff init --claude
+  npx royascaff init --cursor --claude
   npx royascaff init ./my-app --git
   npx royascaff init --force
 `);
@@ -29,12 +41,16 @@ function parseArgs(argv) {
   const args = argv.slice(2);
   const flags = { force: false, git: false, help: false };
   const positional = [];
+  const targets = [];
 
   for (const arg of args) {
     if (arg === "--force") flags.force = true;
     else if (arg === "--git") flags.git = true;
     else if (arg === "--help" || arg === "-h") flags.help = true;
-    else if (arg.startsWith("-")) {
+    else if (arg.startsWith("--") && AGENT_TARGETS[arg.slice(2)]) {
+      const target = arg.slice(2);
+      if (!targets.includes(target)) targets.push(target);
+    } else if (arg.startsWith("-")) {
       console.error(`Unknown option: ${arg}`);
       process.exit(1);
     } else {
@@ -45,7 +61,9 @@ function parseArgs(argv) {
   const command = positional[0];
   const targetDir = positional[1] || ".";
 
-  return { flags, command, targetDir };
+  if (targets.length === 0) targets.push(DEFAULT_TARGET);
+
+  return { flags, command, targetDir, targets };
 }
 
 function exists(p) {
@@ -81,7 +99,7 @@ function initGit(royascaffDir) {
   console.log("  git: initialized repository in royascaff/");
 }
 
-function init(targetDir, flags) {
+function init(targetDir, flags, targets) {
   const resolvedTarget = path.resolve(process.cwd(), targetDir);
 
   if (!exists(resolvedTarget)) {
@@ -92,7 +110,6 @@ function init(targetDir, flags) {
   const skillsSrc = path.join(PACKAGE_ROOT, "skills");
   const royascaffDir = path.join(resolvedTarget, "royascaff");
   const engineDest = path.join(royascaffDir, "engine");
-  const skillsDest = path.join(resolvedTarget, ".cursor", "skills");
 
   console.log(`Scaffolding RoyaScaff into ${resolvedTarget}\n`);
 
@@ -100,9 +117,16 @@ function init(targetDir, flags) {
   copyDir(engineSrc, engineDest, flags.force);
   console.log("  copied royascaff/engine/");
 
-  fs.mkdirSync(path.join(resolvedTarget, ".cursor"), { recursive: true });
-  copyDir(skillsSrc, skillsDest, flags.force);
-  console.log("  copied .cursor/skills/");
+  for (const target of targets) {
+    const agentDir = AGENT_TARGETS[target];
+    fs.mkdirSync(path.join(resolvedTarget, agentDir), { recursive: true });
+    copyDir(
+      skillsSrc,
+      path.join(resolvedTarget, agentDir, "skills"),
+      flags.force
+    );
+    console.log(`  copied ${agentDir}/skills/`);
+  }
 
   if (flags.git) {
     initGit(royascaffDir);
@@ -116,7 +140,7 @@ Done. Next steps:
 }
 
 function main() {
-  const { flags, command, targetDir } = parseArgs(process.argv);
+  const { flags, command, targetDir, targets } = parseArgs(process.argv);
 
   if (flags.help || !command) {
     printHelp();
@@ -130,7 +154,7 @@ function main() {
   }
 
   try {
-    init(targetDir, flags);
+    init(targetDir, flags, targets);
   } catch (err) {
     console.error(`Error: ${err.message}`);
     process.exit(1);

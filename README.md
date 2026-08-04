@@ -69,6 +69,13 @@ Scaffold the engine into your project root:
 npx royascaff init
 ```
 
+Skills go to `.cursor/skills/` by default. Pick another agent — or several — with target flags:
+
+```bash
+npx royascaff init --claude           # .claude/skills/
+npx royascaff init --cursor --claude  # both
+```
+
 With git initialized inside `royascaff/` only (your project keeps its own git):
 
 ```bash
@@ -81,12 +88,12 @@ Target a specific directory:
 npx royascaff init ./my-app --git
 ```
 
-This copies `royascaff/engine/` and `.cursor/skills/` into your project. It does **not** create
-`project/` — the engine generates that when you start Phase 0–4 or Phase R.
+This copies `royascaff/engine/` and the skills for each selected agent into your project. It does
+**not** create `project/` — the engine generates that when you start Phase 0–4 or Phase R.
 
 ```text
 your-app/
-  .cursor/
+  .cursor/            # or .claude/ with --claude
     skills/         # /flow, /initial-build, …
   royascaff/
     .git/           # only with --git (engine repo)
@@ -113,6 +120,16 @@ npx ./royascaff-1.2.1.tgz init /tmp/test-app
 2. **New build**: Phase 0–2 design, then REQ-INIT packs (Phase 3.x), then Phase 4 when ready.
 3. **Legacy code**: Phase R (document + REQ-R packs for gaps).
 4. **Features**: `/change-mode`. **UI polish**: `/polish`. **Bugs**: `/bug-fix`.
+
+## Documentation
+
+Full documentation lives in [`docs/`](docs/README.md), split by audience:
+
+- **Evaluating RoyaScaff** — [What is RoyaScaff](docs/overview/01-what-is-royascaff.md) · [Why it exists](docs/overview/02-why-it-exists.md) · [Benefits](docs/overview/03-benefits.md) · [When to use it](docs/overview/04-when-to-use-it.md)
+- **Using it** — [Install](docs/guides/01-install.md) · [Quickstart](docs/guides/02-quickstart.md) · [Daily workflow](docs/guides/03-daily-workflow.md) · [one document per flow](docs/README.md#flows)
+- **Extending it** — [Concepts and glossary](docs/reference/01-concepts-and-glossary.md) · [Engine architecture](docs/contributing/01-engine-architecture.md) · [Extending and releasing](docs/contributing/02-extending-and-releasing.md)
+
+Reference material covers the [project layout](docs/reference/02-project-layout.md), [status and IDs](docs/reference/03-status-and-ids.md), [conventions](docs/reference/04-conventions.md), [templates](docs/reference/05-templates.md), [engine rules](docs/reference/06-engine-rules.md), the [CLI](docs/reference/07-cli.md), and the [verification checks](docs/reference/08-verification-checks.md).
 
 ## License & contributing
 
