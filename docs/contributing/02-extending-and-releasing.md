@@ -14,11 +14,11 @@ Two rules constrain every edit:
 ## Adding a template
 
 1. Create `engine/templates/<name>-template.md`. Follow the existing shape: a one-line purpose, a `## Schema` block showing the output markdown, a field reference, and one worked example.
-2. If the template needs more than a page of explanation, add `engine/templates/references/<name>-template-guide.md` and link to it from the template with a line like:
+2. If the template needs more than a page of explanation, add `engine/templates/references/<name>-template-guide.md` and link to it from the template with a line like this:
 
-   ```md
-   > Full discovery questions & field reference → `references/<name>-template-guide.md`
-   ```
+```md
+> Full discovery questions & field reference → `references/<name>-template-guide.md`
+```
 
 3. Wire it into the flow step that creates it. The step must declare **Input**, **Template**, **Output**, and **Done-when**.
 4. Add a row to the "When each path is created" table in [project-layout.md](../../engine/project-layout.md).
@@ -103,14 +103,12 @@ For a flow change, also run one flow you did not touch — the flows share the l
 1. **Bump the version** in [package.json](../../package.json). The repository is at 1.2.5.
 2. **Check the `files` array.** It currently lists `bin`, `engine`, `skills`, `README.md`, and `LICENSE`. If you added a top-level directory that consumers need, add it here — otherwise it will not ship.
 3. **Check `.npmignore`** for anything new that should be excluded.
-4. **Dry-run the pack:**
+4. **Dry-run the pack** and confirm the tarball contains exactly what you expect and nothing else:
 
-   ```bash
-   npm pack
-   tar -tf royascaff-<version>.tgz
-   ```
-
-   Confirm the tarball contains exactly what you expect and nothing else.
+```bash
+npm pack
+tar -tf royascaff-<version>.tgz
+```
 
 5. **Install the tarball into a clean directory** and run a flow, as above.
 6. **Update the README** if the install instructions, flow list, or product boundary changed.
