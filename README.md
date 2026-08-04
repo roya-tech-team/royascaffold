@@ -123,5 +123,6 @@ Source repository: [github.com/roya-tech-team/royascaffold](https://github.com/r
 
 Contributions are welcome. Fork the repo, make your changes, and open a pull request.
 Improvements to flows, templates, rules, and skills help everyone building with AI-Control.
-Improvements to flows, templates, rules, and skills help everyone building with AI-Control.
+
+
 
