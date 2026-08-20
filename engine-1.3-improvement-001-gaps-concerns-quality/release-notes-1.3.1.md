@@ -1,7 +1,8 @@
 # RoyaScaff 1.3.1 Release Notes
 
-**Status:** implemented engine candidate; contract acceptance is complete and the
-controlled low-model product outcome benchmark remains pending.
+**Status:** implemented experimental candidate; isolated contract acceptance passes,
+but the first reviewed Grok Low product benchmark scored C/6 and missed the B+/A
+first-pass release target. Do not promote as canonical before revision and re-benchmark.
 
 ## Purpose
 
@@ -41,3 +42,9 @@ remains the closing assurance loop rather than the product-discovery mechanism.
   separately.
 - Evolutionary requirement history/experiment rollback and broader human/AI engine UX
   remain separate improvements.
+- The current CLI has two benchmark-discovered integration defects: CommonJS loading
+  fails when copied under an ESM host package, and project validation does not exclude
+  the copied engine's own example records.
+- The first reviewed 1.3.1 product run improved plan/evidence quality but not overall
+  product grade. It also showed excessive document/context load. Phases 5–7 and 9 need
+  revision before the next candidate benchmark.

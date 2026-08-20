@@ -8,7 +8,11 @@
   baseline algorithm documented in `baseline-1.3.md`.
 - **Target version:** 1.3.1, schema version 2.
 - **Production/canonical promotion:** not performed; owner controls that action.
-- **Low-model product outcome benchmark:** pending a frozen model/prompt/reference run.
+- **Low-model product outcome benchmark:** one Grok Low 3D-network run reviewed; C/6,
+  below the B+/A first-pass target. The run did not separately capture untouched first
+  pass and bounded-repair final output, and required transfer runs remain pending.
+- **Release recommendation:** revise Phases 5–7 and 9, then re-benchmark. Do not
+  promote this candidate as a proven outcome improvement.
 
 ## Implemented surfaces
 
@@ -70,11 +74,28 @@ Covered behaviors:
 - Pre-code QDC/SQR/IRR blockers are separate from post-code evidence validation.
 - CLI output explicitly distinguishes contract validity from semantic/product quality.
 
-## Remaining empirical gate
+## Empirical benchmark result
 
-The engine mechanics are accepted, but the claim that Grok Low reaches B+/A first pass
-must be measured rather than inferred. Freeze engine hash, model/version/effort, prompt,
-reference, answers, budgets, and rubric; compare 1.3 versus 1.3.1; capture untouched
-first pass before feedback; then apply the same bounded repair policy and score final
-result. A missed target becomes a new traced improvement and must not be hidden by a
-rubric change.
+The reviewed build is
+`benchmark/3d-network/grok-low/gpt-yes-yes-1.3.1-12131`. It improved planning,
+architecture, evidence binding, and honest authority handling, but the product remained
+C/6 and did not improve the 1.3 overall score. Visual polish was below the 1.3 run and
+project documentation grew to 6,759 nonblank lines for 1,639 nonblank application LOC.
+
+The benchmark also exposed two engine integration defects:
+
+1. copied `bin/sdlc.js` is interpreted as ESM by a host package with
+   `"type": "module"`, while the CLI uses CommonJS `require`;
+2. external validation scans the copied `engine/` folder and treats example IDs in
+   `engine/conventions.md` as live project records.
+
+The project contracts pass as 205 artifacts, 21 documents, one change, and seven
+Context manifests when the copied engine directory is excluded. The full finding and
+next-candidate plan are recorded in
+`benchmark/3d-network/version1.3-analysis/improvement-001-gaps-concerns-quality/07-phase-11-grok-1.3.1-benchmark-review.md`.
+
+This is sufficient to reject the current release target, not to complete the controlled
+experiment. A later run must freeze engine hash, model/version/effort, prompt,
+reference, answers, budgets, and rubric; capture untouched first pass; apply a bounded
+repair policy; and run the non-UI and compact-path transfer checks. Do not hide the
+missed target through a rubric change.
