@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://royascaff.dev/schemas/v1.3.1/review.schema.json",
+  "title": "RoyaScaff Gate Review",
+  "type": "object",
+  "required": ["review_id", "review_type", "change_id", "disposition", "reviewed_inputs", "reviewer", "authority_class", "timestamp"],
+  "properties": {
+    "review_id": { "type": "string", "pattern": "^REV-(?:[A-Z0-9]+-){1,}[A-Z0-9]+$" },
+    "review_type": { "enum": ["solution-quality", "implementation-readiness"] },
+    "change_id": { "type": "string", "pattern": "^CHG-" },
+    "disposition": { "enum": ["pass", "pass-with-conditions", "revise"] },
+    "reviewed_inputs": { "type": "array", "items": { "type": "string" }, "minItems": 1, "uniqueItems": true },
+    "reviewer": { "type": "string", "minLength": 1 },
+    "authority_class": { "enum": ["implementer-self-check", "fresh-context-reviewer", "independent-model", "independent-person", "deterministic-runner", "stakeholder-owner"] },
+    "timestamp": { "type": "string" },
+    "conditions": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}

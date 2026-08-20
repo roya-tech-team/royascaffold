@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://royascaff.dev/schemas/v1.3.1/pattern-decision.schema.json",
+  "title": "RoyaScaff Pattern Decision",
+  "type": "object",
+  "required": ["id", "problem", "forces", "choice", "rationale", "alternatives", "constraints", "failure_modes", "validation", "decision_status", "materiality", "owner"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^PAT-(?:[A-Z0-9]+-){1,}[A-Z0-9]+$" },
+    "problem": { "type": "string", "minLength": 1 },
+    "forces": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "choice": { "type": "string", "minLength": 1 },
+    "rationale": { "type": "string", "minLength": 1 },
+    "alternatives": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "constraints": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "failure_modes": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "validation": { "type": "string", "minLength": 1 },
+    "decision_status": { "enum": ["proposed", "decided", "approved-assumption", "delegated", "blocked", "superseded"] },
+    "materiality": { "enum": ["non-material", "material", "critical"] },
+    "owner": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": true
+}
