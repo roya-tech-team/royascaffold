@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://royascaff.dev/schemas/v1/workflow.schema.json",
+  "title": "RoyaScaff Workflow Contract",
+  "type": "object",
+  "required": ["id", "version", "intents", "entry_conditions", "states", "transitions", "steps", "terminal_conditions"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "version": { "type": "integer", "minimum": 1 },
+    "intents": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "entry_conditions": { "type": "array", "items": { "type": "string" } },
+    "states": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "transitions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "condition"],
+        "properties": {
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "condition": { "type": "string" }
+        }
+      }
+    },
+    "steps": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "terminal_conditions": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+  },
+  "additionalProperties": true
+}

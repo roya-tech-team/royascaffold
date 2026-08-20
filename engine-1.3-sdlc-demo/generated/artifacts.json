@@ -1,0 +1,2261 @@
+{
+  "generated": true,
+  "schema_version": 1,
+  "project_hash": "ac409cf54f92a7b9e96550f0f631e70b9f9310284e7c384d2c0f422eea889902",
+  "artifacts": [
+    {
+      "id": "ADR-POLLPULSE-001",
+      "kind": "architecture-decision",
+      "title": "React web consumes an Express API",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "ARCH-POLLPULSE-001",
+        "CMP-WEB-API-001",
+        "CMP-API-BOOT-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/04-design/architecture/decisions/ADR-001-web-api.md:12"
+    },
+    {
+      "id": "ADR-POLLPULSE-002",
+      "kind": "architecture-decision",
+      "title": "Use built-in SQLite for self-contained persistence",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "SVC-FOUND-01",
+        "DATA-USERS-001",
+        "DATA-POLLS-001",
+        "DATA-OPTIONS-001",
+        "DATA-VOTES-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/04-design/architecture/decisions/ADR-002-sqlite.md:12"
+    },
+    {
+      "id": "ADR-POLLPULSE-003",
+      "kind": "architecture-decision",
+      "title": "Seven-day bearer JWT stored by the browser",
+      "knowledge_status": "approved",
+      "implementation_status": "partial",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CTR-AUTH-RESPONSE-001",
+        "CMP-API-AUTH-MW-001",
+        "CMP-WEB-AUTH-001",
+        "RISK-SEC-001",
+        "RISK-SEC-002"
+      ],
+      "verified_by": [],
+      "source": "knowledge/04-design/architecture/decisions/ADR-003-jwt-session.md:12"
+    },
+    {
+      "id": "ARCH-POLLPULSE-001",
+      "kind": "architecture-rule",
+      "title": "Two-app modular layered boundary",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "NFR-MAINT-001",
+        "ADR-POLLPULSE-001",
+        "CMP-WEB-API-001",
+        "CMP-API-BOOT-001",
+        "SVC-AUTH-01",
+        "SVC-POLLS-01",
+        "TEST-ARCH-001",
+        "ADR-POLLPULSE-002",
+        "ADR-POLLPULSE-003"
+      ],
+      "verified_by": [
+        "TEST-ARCH-001"
+      ],
+      "source": "knowledge/04-design/architecture/overview.md:30"
+    },
+    {
+      "id": "CAP-IDENTITY-001",
+      "kind": "capability",
+      "title": "Member identity and session",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "OUT-POLLPULSE-001",
+        "REQ-AUTH-001",
+        "REQ-AUTH-002",
+        "REQ-AUTH-003",
+        "WF-AUTH-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/01-business/brd.md:28"
+    },
+    {
+      "id": "CAP-POLLS-001",
+      "kind": "capability",
+      "title": "Poll management",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "OUT-POLLPULSE-001",
+        "REQ-POLLS-001",
+        "REQ-POLLS-002",
+        "REQ-POLLS-003",
+        "REQ-POLLS-004",
+        "WF-POLLS-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/01-business/brd.md:37"
+    },
+    {
+      "id": "CAP-RESULTS-001",
+      "kind": "capability",
+      "title": "Visible poll outcome",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "OUT-POLLPULSE-001",
+        "REQ-RESULTS-001",
+        "WF-POLLS-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/01-business/brd.md:55"
+    },
+    {
+      "id": "CAP-VOTING-001",
+      "kind": "capability",
+      "title": "Single authenticated vote",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "OUT-POLLPULSE-001",
+        "REQ-VOTE-001",
+        "REQ-VOTE-002",
+        "WF-POLLS-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/01-business/brd.md:46"
+    },
+    {
+      "id": "CMP-API-AUTH-MW-001",
+      "kind": "security-middleware",
+      "title": "Bearer authentication middleware",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-AUTH-003",
+        "NFR-SEC-001",
+        "ADR-POLLPULSE-003",
+        "SVC-AUTH-02",
+        "TEST-AUTH-001",
+        "TEST-SEC-001"
+      ],
+      "verified_by": [
+        "TEST-AUTH-001",
+        "TEST-SEC-001"
+      ],
+      "source": "knowledge/05-implementation/components/auth.md:36"
+    },
+    {
+      "id": "CMP-API-BOOT-001",
+      "kind": "runtime-entry",
+      "title": "API bootstrap",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "EP-FOUND-01",
+        "SVC-FOUND-01",
+        "CMP-API-ERROR-001",
+        "CMP-AUTH-ROUTES-001",
+        "CMP-POLLS-ROUTES-001",
+        "TEST-FOUND-001",
+        "TEST-ARCH-001"
+      ],
+      "verified_by": [
+        "TEST-FOUND-001",
+        "TEST-ARCH-001"
+      ],
+      "source": "knowledge/05-implementation/components/foundation.md:12"
+    },
+    {
+      "id": "CMP-API-ERROR-001",
+      "kind": "middleware",
+      "title": "API error boundary",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CTR-ERROR-001",
+        "TEST-ARCH-001"
+      ],
+      "verified_by": [
+        "TEST-ARCH-001"
+      ],
+      "source": "knowledge/05-implementation/components/foundation.md:36"
+    },
+    {
+      "id": "CMP-AUTH-CTRL-001",
+      "kind": "transport-controller",
+      "title": "Auth HTTP controller",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "EP-AUTH-01",
+        "EP-AUTH-02",
+        "EP-AUTH-03",
+        "SVC-AUTH-01",
+        "TEST-AUTH-001"
+      ],
+      "verified_by": [
+        "TEST-AUTH-001"
+      ],
+      "source": "knowledge/05-implementation/components/auth.md:48"
+    },
+    {
+      "id": "CMP-AUTH-ROUTES-001",
+      "kind": "transport-router",
+      "title": "Auth route registration",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "EP-AUTH-01",
+        "EP-AUTH-02",
+        "EP-AUTH-03",
+        "CMP-AUTH-CTRL-001",
+        "CMP-API-AUTH-MW-001",
+        "TEST-AUTH-001"
+      ],
+      "verified_by": [
+        "TEST-AUTH-001"
+      ],
+      "source": "knowledge/05-implementation/components/auth.md:60"
+    },
+    {
+      "id": "CMP-POLLS-CTRL-001",
+      "kind": "transport-controller",
+      "title": "Poll HTTP controller",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "EP-POLLS-01",
+        "EP-POLLS-02",
+        "EP-POLLS-03",
+        "EP-POLLS-04",
+        "EP-POLLS-05",
+        "SVC-POLLS-01",
+        "TEST-POLLS-001",
+        "TEST-POLLS-002",
+        "TEST-VOTE-001"
+      ],
+      "verified_by": [
+        "TEST-POLLS-001",
+        "TEST-POLLS-002",
+        "TEST-VOTE-001"
+      ],
+      "source": "knowledge/05-implementation/components/polls.md:48"
+    },
+    {
+      "id": "CMP-POLLS-ROUTES-001",
+      "kind": "transport-router",
+      "title": "Protected poll route registration",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "EP-POLLS-01",
+        "EP-POLLS-02",
+        "EP-POLLS-03",
+        "EP-POLLS-04",
+        "EP-POLLS-05",
+        "CMP-API-AUTH-MW-001",
+        "CMP-POLLS-CTRL-001",
+        "TEST-POLLS-001",
+        "TEST-POLLS-002",
+        "TEST-VOTE-001"
+      ],
+      "verified_by": [
+        "TEST-POLLS-001",
+        "TEST-POLLS-002",
+        "TEST-VOTE-001"
+      ],
+      "source": "knowledge/05-implementation/components/polls.md:58"
+    },
+    {
+      "id": "CMP-WEB-API-001",
+      "kind": "integration-adapter",
+      "title": "Browser API client",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CTR-AUTH-REGISTER-001",
+        "CTR-AUTH-LOGIN-001",
+        "CTR-AUTH-USER-001",
+        "CTR-POLLS-CREATE-001",
+        "CTR-POLLS-VOTE-001",
+        "CTR-POLLS-LIST-001",
+        "CTR-POLLS-DETAIL-001",
+        "ADR-POLLPULSE-003",
+        "TEST-ARCH-001",
+        "TEST-UX-001"
+      ],
+      "verified_by": [
+        "TEST-ARCH-001",
+        "TEST-UX-001"
+      ],
+      "source": "knowledge/05-implementation/components/foundation.md:69"
+    },
+    {
+      "id": "CMP-WEB-AUTH-001",
+      "kind": "interface-state-service",
+      "title": "Browser authentication state",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "WF-AUTH-001",
+        "ADR-POLLPULSE-003",
+        "CMP-WEB-API-001",
+        "TEST-AUTH-001",
+        "TEST-UX-001"
+      ],
+      "verified_by": [
+        "TEST-AUTH-001",
+        "TEST-UX-001"
+      ],
+      "source": "knowledge/05-implementation/components/auth.md:70"
+    },
+    {
+      "id": "CMP-WEB-AUTH-LAYOUT-001",
+      "kind": "interface-component",
+      "title": "Authentication layout",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "PG-AUTH-01",
+        "PG-AUTH-02",
+        "TEST-UX-001"
+      ],
+      "verified_by": [
+        "TEST-UX-001"
+      ],
+      "source": "knowledge/05-implementation/components/auth.md:82"
+    },
+    {
+      "id": "CMP-WEB-BOOT-001",
+      "kind": "runtime-entry",
+      "title": "Web bootstrap",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CMP-WEB-ROUTER-001",
+        "CMP-WEB-AUTH-001",
+        "TEST-WEB-BUILD-001"
+      ],
+      "verified_by": [
+        "TEST-WEB-BUILD-001"
+      ],
+      "source": "knowledge/05-implementation/components/foundation.md:47"
+    },
+    {
+      "id": "CMP-WEB-LAYOUT-001",
+      "kind": "interface-component",
+      "title": "Authenticated application shell",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "PG-FOUND-01",
+        "TEST-UX-001"
+      ],
+      "verified_by": [
+        "TEST-UX-001"
+      ],
+      "source": "knowledge/05-implementation/components/foundation.md:81"
+    },
+    {
+      "id": "CMP-WEB-POLL-CARD-001",
+      "kind": "interface-component",
+      "title": "Poll summary card",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CTR-POLLS-SUMMARY-001",
+        "PG-FOUND-02",
+        "PG-POLLS-01",
+        "TEST-UX-001"
+      ],
+      "verified_by": [
+        "TEST-UX-001"
+      ],
+      "source": "knowledge/05-implementation/components/polls.md:68"
+    },
+    {
+      "id": "CMP-WEB-POLL-RESULTS-001",
+      "kind": "interface-component",
+      "title": "Poll result bars",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-RESULTS-001",
+        "CTR-POLLS-DETAIL-001",
+        "INV-RESULTS-001",
+        "PG-POLLS-04",
+        "TEST-RESULTS-001",
+        "TEST-UX-001"
+      ],
+      "verified_by": [
+        "TEST-RESULTS-001",
+        "TEST-UX-001"
+      ],
+      "source": "knowledge/05-implementation/components/polls.md:78"
+    },
+    {
+      "id": "CMP-WEB-PROTECTED-001",
+      "kind": "interface-guard",
+      "title": "Protected route guard",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-AUTH-003",
+        "CMP-WEB-AUTH-001",
+        "TEST-AUTH-001",
+        "TEST-UX-001"
+      ],
+      "verified_by": [
+        "TEST-AUTH-001",
+        "TEST-UX-001"
+      ],
+      "source": "knowledge/05-implementation/components/auth.md:93"
+    },
+    {
+      "id": "CMP-WEB-ROUTER-001",
+      "kind": "interface-router",
+      "title": "Application route table",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "PG-FOUND-01",
+        "PG-FOUND-02",
+        "PG-AUTH-01",
+        "PG-AUTH-02",
+        "PG-POLLS-01",
+        "PG-POLLS-02",
+        "PG-POLLS-03",
+        "TEST-UX-001"
+      ],
+      "verified_by": [
+        "TEST-UX-001"
+      ],
+      "source": "knowledge/05-implementation/components/foundation.md:58"
+    },
+    {
+      "id": "CON-OPTION-001",
+      "kind": "domain-concept",
+      "title": "Poll option",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "DATA-OPTIONS-001",
+        "CTR-POLLS-DETAIL-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/03-domain/model.md:33"
+    },
+    {
+      "id": "CON-POLL-001",
+      "kind": "domain-concept",
+      "title": "Poll",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "DATA-POLLS-001",
+        "CTR-POLLS-DETAIL-001",
+        "WF-POLLS-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/03-domain/model.md:22"
+    },
+    {
+      "id": "CON-USER-001",
+      "kind": "domain-concept",
+      "title": "Member",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "DATA-USERS-001",
+        "CTR-AUTH-USER-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/03-domain/model.md:12"
+    },
+    {
+      "id": "CON-VOTE-001",
+      "kind": "domain-concept",
+      "title": "Vote",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "DATA-VOTES-001",
+        "CTR-POLLS-VOTE-001",
+        "WF-POLLS-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/03-domain/model.md:43"
+    },
+    {
+      "id": "CTR-AUTH-LOGIN-001",
+      "kind": "request-contract",
+      "title": "Login request",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "EP-AUTH-02",
+        "CTR-ERROR-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/04-design/contracts/auth.md:23"
+    },
+    {
+      "id": "CTR-AUTH-REGISTER-001",
+      "kind": "request-contract",
+      "title": "Registration request",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "EP-AUTH-01",
+        "CON-USER-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/04-design/contracts/auth.md:12"
+    },
+    {
+      "id": "CTR-AUTH-RESPONSE-001",
+      "kind": "response-contract",
+      "title": "Authentication response",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "EP-AUTH-01",
+        "EP-AUTH-02",
+        "CTR-AUTH-USER-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/04-design/contracts/auth.md:44"
+    },
+    {
+      "id": "CTR-AUTH-USER-001",
+      "kind": "response-contract",
+      "title": "Safe member response",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "EP-AUTH-03",
+        "CTR-AUTH-RESPONSE-001",
+        "CON-USER-001",
+        "DATA-USERS-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/04-design/contracts/auth.md:33"
+    },
+    {
+      "id": "CTR-ERROR-001",
+      "kind": "response-contract",
+      "title": "API error response",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CMP-API-ERROR-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/04-design/contracts/foundation.md:23"
+    },
+    {
+      "id": "CTR-HEALTH-001",
+      "kind": "response-contract",
+      "title": "Health response",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "EP-FOUND-01",
+        "TEST-FOUND-001"
+      ],
+      "verified_by": [
+        "TEST-FOUND-001"
+      ],
+      "source": "knowledge/04-design/contracts/foundation.md:12"
+    },
+    {
+      "id": "CTR-POLLS-CREATE-001",
+      "kind": "request-contract",
+      "title": "Create poll request",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "EP-POLLS-01",
+        "CON-POLL-001",
+        "CON-OPTION-001",
+        "INV-POLLS-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/04-design/contracts/polls.md:12"
+    },
+    {
+      "id": "CTR-POLLS-DETAIL-001",
+      "kind": "response-contract",
+      "title": "Poll detail and results",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "EP-POLLS-01",
+        "EP-POLLS-03",
+        "EP-POLLS-04",
+        "EP-POLLS-05",
+        "CON-POLL-001",
+        "CON-OPTION-001",
+        "CON-VOTE-001",
+        "CTR-ERROR-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/04-design/contracts/polls.md:56"
+    },
+    {
+      "id": "CTR-POLLS-LIST-001",
+      "kind": "response-contract",
+      "title": "Paginated poll list",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "EP-POLLS-02",
+        "CTR-POLLS-SUMMARY-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/04-design/contracts/polls.md:45"
+    },
+    {
+      "id": "CTR-POLLS-SUMMARY-001",
+      "kind": "response-contract",
+      "title": "Poll summary",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CTR-POLLS-LIST-001",
+        "CON-POLL-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/04-design/contracts/polls.md:34"
+    },
+    {
+      "id": "CTR-POLLS-VOTE-001",
+      "kind": "request-contract",
+      "title": "Cast vote request",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "EP-POLLS-04",
+        "CON-VOTE-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/04-design/contracts/polls.md:23"
+    },
+    {
+      "id": "DATA-OPTIONS-001",
+      "kind": "persistence-model",
+      "title": "poll_options table",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CON-OPTION-001",
+        "SVC-POLLS-02"
+      ],
+      "verified_by": [],
+      "source": "knowledge/04-design/data/model.md:41"
+    },
+    {
+      "id": "DATA-POLLS-001",
+      "kind": "persistence-model",
+      "title": "polls table",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CON-POLL-001",
+        "SVC-POLLS-02"
+      ],
+      "verified_by": [],
+      "source": "knowledge/04-design/data/model.md:31"
+    },
+    {
+      "id": "DATA-USERS-001",
+      "kind": "persistence-model",
+      "title": "users table",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CON-USER-001",
+        "SVC-AUTH-02"
+      ],
+      "verified_by": [],
+      "source": "knowledge/04-design/data/model.md:21"
+    },
+    {
+      "id": "DATA-VOTES-001",
+      "kind": "persistence-model",
+      "title": "votes table",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CON-VOTE-001",
+        "SVC-POLLS-03",
+        "INV-VOTE-001",
+        "INV-VOTE-002"
+      ],
+      "verified_by": [],
+      "source": "knowledge/04-design/data/model.md:51"
+    },
+    {
+      "id": "EP-AUTH-01",
+      "kind": "http-action",
+      "title": "POST /auth/register",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-AUTH-001",
+        "CTR-AUTH-REGISTER-001",
+        "CTR-AUTH-RESPONSE-001",
+        "CTR-ERROR-001",
+        "CMP-AUTH-ROUTES-001",
+        "CMP-AUTH-CTRL-001",
+        "SVC-AUTH-01",
+        "TEST-AUTH-001"
+      ],
+      "verified_by": [
+        "TEST-AUTH-001"
+      ],
+      "source": "knowledge/05-implementation/actions/api.md:25"
+    },
+    {
+      "id": "EP-AUTH-02",
+      "kind": "http-action",
+      "title": "POST /auth/login",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-AUTH-002",
+        "CTR-AUTH-LOGIN-001",
+        "CTR-AUTH-RESPONSE-001",
+        "CTR-ERROR-001",
+        "CMP-AUTH-ROUTES-001",
+        "CMP-AUTH-CTRL-001",
+        "SVC-AUTH-01",
+        "TEST-AUTH-001"
+      ],
+      "verified_by": [
+        "TEST-AUTH-001"
+      ],
+      "source": "knowledge/05-implementation/actions/api.md:39"
+    },
+    {
+      "id": "EP-AUTH-03",
+      "kind": "http-action",
+      "title": "GET /auth/me",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-AUTH-003",
+        "CTR-AUTH-USER-001",
+        "CTR-ERROR-001",
+        "CMP-AUTH-ROUTES-001",
+        "CMP-API-AUTH-MW-001",
+        "CMP-AUTH-CTRL-001",
+        "SVC-AUTH-01",
+        "TEST-AUTH-001"
+      ],
+      "verified_by": [
+        "TEST-AUTH-001"
+      ],
+      "source": "knowledge/05-implementation/actions/api.md:53"
+    },
+    {
+      "id": "EP-FOUND-01",
+      "kind": "http-action",
+      "title": "GET /health",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-FOUND-001",
+        "CTR-HEALTH-001",
+        "CMP-API-BOOT-001",
+        "TEST-FOUND-001"
+      ],
+      "verified_by": [
+        "TEST-FOUND-001"
+      ],
+      "source": "knowledge/05-implementation/actions/api.md:12"
+    },
+    {
+      "id": "EP-POLLS-01",
+      "kind": "http-action",
+      "title": "POST /polls",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-POLLS-001",
+        "CTR-POLLS-CREATE-001",
+        "CTR-POLLS-DETAIL-001",
+        "CTR-ERROR-001",
+        "CMP-POLLS-ROUTES-001",
+        "CMP-POLLS-CTRL-001",
+        "SVC-POLLS-01",
+        "TEST-POLLS-001"
+      ],
+      "verified_by": [
+        "TEST-POLLS-001"
+      ],
+      "source": "knowledge/05-implementation/actions/api.md:66"
+    },
+    {
+      "id": "EP-POLLS-02",
+      "kind": "http-action",
+      "title": "GET /polls",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-POLLS-002",
+        "NFR-PERF-001",
+        "CTR-POLLS-LIST-001",
+        "CTR-ERROR-001",
+        "CMP-POLLS-ROUTES-001",
+        "CMP-POLLS-CTRL-001",
+        "SVC-POLLS-01",
+        "TEST-POLLS-001",
+        "TEST-PERF-001"
+      ],
+      "verified_by": [
+        "TEST-POLLS-001",
+        "TEST-PERF-001"
+      ],
+      "source": "knowledge/05-implementation/actions/api.md:80"
+    },
+    {
+      "id": "EP-POLLS-03",
+      "kind": "http-action",
+      "title": "GET /polls/:id",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-POLLS-003",
+        "REQ-RESULTS-001",
+        "CTR-POLLS-DETAIL-001",
+        "CTR-ERROR-001",
+        "CMP-POLLS-ROUTES-001",
+        "CMP-POLLS-CTRL-001",
+        "SVC-POLLS-01",
+        "TEST-POLLS-001",
+        "TEST-RESULTS-001"
+      ],
+      "verified_by": [
+        "TEST-POLLS-001",
+        "TEST-RESULTS-001"
+      ],
+      "source": "knowledge/05-implementation/actions/api.md:93"
+    },
+    {
+      "id": "EP-POLLS-04",
+      "kind": "http-action",
+      "title": "POST /polls/:id/vote",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-VOTE-001",
+        "REQ-VOTE-002",
+        "CTR-POLLS-VOTE-001",
+        "CTR-POLLS-DETAIL-001",
+        "CTR-ERROR-001",
+        "CMP-POLLS-ROUTES-001",
+        "CMP-POLLS-CTRL-001",
+        "SVC-POLLS-01",
+        "SVC-POLLS-03",
+        "TEST-VOTE-001"
+      ],
+      "verified_by": [
+        "TEST-VOTE-001"
+      ],
+      "source": "knowledge/05-implementation/actions/api.md:106"
+    },
+    {
+      "id": "EP-POLLS-05",
+      "kind": "http-action",
+      "title": "POST /polls/:id/close",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-POLLS-004",
+        "CTR-POLLS-DETAIL-001",
+        "CTR-ERROR-001",
+        "CMP-POLLS-ROUTES-001",
+        "CMP-POLLS-CTRL-001",
+        "SVC-POLLS-01",
+        "SVC-POLLS-02",
+        "TEST-POLLS-002"
+      ],
+      "verified_by": [
+        "TEST-POLLS-002"
+      ],
+      "source": "knowledge/05-implementation/actions/api.md:120"
+    },
+    {
+      "id": "EVD-API-SYNTAX-001",
+      "kind": "command-evidence",
+      "title": "API JavaScript files parse",
+      "knowledge_status": "approved",
+      "implementation_status": "not-applicable",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "TEST-API-SYNTAX-001",
+        "TASK-MIGRATION-001"
+      ],
+      "verified_by": [],
+      "source": "evidence/api-syntax.md:3"
+    },
+    {
+      "id": "EVD-BLUEPRINT-001",
+      "kind": "command-evidence",
+      "title": "v1.3 blueprint validation and context generation",
+      "knowledge_status": "approved",
+      "implementation_status": "not-applicable",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "TEST-BLUEPRINT-001",
+        "TASK-MIGRATION-001"
+      ],
+      "verified_by": [],
+      "source": "evidence/blueprint-validation.md:3"
+    },
+    {
+      "id": "EVD-MIGRATION-001",
+      "kind": "inspection-evidence",
+      "title": "PollPulse blueprint/source inventory inspection",
+      "knowledge_status": "approved",
+      "implementation_status": "not-applicable",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "TEST-ARCH-001",
+        "TASK-MIGRATION-001"
+      ],
+      "verified_by": [],
+      "source": "evidence/source-inspection.md:3"
+    },
+    {
+      "id": "EVD-WEB-BUILD-001",
+      "kind": "command-evidence",
+      "title": "PollPulse web production build",
+      "knowledge_status": "approved",
+      "implementation_status": "not-applicable",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "TEST-WEB-BUILD-001",
+        "TASK-MIGRATION-001",
+        "RISK-DEP-001"
+      ],
+      "verified_by": [],
+      "source": "evidence/web-build.md:3"
+    },
+    {
+      "id": "INV-AUTH-001",
+      "kind": "invariant",
+      "title": "Credential boundary",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "NFR-SEC-001",
+        "SVC-AUTH-01",
+        "SVC-AUTH-02",
+        "TEST-AUTH-001",
+        "TEST-SEC-001"
+      ],
+      "verified_by": [
+        "TEST-AUTH-001",
+        "TEST-SEC-001"
+      ],
+      "source": "knowledge/03-domain/model.md:54"
+    },
+    {
+      "id": "INV-POLLS-001",
+      "kind": "invariant",
+      "title": "Poll option cardinality and text limits",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "SVC-POLLS-01",
+        "TEST-POLLS-001"
+      ],
+      "verified_by": [
+        "TEST-POLLS-001"
+      ],
+      "source": "knowledge/03-domain/model.md:66"
+    },
+    {
+      "id": "INV-POLLS-002",
+      "kind": "invariant",
+      "title": "Creator-only close",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "SVC-POLLS-01",
+        "TEST-POLLS-002"
+      ],
+      "verified_by": [
+        "TEST-POLLS-002"
+      ],
+      "source": "knowledge/03-domain/model.md:77"
+    },
+    {
+      "id": "INV-POLLS-003",
+      "kind": "invariant",
+      "title": "Closing is idempotent",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "SVC-POLLS-01",
+        "SVC-POLLS-02",
+        "TEST-POLLS-002"
+      ],
+      "verified_by": [
+        "TEST-POLLS-002"
+      ],
+      "source": "knowledge/03-domain/model.md:88"
+    },
+    {
+      "id": "INV-RESULTS-001",
+      "kind": "invariant",
+      "title": "Result calculation",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "SVC-POLLS-02",
+        "PG-POLLS-04",
+        "TEST-RESULTS-001"
+      ],
+      "verified_by": [
+        "TEST-RESULTS-001"
+      ],
+      "source": "knowledge/03-domain/model.md:121"
+    },
+    {
+      "id": "INV-VOTE-001",
+      "kind": "invariant",
+      "title": "One permanent vote per member and poll",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "SVC-POLLS-01",
+        "SVC-POLLS-03",
+        "DATA-VOTES-001",
+        "TEST-VOTE-001"
+      ],
+      "verified_by": [
+        "TEST-VOTE-001"
+      ],
+      "source": "knowledge/03-domain/model.md:99"
+    },
+    {
+      "id": "INV-VOTE-002",
+      "kind": "invariant",
+      "title": "Vote targets a valid option of an open poll",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "SVC-POLLS-01",
+        "TEST-VOTE-001"
+      ],
+      "verified_by": [
+        "TEST-VOTE-001"
+      ],
+      "source": "knowledge/03-domain/model.md:110"
+    },
+    {
+      "id": "JRN-POLLPULSE-001",
+      "kind": "user-journey",
+      "title": "Member decision journey",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "OUT-POLLPULSE-001",
+        "WF-AUTH-001",
+        "WF-POLLS-001",
+        "PG-AUTH-02",
+        "PG-AUTH-01",
+        "PG-FOUND-02",
+        "PG-POLLS-02",
+        "PG-POLLS-01",
+        "PG-POLLS-03",
+        "PG-POLLS-04",
+        "TEST-UX-001"
+      ],
+      "verified_by": [
+        "TEST-UX-001"
+      ],
+      "source": "knowledge/04-design/experience/journeys.md:12"
+    },
+    {
+      "id": "NFR-MAINT-001",
+      "kind": "maintainability-requirement",
+      "title": "Keep browser, API behavior, and persistence separated",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "ADR-POLLPULSE-001",
+        "CMP-WEB-API-001",
+        "SVC-AUTH-01",
+        "SVC-POLLS-01",
+        "SVC-AUTH-02",
+        "SVC-POLLS-02",
+        "SVC-POLLS-03",
+        "TEST-ARCH-001"
+      ],
+      "verified_by": [
+        "TEST-ARCH-001"
+      ],
+      "source": "knowledge/02-requirements/nfr.md:56"
+    },
+    {
+      "id": "NFR-OPS-001",
+      "kind": "operability-requirement",
+      "title": "Provide a health signal and recoverable local data",
+      "knowledge_status": "approved",
+      "implementation_status": "partial",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "EP-FOUND-01",
+        "CMP-API-BOOT-001",
+        "SVC-FOUND-01",
+        "TEST-FOUND-001"
+      ],
+      "verified_by": [
+        "TEST-FOUND-001"
+      ],
+      "source": "knowledge/02-requirements/nfr.md:45"
+    },
+    {
+      "id": "NFR-PERF-001",
+      "kind": "performance-requirement",
+      "title": "Bound poll-list reads",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "EP-POLLS-02",
+        "SVC-POLLS-01",
+        "SVC-POLLS-02",
+        "TEST-PERF-001"
+      ],
+      "verified_by": [
+        "TEST-PERF-001"
+      ],
+      "source": "knowledge/02-requirements/nfr.md:23"
+    },
+    {
+      "id": "NFR-SEC-001",
+      "kind": "security-requirement",
+      "title": "Protect credentials and authenticated routes",
+      "knowledge_status": "approved",
+      "implementation_status": "partial",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "SVC-AUTH-01",
+        "CMP-API-AUTH-MW-001",
+        "CMP-WEB-AUTH-001",
+        "TEST-SEC-001",
+        "RISK-SEC-001",
+        "RISK-SEC-002"
+      ],
+      "verified_by": [
+        "TEST-SEC-001"
+      ],
+      "source": "knowledge/02-requirements/nfr.md:12"
+    },
+    {
+      "id": "NFR-UX-001",
+      "kind": "usability-requirement",
+      "title": "Expose interface progress and failure states",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "PG-AUTH-01",
+        "PG-AUTH-02",
+        "PG-FOUND-02",
+        "PG-POLLS-01",
+        "PG-POLLS-02",
+        "PG-POLLS-03",
+        "TEST-UX-001"
+      ],
+      "verified_by": [
+        "TEST-UX-001"
+      ],
+      "source": "knowledge/02-requirements/nfr.md:34"
+    },
+    {
+      "id": "OPS-DEPLOY-001",
+      "kind": "deployment-design",
+      "title": "Local demonstration deployment",
+      "knowledge_status": "approved",
+      "implementation_status": "partial",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CMP-API-BOOT-001",
+        "CMP-WEB-BOOT-001",
+        "SVC-FOUND-01",
+        "RISK-OPS-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/07-operations/deployment.md:12"
+    },
+    {
+      "id": "OPS-OBS-001",
+      "kind": "observability-design",
+      "title": "Health and error observation",
+      "knowledge_status": "approved",
+      "implementation_status": "partial",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "EP-FOUND-01",
+        "CMP-API-ERROR-001",
+        "RISK-OPS-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/07-operations/deployment.md:23"
+    },
+    {
+      "id": "OUT-POLLPULSE-001",
+      "kind": "business-outcome",
+      "title": "Reach quick, visible team decisions",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CAP-IDENTITY-001",
+        "CAP-POLLS-001",
+        "CAP-VOTING-001",
+        "CAP-RESULTS-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/01-business/brd.md:18"
+    },
+    {
+      "id": "PG-AUTH-01",
+      "kind": "interface-action",
+      "title": "Login page",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-AUTH-002",
+        "EP-AUTH-02",
+        "CMP-WEB-AUTH-001",
+        "CMP-WEB-AUTH-LAYOUT-001",
+        "TEST-AUTH-001",
+        "TEST-UX-001"
+      ],
+      "verified_by": [
+        "TEST-AUTH-001",
+        "TEST-UX-001"
+      ],
+      "source": "knowledge/05-implementation/actions/web.md:35"
+    },
+    {
+      "id": "PG-AUTH-02",
+      "kind": "interface-action",
+      "title": "Registration page",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-AUTH-001",
+        "EP-AUTH-01",
+        "CMP-WEB-AUTH-001",
+        "CMP-WEB-AUTH-LAYOUT-001",
+        "TEST-AUTH-001",
+        "TEST-UX-001"
+      ],
+      "verified_by": [
+        "TEST-AUTH-001",
+        "TEST-UX-001"
+      ],
+      "source": "knowledge/05-implementation/actions/web.md:47"
+    },
+    {
+      "id": "PG-FOUND-01",
+      "kind": "interface-action",
+      "title": "Authenticated app shell",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CMP-WEB-ROUTER-001",
+        "CMP-WEB-PROTECTED-001",
+        "CMP-WEB-LAYOUT-001",
+        "TEST-UX-001"
+      ],
+      "verified_by": [
+        "TEST-UX-001"
+      ],
+      "source": "knowledge/05-implementation/actions/web.md:12"
+    },
+    {
+      "id": "PG-FOUND-02",
+      "kind": "interface-action",
+      "title": "Dashboard",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-POLLS-002",
+        "EP-POLLS-02",
+        "CMP-WEB-POLL-CARD-001",
+        "TEST-UX-001"
+      ],
+      "verified_by": [
+        "TEST-UX-001"
+      ],
+      "source": "knowledge/05-implementation/actions/web.md:23"
+    },
+    {
+      "id": "PG-POLLS-01",
+      "kind": "interface-action",
+      "title": "Poll list page",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-POLLS-002",
+        "EP-POLLS-02",
+        "CMP-WEB-POLL-CARD-001",
+        "TEST-POLLS-001",
+        "TEST-UX-001"
+      ],
+      "verified_by": [
+        "TEST-POLLS-001",
+        "TEST-UX-001"
+      ],
+      "source": "knowledge/05-implementation/actions/web.md:59"
+    },
+    {
+      "id": "PG-POLLS-02",
+      "kind": "interface-action",
+      "title": "Create poll page",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-POLLS-001",
+        "EP-POLLS-01",
+        "TEST-POLLS-001",
+        "TEST-UX-001"
+      ],
+      "verified_by": [
+        "TEST-POLLS-001",
+        "TEST-UX-001"
+      ],
+      "source": "knowledge/05-implementation/actions/web.md:71"
+    },
+    {
+      "id": "PG-POLLS-03",
+      "kind": "interface-action",
+      "title": "Poll detail/vote/close page",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-POLLS-003",
+        "REQ-POLLS-004",
+        "REQ-VOTE-001",
+        "REQ-VOTE-002",
+        "EP-POLLS-03",
+        "EP-POLLS-04",
+        "EP-POLLS-05",
+        "PG-POLLS-04",
+        "TEST-POLLS-002",
+        "TEST-VOTE-001",
+        "TEST-UX-001"
+      ],
+      "verified_by": [
+        "TEST-POLLS-002",
+        "TEST-VOTE-001",
+        "TEST-UX-001"
+      ],
+      "source": "knowledge/05-implementation/actions/web.md:83"
+    },
+    {
+      "id": "PG-POLLS-04",
+      "kind": "interface-action",
+      "title": "Embedded results view",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-RESULTS-001",
+        "CMP-WEB-POLL-RESULTS-001",
+        "CTR-POLLS-DETAIL-001",
+        "TEST-RESULTS-001",
+        "TEST-UX-001"
+      ],
+      "verified_by": [
+        "TEST-RESULTS-001",
+        "TEST-UX-001"
+      ],
+      "source": "knowledge/05-implementation/actions/web.md:95"
+    },
+    {
+      "id": "QUAL-POLLPULSE-001",
+      "kind": "quality-policy",
+      "title": "Evidence-backed quality policy",
+      "knowledge_status": "approved",
+      "implementation_status": "partial",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "TEST-FOUND-001",
+        "TEST-AUTH-001",
+        "TEST-POLLS-001",
+        "TEST-POLLS-002",
+        "TEST-VOTE-001",
+        "TEST-RESULTS-001",
+        "TEST-SEC-001",
+        "TEST-PERF-001",
+        "TEST-UX-001",
+        "TEST-ARCH-001",
+        "TEST-WEB-BUILD-001",
+        "TEST-API-SYNTAX-001",
+        "TEST-BLUEPRINT-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/06-quality/strategy.md:12"
+    },
+    {
+      "id": "REL-POLLPULSE-001",
+      "kind": "release-record",
+      "title": "Migrated v1.2 implemented demo snapshot",
+      "knowledge_status": "approved",
+      "implementation_status": "not-applicable",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CHG-MIGRATION-001",
+        "QUAL-POLLPULSE-001"
+      ],
+      "verified_by": [],
+      "source": "releases/REL-POLLPULSE-001.md:12"
+    },
+    {
+      "id": "REQ-AUTH-001",
+      "kind": "requirement",
+      "title": "Register a member",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CAP-IDENTITY-001",
+        "INV-AUTH-001",
+        "EP-AUTH-01",
+        "PG-AUTH-02",
+        "SVC-AUTH-01",
+        "TEST-AUTH-001"
+      ],
+      "verified_by": [
+        "TEST-AUTH-001"
+      ],
+      "source": "knowledge/02-requirements/functional.md:23"
+    },
+    {
+      "id": "REQ-AUTH-002",
+      "kind": "requirement",
+      "title": "Log in a member",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CAP-IDENTITY-001",
+        "INV-AUTH-001",
+        "EP-AUTH-02",
+        "PG-AUTH-01",
+        "SVC-AUTH-01",
+        "TEST-AUTH-001"
+      ],
+      "verified_by": [
+        "TEST-AUTH-001"
+      ],
+      "source": "knowledge/02-requirements/functional.md:36"
+    },
+    {
+      "id": "REQ-AUTH-003",
+      "kind": "requirement",
+      "title": "Restore and expose the authenticated member",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CAP-IDENTITY-001",
+        "EP-AUTH-03",
+        "CMP-API-AUTH-MW-001",
+        "CMP-WEB-AUTH-001",
+        "TEST-AUTH-001"
+      ],
+      "verified_by": [
+        "TEST-AUTH-001"
+      ],
+      "source": "knowledge/02-requirements/functional.md:49"
+    },
+    {
+      "id": "REQ-FOUND-001",
+      "kind": "requirement",
+      "title": "Expose service health",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "EP-FOUND-01",
+        "CMP-API-BOOT-001",
+        "TEST-FOUND-001"
+      ],
+      "verified_by": [
+        "TEST-FOUND-001"
+      ],
+      "source": "knowledge/02-requirements/functional.md:12"
+    },
+    {
+      "id": "REQ-POLLS-001",
+      "kind": "requirement",
+      "title": "Create a poll",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CAP-POLLS-001",
+        "INV-POLLS-001",
+        "EP-POLLS-01",
+        "PG-POLLS-02",
+        "SVC-POLLS-01",
+        "TEST-POLLS-001"
+      ],
+      "verified_by": [
+        "TEST-POLLS-001"
+      ],
+      "source": "knowledge/02-requirements/functional.md:61"
+    },
+    {
+      "id": "REQ-POLLS-002",
+      "kind": "requirement",
+      "title": "Browse paginated polls",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CAP-POLLS-001",
+        "EP-POLLS-02",
+        "PG-POLLS-01",
+        "PG-FOUND-02",
+        "SVC-POLLS-01",
+        "TEST-POLLS-001"
+      ],
+      "verified_by": [
+        "TEST-POLLS-001"
+      ],
+      "source": "knowledge/02-requirements/functional.md:74"
+    },
+    {
+      "id": "REQ-POLLS-003",
+      "kind": "requirement",
+      "title": "View poll detail",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CAP-POLLS-001",
+        "EP-POLLS-03",
+        "PG-POLLS-03",
+        "SVC-POLLS-01",
+        "TEST-POLLS-001"
+      ],
+      "verified_by": [
+        "TEST-POLLS-001"
+      ],
+      "source": "knowledge/02-requirements/functional.md:86"
+    },
+    {
+      "id": "REQ-POLLS-004",
+      "kind": "requirement",
+      "title": "Close an owned poll",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CAP-POLLS-001",
+        "INV-POLLS-002",
+        "INV-POLLS-003",
+        "WF-POLLS-001",
+        "EP-POLLS-05",
+        "PG-POLLS-03",
+        "SVC-POLLS-01",
+        "TEST-POLLS-002"
+      ],
+      "verified_by": [
+        "TEST-POLLS-002"
+      ],
+      "source": "knowledge/02-requirements/functional.md:98"
+    },
+    {
+      "id": "REQ-RESULTS-001",
+      "kind": "requirement",
+      "title": "Show counts and percentages",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CAP-RESULTS-001",
+        "INV-RESULTS-001",
+        "EP-POLLS-03",
+        "PG-POLLS-04",
+        "SVC-POLLS-02",
+        "TEST-RESULTS-001"
+      ],
+      "verified_by": [
+        "TEST-RESULTS-001"
+      ],
+      "source": "knowledge/02-requirements/functional.md:139"
+    },
+    {
+      "id": "REQ-VOTE-001",
+      "kind": "requirement",
+      "title": "Cast at most one vote",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CAP-VOTING-001",
+        "INV-VOTE-001",
+        "WF-POLLS-001",
+        "EP-POLLS-04",
+        "PG-POLLS-03",
+        "SVC-POLLS-01",
+        "SVC-POLLS-03",
+        "TEST-VOTE-001"
+      ],
+      "verified_by": [
+        "TEST-VOTE-001"
+      ],
+      "source": "knowledge/02-requirements/functional.md:112"
+    },
+    {
+      "id": "REQ-VOTE-002",
+      "kind": "requirement",
+      "title": "Accept only an option of an open target poll",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CAP-VOTING-001",
+        "INV-VOTE-002",
+        "EP-POLLS-04",
+        "SVC-POLLS-01",
+        "TEST-VOTE-001"
+      ],
+      "verified_by": [
+        "TEST-VOTE-001"
+      ],
+      "source": "knowledge/02-requirements/functional.md:126"
+    },
+    {
+      "id": "RISK-DEP-001",
+      "kind": "security-debt",
+      "title": "Installed web dependency vulnerabilities",
+      "knowledge_status": "approved",
+      "implementation_status": "not-applicable",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "NFR-SEC-001",
+        "TEST-SEC-001",
+        "CMP-WEB-BOOT-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/06-quality/accepted-risks.md:52"
+    },
+    {
+      "id": "RISK-OPS-001",
+      "kind": "operational-debt",
+      "title": "No production deployment/recovery design",
+      "knowledge_status": "approved",
+      "implementation_status": "not-applicable",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "NFR-OPS-001",
+        "OPS-DEPLOY-001",
+        "OPS-OBS-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/06-quality/accepted-risks.md:42"
+    },
+    {
+      "id": "RISK-SEC-001",
+      "kind": "accepted-risk",
+      "title": "Bearer token stored in localStorage",
+      "knowledge_status": "approved",
+      "implementation_status": "not-applicable",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "ADR-POLLPULSE-003",
+        "NFR-SEC-001",
+        "CMP-WEB-AUTH-001",
+        "CMP-WEB-API-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/06-quality/accepted-risks.md:12"
+    },
+    {
+      "id": "RISK-SEC-002",
+      "kind": "accepted-risk",
+      "title": "Development JWT secret fallback",
+      "knowledge_status": "approved",
+      "implementation_status": "not-applicable",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "ADR-POLLPULSE-003",
+        "NFR-SEC-001",
+        "CMP-API-BOOT-001",
+        "CMP-API-AUTH-MW-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/06-quality/accepted-risks.md:22"
+    },
+    {
+      "id": "RISK-TEST-001",
+      "kind": "quality-debt",
+      "title": "v1.2 verification lacks executable evidence",
+      "knowledge_status": "approved",
+      "implementation_status": "not-applicable",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "QUAL-POLLPULSE-001",
+        "TEST-FOUND-001",
+        "TEST-AUTH-001",
+        "TEST-POLLS-001",
+        "TEST-POLLS-002",
+        "TEST-VOTE-001",
+        "TEST-RESULTS-001",
+        "TEST-SEC-001",
+        "TEST-PERF-001",
+        "TEST-UX-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/06-quality/accepted-risks.md:32"
+    },
+    {
+      "id": "RUN-LOCAL-001",
+      "kind": "runbook",
+      "title": "Start and validate PollPulse locally",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "OPS-DEPLOY-001",
+        "EP-FOUND-01",
+        "TEST-WEB-BUILD-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/07-operations/runbooks/local-start.md:12"
+    },
+    {
+      "id": "SEC-POLLPULSE-001",
+      "kind": "security-design",
+      "title": "Authentication and resource authorization",
+      "knowledge_status": "approved",
+      "implementation_status": "partial",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "NFR-SEC-001",
+        "SVC-AUTH-01",
+        "CMP-API-AUTH-MW-001",
+        "SVC-POLLS-01",
+        "CMP-WEB-AUTH-001",
+        "TEST-SEC-001"
+      ],
+      "verified_by": [
+        "TEST-SEC-001"
+      ],
+      "source": "knowledge/04-design/architecture/security.md:12"
+    },
+    {
+      "id": "SVC-AUTH-01",
+      "kind": "application-service",
+      "title": "Authentication behavior service",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-AUTH-001",
+        "REQ-AUTH-002",
+        "REQ-AUTH-003",
+        "INV-AUTH-001",
+        "CTR-AUTH-RESPONSE-001",
+        "SVC-AUTH-02",
+        "TEST-AUTH-001",
+        "TEST-SEC-001"
+      ],
+      "verified_by": [
+        "TEST-AUTH-001",
+        "TEST-SEC-001"
+      ],
+      "source": "knowledge/05-implementation/components/auth.md:12"
+    },
+    {
+      "id": "SVC-AUTH-02",
+      "kind": "repository",
+      "title": "User repository and mapper",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "DATA-USERS-001",
+        "CTR-AUTH-USER-001",
+        "SVC-FOUND-01",
+        "TEST-AUTH-001"
+      ],
+      "verified_by": [
+        "TEST-AUTH-001"
+      ],
+      "source": "knowledge/05-implementation/components/auth.md:24"
+    },
+    {
+      "id": "SVC-FOUND-01",
+      "kind": "persistence-infrastructure",
+      "title": "SQLite database service",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "ADR-POLLPULSE-002",
+        "DATA-USERS-001",
+        "DATA-POLLS-001",
+        "DATA-OPTIONS-001",
+        "DATA-VOTES-001",
+        "TEST-FOUND-001"
+      ],
+      "verified_by": [
+        "TEST-FOUND-001"
+      ],
+      "source": "knowledge/05-implementation/components/foundation.md:24"
+    },
+    {
+      "id": "SVC-POLLS-01",
+      "kind": "application-service",
+      "title": "Poll behavior service",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "WF-POLLS-001",
+        "INV-POLLS-001",
+        "INV-POLLS-002",
+        "INV-POLLS-003",
+        "INV-VOTE-001",
+        "INV-VOTE-002",
+        "SVC-POLLS-02",
+        "SVC-POLLS-03",
+        "TEST-POLLS-001",
+        "TEST-POLLS-002",
+        "TEST-VOTE-001"
+      ],
+      "verified_by": [
+        "TEST-POLLS-001",
+        "TEST-POLLS-002",
+        "TEST-VOTE-001"
+      ],
+      "source": "knowledge/05-implementation/components/polls.md:12"
+    },
+    {
+      "id": "SVC-POLLS-02",
+      "kind": "repository",
+      "title": "Poll repository and detail mapper",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "DATA-POLLS-001",
+        "DATA-OPTIONS-001",
+        "CTR-POLLS-SUMMARY-001",
+        "CTR-POLLS-LIST-001",
+        "CTR-POLLS-DETAIL-001",
+        "INV-RESULTS-001",
+        "SVC-FOUND-01",
+        "TEST-POLLS-001",
+        "TEST-RESULTS-001",
+        "TEST-PERF-001"
+      ],
+      "verified_by": [
+        "TEST-POLLS-001",
+        "TEST-RESULTS-001",
+        "TEST-PERF-001"
+      ],
+      "source": "knowledge/05-implementation/components/polls.md:24"
+    },
+    {
+      "id": "SVC-POLLS-03",
+      "kind": "repository",
+      "title": "Vote repository",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "DATA-VOTES-001",
+        "INV-VOTE-001",
+        "SVC-FOUND-01",
+        "TEST-VOTE-001"
+      ],
+      "verified_by": [
+        "TEST-VOTE-001"
+      ],
+      "source": "knowledge/05-implementation/components/polls.md:36"
+    },
+    {
+      "id": "TASK-MIGRATION-001",
+      "kind": "execution-task",
+      "title": "Build and validate the v1.3 PollPulse blueprint",
+      "knowledge_status": "approved",
+      "implementation_status": "verified",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CHG-MIGRATION-001",
+        "EVD-MIGRATION-001",
+        "EVD-BLUEPRINT-001",
+        "EVD-WEB-BUILD-001",
+        "EVD-API-SYNTAX-001"
+      ],
+      "verified_by": [
+        "EVD-MIGRATION-001",
+        "EVD-BLUEPRINT-001",
+        "EVD-WEB-BUILD-001",
+        "EVD-API-SYNTAX-001"
+      ],
+      "source": "changes/archive/CHG-MIGRATION-001/execution-plan.md:3"
+    },
+    {
+      "id": "TEST-API-SYNTAX-001",
+      "kind": "syntax-check",
+      "title": "API JavaScript syntax",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CMP-API-BOOT-001",
+        "SVC-AUTH-01",
+        "SVC-AUTH-02",
+        "SVC-POLLS-01",
+        "SVC-POLLS-02",
+        "SVC-POLLS-03",
+        "EVD-API-SYNTAX-001"
+      ],
+      "verified_by": [
+        "EVD-API-SYNTAX-001"
+      ],
+      "source": "knowledge/05-implementation/tests/catalog.md:125"
+    },
+    {
+      "id": "TEST-ARCH-001",
+      "kind": "architecture-check",
+      "title": "Dependency and code-map conformance",
+      "knowledge_status": "approved",
+      "implementation_status": "partial",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "NFR-MAINT-001",
+        "ARCH-POLLPULSE-001",
+        "EVD-MIGRATION-001"
+      ],
+      "verified_by": [
+        "EVD-MIGRATION-001"
+      ],
+      "source": "knowledge/05-implementation/tests/catalog.md:103"
+    },
+    {
+      "id": "TEST-AUTH-001",
+      "kind": "integration-test",
+      "title": "Registration, login, current member, failure behavior",
+      "knowledge_status": "approved",
+      "implementation_status": "planned",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-AUTH-001",
+        "REQ-AUTH-002",
+        "REQ-AUTH-003",
+        "INV-AUTH-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/05-implementation/tests/catalog.md:23"
+    },
+    {
+      "id": "TEST-BLUEPRINT-001",
+      "kind": "blueprint-check",
+      "title": "v1.3 blueprint deterministic validation",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CHG-MIGRATION-001",
+        "EVD-BLUEPRINT-001"
+      ],
+      "verified_by": [
+        "EVD-BLUEPRINT-001"
+      ],
+      "source": "knowledge/05-implementation/tests/catalog.md:136"
+    },
+    {
+      "id": "TEST-FOUND-001",
+      "kind": "integration-test",
+      "title": "API startup, schema, and health",
+      "knowledge_status": "approved",
+      "implementation_status": "planned",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-FOUND-001",
+        "NFR-OPS-001",
+        "CMP-API-BOOT-001",
+        "SVC-FOUND-01"
+      ],
+      "verified_by": [],
+      "source": "knowledge/05-implementation/tests/catalog.md:12"
+    },
+    {
+      "id": "TEST-PERF-001",
+      "kind": "performance-check",
+      "title": "Pagination bounds",
+      "knowledge_status": "approved",
+      "implementation_status": "planned",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "NFR-PERF-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/05-implementation/tests/catalog.md:83"
+    },
+    {
+      "id": "TEST-POLLS-001",
+      "kind": "integration-test",
+      "title": "Create, list, and detail",
+      "knowledge_status": "approved",
+      "implementation_status": "planned",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-POLLS-001",
+        "REQ-POLLS-002",
+        "REQ-POLLS-003",
+        "INV-POLLS-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/05-implementation/tests/catalog.md:33"
+    },
+    {
+      "id": "TEST-POLLS-002",
+      "kind": "integration-test",
+      "title": "Creator close and idempotency",
+      "knowledge_status": "approved",
+      "implementation_status": "planned",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-POLLS-004",
+        "INV-POLLS-002",
+        "INV-POLLS-003"
+      ],
+      "verified_by": [],
+      "source": "knowledge/05-implementation/tests/catalog.md:43"
+    },
+    {
+      "id": "TEST-RESULTS-001",
+      "kind": "unit-integration-test",
+      "title": "Result count and percentage mapping",
+      "knowledge_status": "approved",
+      "implementation_status": "planned",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-RESULTS-001",
+        "INV-RESULTS-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/05-implementation/tests/catalog.md:63"
+    },
+    {
+      "id": "TEST-SEC-001",
+      "kind": "security-test",
+      "title": "Authentication and authorization security checks",
+      "knowledge_status": "approved",
+      "implementation_status": "planned",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "NFR-SEC-001",
+        "SEC-POLLPULSE-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/05-implementation/tests/catalog.md:73"
+    },
+    {
+      "id": "TEST-UX-001",
+      "kind": "interface-evaluation",
+      "title": "Core responsive/accessibility journey",
+      "knowledge_status": "approved",
+      "implementation_status": "planned",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "NFR-UX-001",
+        "JRN-POLLPULSE-001"
+      ],
+      "verified_by": [],
+      "source": "knowledge/05-implementation/tests/catalog.md:93"
+    },
+    {
+      "id": "TEST-VOTE-001",
+      "kind": "integration-test",
+      "title": "Single valid vote under failures and concurrency",
+      "knowledge_status": "approved",
+      "implementation_status": "planned",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-VOTE-001",
+        "REQ-VOTE-002",
+        "INV-VOTE-001",
+        "INV-VOTE-002"
+      ],
+      "verified_by": [],
+      "source": "knowledge/05-implementation/tests/catalog.md:53"
+    },
+    {
+      "id": "TEST-WEB-BUILD-001",
+      "kind": "build-check",
+      "title": "Web production build",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "CMP-WEB-BOOT-001",
+        "EVD-WEB-BUILD-001"
+      ],
+      "verified_by": [
+        "EVD-WEB-BUILD-001"
+      ],
+      "source": "knowledge/05-implementation/tests/catalog.md:114"
+    },
+    {
+      "id": "WF-AUTH-001",
+      "kind": "workflow",
+      "title": "Register, authenticate, and restore session",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-AUTH-001",
+        "REQ-AUTH-002",
+        "REQ-AUTH-003",
+        "INV-AUTH-001",
+        "NFR-SEC-001",
+        "EP-AUTH-01",
+        "EP-AUTH-02",
+        "EP-AUTH-03",
+        "CMP-WEB-AUTH-001",
+        "TEST-AUTH-001",
+        "TEST-SEC-001"
+      ],
+      "verified_by": [
+        "TEST-AUTH-001",
+        "TEST-SEC-001"
+      ],
+      "source": "knowledge/03-domain/workflows/authentication.md:12"
+    },
+    {
+      "id": "WF-POLLS-001",
+      "kind": "workflow",
+      "title": "Create, vote, view results, and close",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "owner": "pollpulse-demo",
+      "relations": [
+        "REQ-POLLS-001",
+        "REQ-POLLS-003",
+        "REQ-POLLS-004",
+        "REQ-VOTE-001",
+        "REQ-VOTE-002",
+        "REQ-RESULTS-001",
+        "INV-POLLS-001",
+        "INV-POLLS-002",
+        "INV-POLLS-003",
+        "INV-VOTE-001",
+        "INV-VOTE-002",
+        "INV-RESULTS-001",
+        "SVC-POLLS-01",
+        "SVC-POLLS-02",
+        "SVC-POLLS-03",
+        "PG-POLLS-02",
+        "PG-POLLS-03",
+        "TEST-POLLS-001",
+        "TEST-POLLS-002",
+        "TEST-VOTE-001",
+        "TEST-RESULTS-001"
+      ],
+      "verified_by": [
+        "TEST-POLLS-001",
+        "TEST-POLLS-002",
+        "TEST-VOTE-001",
+        "TEST-RESULTS-001"
+      ],
+      "source": "knowledge/03-domain/workflows/poll-lifecycle.md:12"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "royascaff/artifact/v1",
+  "type": "object",
+  "required": ["id", "type", "title", "module", "owner", "knowledge_status", "implementation_status"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[A-Z][A-Z0-9]*-[A-Z0-9][A-Z0-9-]*$" },
+    "type": { "type": "string", "minLength": 2 },
+    "title": { "type": "string", "minLength": 2 },
+    "module": { "type": "string", "minLength": 1 },
+    "owner": { "type": "string", "minLength": 1 },
+    "knowledge_status": { "enum": ["draft", "approved", "deprecated", "superseded"] },
+    "implementation_status": { "enum": ["planned", "partial", "implemented", "verified", "not-applicable"] },
+    "tags": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "satisfies": { "$ref": "#/$defs/ids" },
+    "constrained_by": { "$ref": "#/$defs/ids" },
+    "realized_by": { "$ref": "#/$defs/ids" },
+    "uses": { "$ref": "#/$defs/ids" },
+    "maps_to": { "$ref": "#/$defs/ids" },
+    "implemented_by": { "$ref": "#/$defs/ids" },
+    "implements": { "$ref": "#/$defs/ids" },
+    "depends_on": { "$ref": "#/$defs/ids" },
+    "verified_by": { "$ref": "#/$defs/ids" },
+    "verifies": { "$ref": "#/$defs/ids" },
+    "supersedes": { "$ref": "#/$defs/ids" },
+    "superseded_by": { "$ref": "#/$defs/ids" },
+    "affects": { "$ref": "#/$defs/ids" },
+    "owned_by": { "$ref": "#/$defs/ids" }
+  },
+  "$defs": {
+    "ids": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[A-Z][A-Z0-9]*-[A-Z0-9][A-Z0-9-]*$" },
+      "uniqueItems": true
+    }
+  },
+  "additionalProperties": true
+}

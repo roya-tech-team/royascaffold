@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "royascaff/context-manifest/v1",
+  "type": "object",
+  "required": ["schema", "id", "task", "workflow", "skill", "source_revision", "canonical_source_hash", "source_hash", "required", "sources", "budget"],
+  "properties": {
+    "schema": { "const": "royascaff/context-manifest/v1" },
+    "id": { "type": "string", "minLength": 3 },
+    "task": { "type": "string", "pattern": "^TASK-" },
+    "workflow": { "type": "string", "minLength": 2 },
+    "skill": { "type": "string" },
+    "source_revision": { "type": "string", "minLength": 1 },
+    "canonical_source_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "source_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "required": { "$ref": "#/$defs/selections" },
+    "optional": { "$ref": "#/$defs/selections" },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "path", "hash", "required", "reason"],
+        "properties": {
+          "id": { "type": "string" },
+          "path": { "type": "string" },
+          "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "required": { "type": "boolean" },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "budget": { "type": "object", "required": ["max_tokens", "estimated_tokens"] }
+  },
+  "$defs": {
+    "selections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "reason"],
+        "properties": {
+          "id": { "type": "string" },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}
