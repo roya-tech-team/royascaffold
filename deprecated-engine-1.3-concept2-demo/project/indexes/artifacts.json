@@ -1,0 +1,1135 @@
+{
+  "schema": "royascaff/artifact-index/v1",
+  "generated_at": "2026-08-20T00:52:23.556Z",
+  "source_hash": "f4ee179881cd7f6f4edc8b7312f1c0c093a3c53823bb43b66eacf11ae1394ba9",
+  "artifacts": {
+    "ADR-JWT": {
+      "type": "decision",
+      "title": "Bearer JWT session",
+      "module": "auth",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "not-applicable",
+      "path": "decisions/ADR-003-jwt.md",
+      "relations": {
+        "affects": [
+          "SEC-JWT",
+          "CMP-AUTH-SERVICE",
+          "CMP-WEB-API"
+        ]
+      }
+    },
+    "ADR-LAYERED": {
+      "type": "decision",
+      "title": "Layered modular monolith",
+      "module": "system",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "not-applicable",
+      "path": "decisions/ADR-001-layered-modular-monolith.md",
+      "relations": {
+        "affects": [
+          "ARCH-SYSTEM",
+          "ARCH-API-LAYERS",
+          "ARCH-WEB-LAYERS"
+        ]
+      }
+    },
+    "ADR-SQLITE": {
+      "type": "decision",
+      "title": "Built-in SQLite persistence",
+      "module": "data",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "not-applicable",
+      "path": "decisions/ADR-002-sqlite.md",
+      "relations": {
+        "affects": [
+          "ARCH-DATA-ACCESS",
+          "DATA-SQLITE"
+        ]
+      }
+    },
+    "ARCH-API-LAYERS": {
+      "type": "architecture-pattern",
+      "title": "API controller-service-repository pattern",
+      "module": "api",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "architecture/system.md",
+      "relations": {
+        "realized_by": [
+          "CMP-AUTH-CONTROLLER",
+          "CMP-AUTH-SERVICE",
+          "CMP-USERS-REPOSITORY",
+          "CMP-POLLS-CONTROLLER",
+          "CMP-POLLS-SERVICE",
+          "CMP-POLLS-REPOSITORY",
+          "CMP-VOTES-REPOSITORY"
+        ]
+      }
+    },
+    "ARCH-DATA-ACCESS": {
+      "type": "architecture-pattern",
+      "title": "SQLite persistence boundary",
+      "module": "data",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "architecture/system.md",
+      "relations": {
+        "realized_by": [
+          "CMP-DATABASE",
+          "CMP-USERS-REPOSITORY",
+          "CMP-POLLS-REPOSITORY",
+          "CMP-VOTES-REPOSITORY"
+        ],
+        "uses": [
+          "DATA-SQLITE"
+        ]
+      }
+    },
+    "ARCH-SYSTEM": {
+      "type": "architecture",
+      "title": "Two-application architecture",
+      "module": "system",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "architecture/system.md",
+      "relations": {
+        "satisfies": [
+          "REQ-AUTH",
+          "REQ-POLL-CREATE",
+          "REQ-POLL-BROWSE",
+          "REQ-POLL-VOTE",
+          "REQ-POLL-CLOSE"
+        ],
+        "realized_by": [
+          "CMP-API-BOOTSTRAP",
+          "CMP-WEB-SHELL"
+        ],
+        "depends_on": [
+          "ARCH-API-LAYERS",
+          "ARCH-WEB-LAYERS",
+          "ARCH-DATA-ACCESS",
+          "SEC-JWT"
+        ]
+      }
+    },
+    "ARCH-WEB-LAYERS": {
+      "type": "architecture-pattern",
+      "title": "Web page-client pattern",
+      "module": "web",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "architecture/system.md",
+      "relations": {
+        "realized_by": [
+          "CMP-WEB-SHELL",
+          "CMP-WEB-API",
+          "CMP-WEB-AUTH",
+          "CMP-WEB-POLLS",
+          "CMP-WEB-POLL-VIEWS"
+        ]
+      }
+    },
+    "CMP-API-BOOTSTRAP": {
+      "type": "component",
+      "title": "API bootstrap and common transport",
+      "module": "api",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "implementation/components.md",
+      "relations": {
+        "implements": [
+          "ARCH-SYSTEM",
+          "CTR-HTTP-API"
+        ],
+        "depends_on": [
+          "CMP-DATABASE",
+          "CMP-AUTH-CONTROLLER",
+          "CMP-POLLS-CONTROLLER"
+        ]
+      }
+    },
+    "CMP-AUTH-CONTROLLER": {
+      "type": "component",
+      "title": "Auth routes and controller",
+      "module": "auth",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "implementation/components.md",
+      "relations": {
+        "implements": [
+          "ARCH-API-LAYERS",
+          "CTR-HTTP-API"
+        ],
+        "uses": [
+          "IFACE-AUTH-SERVICE",
+          "SEC-JWT"
+        ],
+        "depends_on": [
+          "CMP-AUTH-SERVICE"
+        ]
+      }
+    },
+    "CMP-AUTH-SERVICE": {
+      "type": "service",
+      "title": "Auth service",
+      "module": "auth",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "implementation/components.md",
+      "relations": {
+        "implements": [
+          "IFACE-AUTH-SERVICE",
+          "SEC-JWT"
+        ],
+        "depends_on": [
+          "CMP-USERS-REPOSITORY"
+        ]
+      }
+    },
+    "CMP-DATABASE": {
+      "type": "component",
+      "title": "Database initializer",
+      "module": "data",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "implementation/components.md",
+      "relations": {
+        "implements": [
+          "ARCH-DATA-ACCESS",
+          "DATA-SQLITE"
+        ]
+      }
+    },
+    "CMP-POLLS-CONTROLLER": {
+      "type": "component",
+      "title": "Poll routes and controller",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "implementation/components.md",
+      "relations": {
+        "implements": [
+          "ARCH-API-LAYERS",
+          "CTR-HTTP-API"
+        ],
+        "uses": [
+          "IFACE-POLLS-SERVICE",
+          "SEC-JWT"
+        ],
+        "depends_on": [
+          "CMP-POLLS-SERVICE"
+        ]
+      }
+    },
+    "CMP-POLLS-REPOSITORY": {
+      "type": "repository",
+      "title": "Polls repository",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "implementation/components.md",
+      "relations": {
+        "implements": [
+          "IFACE-POLLS-REPOSITORY",
+          "ARCH-DATA-ACCESS"
+        ],
+        "depends_on": [
+          "CMP-DATABASE"
+        ]
+      }
+    },
+    "CMP-POLLS-SERVICE": {
+      "type": "service",
+      "title": "Polls service",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "implementation/components.md",
+      "relations": {
+        "implements": [
+          "IFACE-POLLS-SERVICE"
+        ],
+        "depends_on": [
+          "CMP-POLLS-REPOSITORY",
+          "CMP-VOTES-REPOSITORY"
+        ]
+      }
+    },
+    "CMP-USERS-REPOSITORY": {
+      "type": "repository",
+      "title": "Users repository",
+      "module": "auth",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "implementation/components.md",
+      "relations": {
+        "implements": [
+          "IFACE-USERS-REPOSITORY",
+          "ARCH-DATA-ACCESS"
+        ],
+        "depends_on": [
+          "CMP-DATABASE"
+        ]
+      }
+    },
+    "CMP-VOTES-REPOSITORY": {
+      "type": "repository",
+      "title": "Votes repository",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "implementation/components.md",
+      "relations": {
+        "implements": [
+          "IFACE-VOTES-REPOSITORY",
+          "ARCH-DATA-ACCESS"
+        ],
+        "depends_on": [
+          "CMP-DATABASE"
+        ]
+      }
+    },
+    "CMP-WEB-API": {
+      "type": "adapter",
+      "title": "Web API client",
+      "module": "web",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "implementation/components.md",
+      "relations": {
+        "implements": [
+          "ARCH-WEB-LAYERS",
+          "CTR-HTTP-API"
+        ]
+      }
+    },
+    "CMP-WEB-AUTH": {
+      "type": "component",
+      "title": "Web authentication feature",
+      "module": "auth",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "implementation/components.md",
+      "relations": {
+        "implements": [
+          "ARCH-WEB-LAYERS"
+        ],
+        "uses": [
+          "CTR-REGISTER",
+          "CTR-LOGIN",
+          "CTR-AUTH-RESPONSE",
+          "CTR-USER"
+        ],
+        "depends_on": [
+          "CMP-WEB-API"
+        ]
+      }
+    },
+    "CMP-WEB-POLL-VIEWS": {
+      "type": "component",
+      "title": "Poll presentation components",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "implementation/components.md",
+      "relations": {
+        "implements": [
+          "ARCH-WEB-LAYERS"
+        ],
+        "uses": [
+          "CTR-POLL-DETAIL"
+        ]
+      }
+    },
+    "CMP-WEB-POLLS": {
+      "type": "component",
+      "title": "Web polls feature",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "implementation/components.md",
+      "relations": {
+        "implements": [
+          "ARCH-WEB-LAYERS"
+        ],
+        "uses": [
+          "CTR-CREATE-POLL",
+          "CTR-VOTE",
+          "CTR-POLL-DETAIL",
+          "CTR-PAGINATED-POLLS"
+        ],
+        "depends_on": [
+          "CMP-WEB-API",
+          "CMP-WEB-POLL-VIEWS"
+        ]
+      }
+    },
+    "CMP-WEB-SHELL": {
+      "type": "component",
+      "title": "Web application shell",
+      "module": "web",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "implementation/components.md",
+      "relations": {
+        "implements": [
+          "ARCH-SYSTEM",
+          "ARCH-WEB-LAYERS"
+        ],
+        "depends_on": [
+          "CMP-WEB-AUTH",
+          "CMP-WEB-POLLS"
+        ]
+      }
+    },
+    "CTR-AUTH-RESPONSE": {
+      "type": "response-dto",
+      "title": "AuthResponse",
+      "module": "auth",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "contracts/http-api.md",
+      "relations": {
+        "uses": [
+          "CTR-USER"
+        ]
+      }
+    },
+    "CTR-CREATE-POLL": {
+      "type": "request-dto",
+      "title": "CreatePollDto",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "contracts/http-api.md",
+      "relations": {
+        "maps_to": [
+          "DOM-POLL"
+        ]
+      }
+    },
+    "CTR-ERROR": {
+      "type": "response-dto",
+      "title": "ErrorResponse",
+      "module": "common",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "contracts/http-api.md",
+      "relations": {}
+    },
+    "CTR-HTTP-API": {
+      "type": "interface",
+      "title": "PollPulse HTTP API",
+      "module": "api",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "contracts/http-api.md",
+      "relations": {
+        "uses": [
+          "CTR-REGISTER",
+          "CTR-LOGIN",
+          "CTR-AUTH-RESPONSE",
+          "CTR-USER",
+          "CTR-CREATE-POLL",
+          "CTR-VOTE",
+          "CTR-POLL-DETAIL",
+          "CTR-PAGINATED-POLLS",
+          "CTR-ERROR"
+        ],
+        "implemented_by": [
+          "CMP-API-BOOTSTRAP",
+          "CMP-AUTH-CONTROLLER",
+          "CMP-POLLS-CONTROLLER"
+        ]
+      }
+    },
+    "CTR-LOGIN": {
+      "type": "request-dto",
+      "title": "LoginDto",
+      "module": "auth",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "contracts/http-api.md",
+      "relations": {}
+    },
+    "CTR-PAGINATED-POLLS": {
+      "type": "response-dto",
+      "title": "PaginatedPollsResponse",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "contracts/http-api.md",
+      "relations": {
+        "uses": [
+          "CTR-POLL-DETAIL"
+        ]
+      }
+    },
+    "CTR-POLL-DETAIL": {
+      "type": "response-dto",
+      "title": "PollDetailDto",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "contracts/http-api.md",
+      "relations": {
+        "maps_to": [
+          "DOM-POLL",
+          "DOM-POLL-OPTION",
+          "DOM-VOTE"
+        ]
+      }
+    },
+    "CTR-REGISTER": {
+      "type": "request-dto",
+      "title": "RegisterDto",
+      "module": "auth",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "contracts/http-api.md",
+      "relations": {
+        "maps_to": [
+          "DOM-USER"
+        ]
+      }
+    },
+    "CTR-USER": {
+      "type": "response-dto",
+      "title": "UserDto",
+      "module": "auth",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "contracts/http-api.md",
+      "relations": {
+        "maps_to": [
+          "DOM-USER"
+        ]
+      }
+    },
+    "CTR-VOTE": {
+      "type": "request-dto",
+      "title": "VoteDto",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "contracts/http-api.md",
+      "relations": {
+        "maps_to": [
+          "DOM-VOTE"
+        ]
+      }
+    },
+    "DATA-POLL-OPTIONS": {
+      "type": "data-model",
+      "title": "poll_options table",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "data/sqlite.md",
+      "relations": {
+        "maps_to": [
+          "DOM-POLL-OPTION"
+        ],
+        "depends_on": [
+          "DATA-POLLS"
+        ]
+      }
+    },
+    "DATA-POLLS": {
+      "type": "data-model",
+      "title": "polls table",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "data/sqlite.md",
+      "relations": {
+        "maps_to": [
+          "DOM-POLL"
+        ],
+        "depends_on": [
+          "DATA-USERS"
+        ]
+      }
+    },
+    "DATA-SQLITE": {
+      "type": "data-store",
+      "title": "PollPulse SQLite database",
+      "module": "data",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "data/sqlite.md",
+      "relations": {
+        "uses": [
+          "DATA-USERS",
+          "DATA-POLLS",
+          "DATA-POLL-OPTIONS",
+          "DATA-VOTES"
+        ],
+        "realized_by": [
+          "CMP-DATABASE"
+        ]
+      }
+    },
+    "DATA-USERS": {
+      "type": "data-model",
+      "title": "users table",
+      "module": "auth",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "data/sqlite.md",
+      "relations": {
+        "maps_to": [
+          "DOM-USER"
+        ]
+      }
+    },
+    "DATA-VOTES": {
+      "type": "data-model",
+      "title": "votes table",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "data/sqlite.md",
+      "relations": {
+        "maps_to": [
+          "DOM-VOTE"
+        ],
+        "depends_on": [
+          "DATA-POLLS",
+          "DATA-POLL-OPTIONS",
+          "DATA-USERS"
+        ]
+      }
+    },
+    "DOM-POLL": {
+      "type": "aggregate-root",
+      "title": "Poll",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "domain/model.md",
+      "relations": {
+        "constrained_by": [
+          "REQ-POLL-CREATE",
+          "REQ-POLL-CLOSE"
+        ],
+        "maps_to": [
+          "DATA-POLLS",
+          "CTR-POLL-DETAIL"
+        ]
+      }
+    },
+    "DOM-POLL-OPTION": {
+      "type": "domain-entity",
+      "title": "Poll option",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "domain/model.md",
+      "relations": {
+        "owned_by": [
+          "DOM-POLL"
+        ],
+        "maps_to": [
+          "DATA-POLL-OPTIONS"
+        ]
+      }
+    },
+    "DOM-USER": {
+      "type": "domain-entity",
+      "title": "User",
+      "module": "auth",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "domain/model.md",
+      "relations": {
+        "maps_to": [
+          "DATA-USERS",
+          "CTR-USER"
+        ]
+      }
+    },
+    "DOM-VOTE": {
+      "type": "domain-entity",
+      "title": "Vote",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "domain/model.md",
+      "relations": {
+        "constrained_by": [
+          "REQ-POLL-VOTE"
+        ],
+        "maps_to": [
+          "DATA-VOTES"
+        ],
+        "depends_on": [
+          "DOM-USER",
+          "DOM-POLL",
+          "DOM-POLL-OPTION"
+        ]
+      }
+    },
+    "IFACE-AUTH-SERVICE": {
+      "type": "service-interface",
+      "title": "Auth service interface",
+      "module": "auth",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "contracts/service-interfaces.md",
+      "relations": {
+        "satisfies": [
+          "REQ-AUTH"
+        ],
+        "uses": [
+          "CTR-REGISTER",
+          "CTR-LOGIN",
+          "CTR-AUTH-RESPONSE",
+          "CTR-USER",
+          "IFACE-USERS-REPOSITORY"
+        ],
+        "realized_by": [
+          "CMP-AUTH-SERVICE"
+        ]
+      }
+    },
+    "IFACE-POLLS-REPOSITORY": {
+      "type": "repository-interface",
+      "title": "Polls repository interface",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "contracts/service-interfaces.md",
+      "relations": {
+        "uses": [
+          "DATA-POLLS",
+          "DATA-POLL-OPTIONS",
+          "DATA-VOTES"
+        ],
+        "realized_by": [
+          "CMP-POLLS-REPOSITORY"
+        ]
+      }
+    },
+    "IFACE-POLLS-SERVICE": {
+      "type": "service-interface",
+      "title": "Polls service interface",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "contracts/service-interfaces.md",
+      "relations": {
+        "satisfies": [
+          "REQ-POLL-CREATE",
+          "REQ-POLL-BROWSE",
+          "REQ-POLL-VOTE",
+          "REQ-POLL-CLOSE"
+        ],
+        "uses": [
+          "CTR-CREATE-POLL",
+          "CTR-VOTE",
+          "CTR-POLL-DETAIL",
+          "CTR-PAGINATED-POLLS",
+          "IFACE-POLLS-REPOSITORY",
+          "IFACE-VOTES-REPOSITORY"
+        ],
+        "realized_by": [
+          "CMP-POLLS-SERVICE"
+        ]
+      }
+    },
+    "IFACE-USERS-REPOSITORY": {
+      "type": "repository-interface",
+      "title": "Users repository interface",
+      "module": "auth",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "contracts/service-interfaces.md",
+      "relations": {
+        "uses": [
+          "DATA-USERS"
+        ],
+        "realized_by": [
+          "CMP-USERS-REPOSITORY"
+        ]
+      }
+    },
+    "IFACE-VOTES-REPOSITORY": {
+      "type": "repository-interface",
+      "title": "Votes repository interface",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "contracts/service-interfaces.md",
+      "relations": {
+        "uses": [
+          "DATA-VOTES"
+        ],
+        "realized_by": [
+          "CMP-VOTES-REPOSITORY"
+        ]
+      }
+    },
+    "REQ-AUTH": {
+      "type": "requirement",
+      "title": "Authenticate members",
+      "module": "auth",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "requirements/product.md",
+      "relations": {
+        "realized_by": [
+          "WF-REGISTER",
+          "WF-LOGIN"
+        ],
+        "implemented_by": [
+          "CMP-AUTH-SERVICE",
+          "CMP-WEB-AUTH"
+        ],
+        "verified_by": [
+          "TEST-AUTH"
+        ]
+      }
+    },
+    "REQ-POLL-BROWSE": {
+      "type": "requirement",
+      "title": "Browse polls and results",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "requirements/product.md",
+      "relations": {
+        "implemented_by": [
+          "CMP-POLLS-SERVICE",
+          "CMP-WEB-POLLS",
+          "CMP-WEB-POLL-VIEWS"
+        ],
+        "verified_by": [
+          "TEST-POLLS"
+        ]
+      }
+    },
+    "REQ-POLL-CLOSE": {
+      "type": "requirement",
+      "title": "Close an owned poll",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "requirements/product.md",
+      "relations": {
+        "realized_by": [
+          "WF-CLOSE-POLL"
+        ],
+        "implemented_by": [
+          "CMP-POLLS-SERVICE",
+          "CMP-WEB-POLLS"
+        ],
+        "verified_by": [
+          "TEST-POLLS"
+        ]
+      }
+    },
+    "REQ-POLL-CREATE": {
+      "type": "requirement",
+      "title": "Create a poll",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "requirements/product.md",
+      "relations": {
+        "realized_by": [
+          "WF-CREATE-POLL"
+        ],
+        "implemented_by": [
+          "CMP-POLLS-SERVICE",
+          "CMP-WEB-POLLS"
+        ],
+        "verified_by": [
+          "TEST-POLLS"
+        ]
+      }
+    },
+    "REQ-POLL-VOTE": {
+      "type": "requirement",
+      "title": "Cast one immutable vote",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "requirements/product.md",
+      "relations": {
+        "realized_by": [
+          "WF-VOTE"
+        ],
+        "implemented_by": [
+          "CMP-POLLS-SERVICE",
+          "CMP-VOTES-REPOSITORY",
+          "CMP-WEB-POLLS"
+        ],
+        "verified_by": [
+          "TEST-POLLS"
+        ]
+      }
+    },
+    "REQ-SCOPE": {
+      "type": "constraint",
+      "title": "Product boundary",
+      "module": "system",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "not-applicable",
+      "path": "requirements/product.md",
+      "relations": {}
+    },
+    "SEC-JWT": {
+      "type": "security-control",
+      "title": "Bearer JWT authentication",
+      "module": "auth",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "architecture/security.md",
+      "relations": {
+        "satisfies": [
+          "REQ-AUTH"
+        ],
+        "realized_by": [
+          "CMP-AUTH-SERVICE",
+          "CMP-AUTH-CONTROLLER",
+          "CMP-WEB-API",
+          "CMP-WEB-AUTH"
+        ],
+        "depends_on": [
+          "ADR-JWT"
+        ]
+      }
+    },
+    "SYS-POLLPULSE": {
+      "type": "system",
+      "title": "PollPulse system",
+      "module": "system",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "system-map.md",
+      "relations": {
+        "uses": [
+          "ARCH-SYSTEM",
+          "DOM-POLL",
+          "WF-VOTE",
+          "CTR-HTTP-API",
+          "DATA-SQLITE",
+          "CMP-API-BOOTSTRAP",
+          "CMP-WEB-SHELL"
+        ]
+      }
+    },
+    "TEST-AUTH": {
+      "type": "test-intent",
+      "title": "Authentication verification intent",
+      "module": "auth",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "planned",
+      "path": "implementation/test-intents.md",
+      "relations": {
+        "verifies": [
+          "REQ-AUTH",
+          "WF-REGISTER",
+          "WF-LOGIN",
+          "IFACE-AUTH-SERVICE"
+        ]
+      }
+    },
+    "TEST-POLLS": {
+      "type": "test-intent",
+      "title": "Poll verification intent",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "planned",
+      "path": "implementation/test-intents.md",
+      "relations": {
+        "verifies": [
+          "REQ-POLL-CREATE",
+          "REQ-POLL-BROWSE",
+          "REQ-POLL-VOTE",
+          "REQ-POLL-CLOSE",
+          "WF-CREATE-POLL",
+          "WF-VOTE",
+          "WF-CLOSE-POLL",
+          "IFACE-POLLS-SERVICE"
+        ]
+      }
+    },
+    "WF-CLOSE-POLL": {
+      "type": "workflow",
+      "title": "Close a poll",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "workflows/polls.md",
+      "relations": {
+        "satisfies": [
+          "REQ-POLL-CLOSE"
+        ],
+        "uses": [
+          "CTR-POLL-DETAIL"
+        ],
+        "implemented_by": [
+          "CMP-POLLS-CONTROLLER",
+          "CMP-POLLS-SERVICE",
+          "CMP-POLLS-REPOSITORY",
+          "CMP-WEB-POLLS"
+        ]
+      }
+    },
+    "WF-CREATE-POLL": {
+      "type": "workflow",
+      "title": "Create a poll",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "workflows/polls.md",
+      "relations": {
+        "satisfies": [
+          "REQ-POLL-CREATE"
+        ],
+        "uses": [
+          "CTR-CREATE-POLL",
+          "CTR-POLL-DETAIL"
+        ],
+        "implemented_by": [
+          "CMP-POLLS-CONTROLLER",
+          "CMP-POLLS-SERVICE",
+          "CMP-POLLS-REPOSITORY",
+          "CMP-WEB-POLLS"
+        ]
+      }
+    },
+    "WF-LOGIN": {
+      "type": "workflow",
+      "title": "Log in a member",
+      "module": "auth",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "workflows/auth.md",
+      "relations": {
+        "satisfies": [
+          "REQ-AUTH"
+        ],
+        "uses": [
+          "CTR-LOGIN",
+          "CTR-AUTH-RESPONSE"
+        ],
+        "implemented_by": [
+          "CMP-AUTH-CONTROLLER",
+          "CMP-AUTH-SERVICE",
+          "CMP-USERS-REPOSITORY",
+          "CMP-WEB-AUTH"
+        ]
+      }
+    },
+    "WF-REGISTER": {
+      "type": "workflow",
+      "title": "Register a member",
+      "module": "auth",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "workflows/auth.md",
+      "relations": {
+        "satisfies": [
+          "REQ-AUTH"
+        ],
+        "uses": [
+          "CTR-REGISTER",
+          "CTR-AUTH-RESPONSE"
+        ],
+        "implemented_by": [
+          "CMP-AUTH-CONTROLLER",
+          "CMP-AUTH-SERVICE",
+          "CMP-USERS-REPOSITORY",
+          "CMP-WEB-AUTH"
+        ]
+      }
+    },
+    "WF-VOTE": {
+      "type": "workflow",
+      "title": "Vote in a poll",
+      "module": "polls",
+      "owner": "pollpulse-team",
+      "knowledge_status": "approved",
+      "implementation_status": "implemented",
+      "path": "workflows/polls.md",
+      "relations": {
+        "satisfies": [
+          "REQ-POLL-VOTE"
+        ],
+        "uses": [
+          "CTR-VOTE",
+          "CTR-POLL-DETAIL"
+        ],
+        "implemented_by": [
+          "CMP-POLLS-CONTROLLER",
+          "CMP-POLLS-SERVICE",
+          "CMP-POLLS-REPOSITORY",
+          "CMP-VOTES-REPOSITORY",
+          "CMP-WEB-POLLS"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,66 @@
+# Artifact Index
+
+> Generated. Source hash: `f4ee179881cd7f6f4edc8b7312f1c0c093a3c53823bb43b66eacf11ae1394ba9`.
+
+| ID | Type | Module | Knowledge | Implementation | Source |
+|----|------|--------|-----------|----------------|--------|
+| ADR-JWT | decision | auth | approved | not-applicable | [source](../decisions/ADR-003-jwt.md) |
+| ADR-LAYERED | decision | system | approved | not-applicable | [source](../decisions/ADR-001-layered-modular-monolith.md) |
+| ADR-SQLITE | decision | data | approved | not-applicable | [source](../decisions/ADR-002-sqlite.md) |
+| ARCH-API-LAYERS | architecture-pattern | api | approved | implemented | [source](../architecture/system.md) |
+| ARCH-DATA-ACCESS | architecture-pattern | data | approved | implemented | [source](../architecture/system.md) |
+| ARCH-SYSTEM | architecture | system | approved | implemented | [source](../architecture/system.md) |
+| ARCH-WEB-LAYERS | architecture-pattern | web | approved | implemented | [source](../architecture/system.md) |
+| CMP-API-BOOTSTRAP | component | api | approved | implemented | [source](../implementation/components.md) |
+| CMP-AUTH-CONTROLLER | component | auth | approved | implemented | [source](../implementation/components.md) |
+| CMP-AUTH-SERVICE | service | auth | approved | implemented | [source](../implementation/components.md) |
+| CMP-DATABASE | component | data | approved | implemented | [source](../implementation/components.md) |
+| CMP-POLLS-CONTROLLER | component | polls | approved | implemented | [source](../implementation/components.md) |
+| CMP-POLLS-REPOSITORY | repository | polls | approved | implemented | [source](../implementation/components.md) |
+| CMP-POLLS-SERVICE | service | polls | approved | implemented | [source](../implementation/components.md) |
+| CMP-USERS-REPOSITORY | repository | auth | approved | implemented | [source](../implementation/components.md) |
+| CMP-VOTES-REPOSITORY | repository | polls | approved | implemented | [source](../implementation/components.md) |
+| CMP-WEB-API | adapter | web | approved | implemented | [source](../implementation/components.md) |
+| CMP-WEB-AUTH | component | auth | approved | implemented | [source](../implementation/components.md) |
+| CMP-WEB-POLL-VIEWS | component | polls | approved | implemented | [source](../implementation/components.md) |
+| CMP-WEB-POLLS | component | polls | approved | implemented | [source](../implementation/components.md) |
+| CMP-WEB-SHELL | component | web | approved | implemented | [source](../implementation/components.md) |
+| CTR-AUTH-RESPONSE | response-dto | auth | approved | implemented | [source](../contracts/http-api.md) |
+| CTR-CREATE-POLL | request-dto | polls | approved | implemented | [source](../contracts/http-api.md) |
+| CTR-ERROR | response-dto | common | approved | implemented | [source](../contracts/http-api.md) |
+| CTR-HTTP-API | interface | api | approved | implemented | [source](../contracts/http-api.md) |
+| CTR-LOGIN | request-dto | auth | approved | implemented | [source](../contracts/http-api.md) |
+| CTR-PAGINATED-POLLS | response-dto | polls | approved | implemented | [source](../contracts/http-api.md) |
+| CTR-POLL-DETAIL | response-dto | polls | approved | implemented | [source](../contracts/http-api.md) |
+| CTR-REGISTER | request-dto | auth | approved | implemented | [source](../contracts/http-api.md) |
+| CTR-USER | response-dto | auth | approved | implemented | [source](../contracts/http-api.md) |
+| CTR-VOTE | request-dto | polls | approved | implemented | [source](../contracts/http-api.md) |
+| DATA-POLL-OPTIONS | data-model | polls | approved | implemented | [source](../data/sqlite.md) |
+| DATA-POLLS | data-model | polls | approved | implemented | [source](../data/sqlite.md) |
+| DATA-SQLITE | data-store | data | approved | implemented | [source](../data/sqlite.md) |
+| DATA-USERS | data-model | auth | approved | implemented | [source](../data/sqlite.md) |
+| DATA-VOTES | data-model | polls | approved | implemented | [source](../data/sqlite.md) |
+| DOM-POLL | aggregate-root | polls | approved | implemented | [source](../domain/model.md) |
+| DOM-POLL-OPTION | domain-entity | polls | approved | implemented | [source](../domain/model.md) |
+| DOM-USER | domain-entity | auth | approved | implemented | [source](../domain/model.md) |
+| DOM-VOTE | domain-entity | polls | approved | implemented | [source](../domain/model.md) |
+| IFACE-AUTH-SERVICE | service-interface | auth | approved | implemented | [source](../contracts/service-interfaces.md) |
+| IFACE-POLLS-REPOSITORY | repository-interface | polls | approved | implemented | [source](../contracts/service-interfaces.md) |
+| IFACE-POLLS-SERVICE | service-interface | polls | approved | implemented | [source](../contracts/service-interfaces.md) |
+| IFACE-USERS-REPOSITORY | repository-interface | auth | approved | implemented | [source](../contracts/service-interfaces.md) |
+| IFACE-VOTES-REPOSITORY | repository-interface | polls | approved | implemented | [source](../contracts/service-interfaces.md) |
+| REQ-AUTH | requirement | auth | approved | implemented | [source](../requirements/product.md) |
+| REQ-POLL-BROWSE | requirement | polls | approved | implemented | [source](../requirements/product.md) |
+| REQ-POLL-CLOSE | requirement | polls | approved | implemented | [source](../requirements/product.md) |
+| REQ-POLL-CREATE | requirement | polls | approved | implemented | [source](../requirements/product.md) |
+| REQ-POLL-VOTE | requirement | polls | approved | implemented | [source](../requirements/product.md) |
+| REQ-SCOPE | constraint | system | approved | not-applicable | [source](../requirements/product.md) |
+| SEC-JWT | security-control | auth | approved | implemented | [source](../architecture/security.md) |
+| SYS-POLLPULSE | system | system | approved | implemented | [source](../system-map.md) |
+| TEST-AUTH | test-intent | auth | approved | planned | [source](../implementation/test-intents.md) |
+| TEST-POLLS | test-intent | polls | approved | planned | [source](../implementation/test-intents.md) |
+| WF-CLOSE-POLL | workflow | polls | approved | implemented | [source](../workflows/polls.md) |
+| WF-CREATE-POLL | workflow | polls | approved | implemented | [source](../workflows/polls.md) |
+| WF-LOGIN | workflow | auth | approved | implemented | [source](../workflows/auth.md) |
+| WF-REGISTER | workflow | auth | approved | implemented | [source](../workflows/auth.md) |
+| WF-VOTE | workflow | polls | approved | implemented | [source](../workflows/polls.md) |

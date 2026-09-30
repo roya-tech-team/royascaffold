@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://royascaff.dev/schemas/v1.3.1/reference-decision.schema.json",
+  "title": "RoyaScaff Reference Decision",
+  "type": "object",
+  "required": ["id", "source", "source_fingerprint", "source_aspect", "disposition", "observation", "interpretation", "rationale", "confidence", "decision_status", "materiality", "owner"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^RDR-(?:[A-Z0-9]+-){1,}[A-Z0-9]+$" },
+    "source": { "type": "string", "minLength": 1 },
+    "source_fingerprint": { "type": "string", "minLength": 8 },
+    "source_aspect": { "type": "string", "minLength": 1 },
+    "disposition": { "enum": ["retain", "adapt", "reject", "unresolved"] },
+    "observation": { "type": "string", "minLength": 1 },
+    "interpretation": { "type": "string", "minLength": 1 },
+    "rationale": { "type": "string", "minLength": 1 },
+    "confidence": { "enum": ["low", "medium", "high"] },
+    "decision_status": { "enum": ["proposed", "decided", "approved-assumption", "delegated", "blocked", "superseded"] },
+    "materiality": { "enum": ["non-material", "material", "critical"] },
+    "owner": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": true
+}

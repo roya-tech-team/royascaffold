@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://royascaff.dev/schemas/v1/change.schema.json",
+  "title": "RoyaScaff Change",
+  "type": "object",
+  "required": ["change_id", "status", "intent", "risk", "baseline_revision", "owners"],
+  "properties": {
+    "change_id": { "type": "string", "pattern": "^CHG-(?:[A-Z0-9]+-){1,}[A-Z0-9]+$" },
+    "status": { "enum": ["draft", "analyzed", "approved", "ready", "in-progress", "failed", "verified", "reconciled", "closed", "blocked", "cancelled"] },
+    "intent": { "type": "string" },
+    "risk": { "enum": ["low", "medium", "high", "critical"] },
+    "baseline_revision": { "type": "string" },
+    "owners": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+  },
+  "additionalProperties": true
+}
+

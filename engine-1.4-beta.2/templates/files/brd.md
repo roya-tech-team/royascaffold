@@ -1,0 +1,49 @@
+---
+document_id: DOC-{{CODE}}-BRD
+title: Business brief
+layer: business
+schema_version: 2
+document_status: approved
+owners: [{{OWNER}}]
+---
+
+# Business brief
+
+> **What:** why {{NAME}} exists, who it is for, and the outcomes it serves
+> **Read when:** deciding whether a feature is worth building
+
+## Problem
+
+_Two or three sentences: who struggles with what today._
+
+## Users
+
+_The kinds of people who use the product, and what they want._
+
+## Scope and out of scope
+
+_What the first release does, and what it deliberately does not do._
+
+## Core workflow
+
+_The main path a user follows, in three to six steps._
+
+## Key words
+
+_The business words this product uses, each with one plain sentence (the domain document holds the full definitions)._
+
+## Outcomes
+
+_Add outcomes with `royascaff new record outcome "<result you can measure>"`. Each says how success is measured._
+
+## Record format (example)
+
+```md
+### OUT-{{CODE}}-001 · Clients see campaign results without asking
+
+- **Owner:** {{OWNER}}
+
+Measured by: fewer than 2 "how is my campaign doing?" messages per client per month.
+```
+
+Write in business language: people, needs and results. The design documents hold the technical detail.

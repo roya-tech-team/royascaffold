@@ -79,6 +79,7 @@ Start here if you are modifying the engine itself or need the exact contracts.
 | [Polish](flows/03-polish.md) | P | Visual, style, and copy changes only |
 | [Bug fix](flows/04-bug-fix.md) | 6 | Triage into a change pack or a direct fix |
 | [Reverse engineer](flows/05-reverse-engineer.md) | R | Document an existing codebase and queue the gaps |
+| [Flow UML diagrams](flows/06-flow-uml-diagrams.md) | All | Mermaid UML maps for routing, gates, branches, pack states, and handoffs |
 
 ### Reference
 

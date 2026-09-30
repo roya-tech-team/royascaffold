@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://royascaff.dev/schemas/v1/evidence.schema.json",
+  "title": "RoyaScaff Evidence",
+  "type": "object",
+  "required": ["evidence_id", "check_id", "result", "revision", "timestamp", "scope", "method"],
+  "properties": {
+    "evidence_id": { "type": "string", "pattern": "^EVD-(?:[A-Z0-9]+-){1,}[A-Z0-9]+$" },
+    "check_id": { "type": "string" },
+    "result": { "enum": ["pass", "fail", "incomplete", "not-applicable"] },
+    "revision": { "type": "string" },
+    "timestamp": { "type": "string" },
+    "scope": { "type": "string" },
+    "method": { "enum": ["command", "inspection", "screenshot", "runtime-observation"] }
+  },
+  "additionalProperties": true
+}

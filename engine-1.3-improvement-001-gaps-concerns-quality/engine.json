@@ -1,0 +1,24 @@
+{
+  "name": "royascaff-sdlc",
+  "version": "1.3.1",
+  "schema_version": 2,
+  "format": "markdown-first-layered-quality-by-design-sdlc",
+  "runtime": {
+    "node": ">=18",
+    "dependencies": []
+  },
+  "commands": ["validate", "index", "context"],
+  "adoption_modes": ["legacy-compatible", "transition", "strict"],
+  "quality_gates": ["solution-quality-review", "implementation-readiness-review"],
+  "skills": [
+    "route-work", "capture-requirements", "analyze-reference", "model-domain-workflow",
+    "design-solution", "review-solution-quality", "plan-execution",
+    "review-implementation-readiness", "build-context", "implement-task",
+    "verify-change", "reconcile-knowledge"
+  ],
+  "compatibility": {
+    "preserve_ids": ["SVC", "EP", "PG", "VW"],
+    "migration_sources": ["v1.2", "v1.3"],
+    "v1_3_mode": "legacy-compatible"
+  }
+}

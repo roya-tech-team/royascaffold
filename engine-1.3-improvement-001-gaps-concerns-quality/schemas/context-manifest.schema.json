@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://royascaff.dev/schemas/v1.3.1/context-manifest.schema.json",
+  "title": "RoyaScaff Context Manifest",
+  "type": "object",
+  "required": ["manifest_id", "role", "root_ids", "include_ids", "max_tokens", "overflow"],
+  "properties": {
+    "manifest_id": { "type": "string" },
+    "role": { "enum": ["analyst", "designer", "planner", "implementer", "verifier", "reconciler", "inventory"] },
+    "context_tier": { "enum": ["compact", "standard", "rigorous"] },
+    "root_ids": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "include_ids": { "type": "array", "items": { "type": "string" } },
+    "include_documents": { "type": "array", "items": { "type": "string" } },
+    "review_ids": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "source_fingerprint": { "type": "string" },
+    "max_tokens": { "type": "integer", "minimum": 1000 },
+    "overflow": { "const": "fail-and-split" }
+  },
+  "additionalProperties": true
+}

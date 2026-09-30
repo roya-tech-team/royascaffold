@@ -1,0 +1,13 @@
+
+> royascaff@1.4.0-beta.4 deploy:dry
+> node scripts/deploy.cjs --dry-run
+
+RoyaScaff deploy · royascaff@1.4.0-beta.4 → npm tag "beta" (dry run)
+
+✓ logged in as islamhaaroya
+✓ 1.4.0-beta.4 is not published yet
+… running the tests
+✓ all tests pass
+✓ package: 108 engine files
+
+Dry run done. To publish: npm run deploy (add -- --otp=123456 if your account asks for a code)

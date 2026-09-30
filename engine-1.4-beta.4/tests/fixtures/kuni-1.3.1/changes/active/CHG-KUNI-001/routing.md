@@ -1,0 +1,27 @@
+# Routing decision
+
+- **Intent:** new product / first visual milestone
+- **Workflow:** Initial Build
+- **Consequence:** medium
+- **Reasons:** new user-visible product and a new rendering architecture; local dummy data only; reversible; no money, identity, persistence, authorization, or external side effects
+- **Uncertainty:** medium
+- **Reasons:** the brief is detailed, but frame-rate, Randomize semantics, mobile depth, accessibility bar, and numeric visual thresholds were unspecified; the stakeholder authorized applying all recommendations
+- **Judgment:** high
+- **Reasons:** subjective cinematic quality, an influential visual reference, and an owner-stated “product not demo” bar. Small file count cannot lower this
+- **Artifact mode:** standard
+- **Adoption mode:** strict
+- **Reference trigger:** yes — `docs/reference/3d-network-reference.png` is influential. RDRs are recorded in `reference-decisions.md`
+- **Content/data credibility:** dummy generated knowledge entities; no live ingestion
+- **Novelty:** new 3D universe product; first Main
+- **Reversibility:** high — local prototype, no production data
+- **Ownership:** product-owner for intent and quality bar; knowledge-universe-team for later implementation
+- **Selected adapters:** `generic`, `web-ui`
+- **Rejected adapters:** `web-api` — no backend, contract, or persistence this slice
+- **Adapter conflicts:** none
+- **Required gates:** Quality Design Contract, later Reference Decision Records, Solution Quality Review, Implementation Readiness Review
+- **Result authority:** stakeholder-owner for material visual polish; fresh-context-reviewer for SQR/IRR; implementer-self-check cannot close high-judgment visual claims
+- **Required layers this capture:** business, requirements, QDC, reference decisions, domain, workflows, experience, architecture, data, components, actions, quality
+- **Deferred to later skills:** implementation
+- **Not required this slice:** public API, security catalog, deployment, observability, release
+- **Next skill:** verify-change
+- **Stop rule:** do not reconcile Main and do not implement the future knowledge platform. Browser runtime and the 10-second orbit are recorded. Residual verification is owner visual adjudication (`CRIT-KUNI-016`) and fresh-context review of `CRIT-KUNI-003`, `CRIT-KUNI-005`, `CRIT-KUNI-006`, and `CRIT-KUNI-011` using `changes/active/CHG-KUNI-001/evidence/1440-first-view.png`. Closed musts must not be re-invented.

@@ -1,0 +1,26 @@
+{
+  "schema": "royascaff/change-index/v1",
+  "generated_at": "2026-08-20T00:52:23.556Z",
+  "source_hash": "a4082130d7551d4479b719f0cd7d4b8196891092d4c1042f5bdd05044aeb867b",
+  "changes": [
+    {
+      "id": "CHG-20260820-040000",
+      "title": "Allow an owner to edit an open poll",
+      "type": "feature",
+      "state": "planned",
+      "risk": "medium",
+      "owner": "pollpulse-team",
+      "path": "changes/active/change-20260820-040000-edit-poll/change.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-POLLS-EDIT-01",
+      "change": "CHG-20260820-040000",
+      "title": "Finalize the poll-edit contract and execution design",
+      "state": "ready",
+      "skill": "design-contracts",
+      "path": "changes/active/change-20260820-040000-edit-poll/execution/tasks/TASK-POLLS-EDIT-01.md"
+    }
+  ]
+}

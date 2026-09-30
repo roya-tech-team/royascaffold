@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://royascaff.dev/schemas/v1.3.1/quality-design-contract.schema.json",
+  "title": "RoyaScaff Quality Design Contract",
+  "type": "object",
+  "required": ["qdc_id", "change_id", "outcome", "audience", "priorities", "criteria", "unacceptable_outcomes", "owners"],
+  "properties": {
+    "qdc_id": { "type": "string", "pattern": "^QDC-(?:[A-Z0-9]+-){1,}[A-Z0-9]+$" },
+    "change_id": { "type": "string", "pattern": "^CHG-" },
+    "outcome": { "type": "string", "minLength": 1 },
+    "audience": { "type": "string", "minLength": 1 },
+    "priorities": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "criteria": { "type": "array", "items": { "type": "string", "pattern": "^CRIT-" }, "minItems": 1, "uniqueItems": true },
+    "foundation_criteria": { "type": "array", "items": { "type": "string", "pattern": "^CRIT-" }, "uniqueItems": true },
+    "unacceptable_outcomes": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "first_pass_target": { "type": "string" },
+    "final_target": { "type": "string" },
+    "owners": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+  },
+  "additionalProperties": true
+}

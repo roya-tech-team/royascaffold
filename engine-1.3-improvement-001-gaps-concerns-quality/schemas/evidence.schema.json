@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://royascaff.dev/schemas/v1.3.1/evidence.schema.json",
+  "title": "RoyaScaff Evidence",
+  "type": "object",
+  "required": ["evidence_id", "criterion_id", "result", "source_fingerprint", "timestamp", "scope", "method", "expected", "actual", "environment", "executor", "adjudicator", "authority_class", "freshness"],
+  "properties": {
+    "evidence_id": { "type": "string", "pattern": "^EVD-(?:[A-Z0-9]+-){1,}[A-Z0-9]+$" },
+    "check_id": { "type": "string" },
+    "criterion_id": { "type": "string", "pattern": "^CRIT-(?:[A-Z0-9]+-){1,}[A-Z0-9]+$" },
+    "result": { "enum": ["pass", "fail", "inconclusive", "manual-required", "not-applicable", "stale"] },
+    "revision": { "type": "string" },
+    "source_fingerprint": { "type": "string", "minLength": 8 },
+    "timestamp": { "type": "string" },
+    "scope": { "type": "string" },
+    "method": { "enum": ["command", "inspection", "screenshot", "runtime-observation", "manual-review"] },
+    "procedure": { "type": "string" },
+    "expected": { "type": "string" },
+    "actual": { "type": "string" },
+    "environment": { "type": "string" },
+    "executor": { "type": "string" },
+    "adjudicator": { "type": "string" },
+    "authority_class": { "enum": ["implementer-self-check", "fresh-context-reviewer", "independent-model", "independent-person", "deterministic-runner", "stakeholder-owner"] },
+    "freshness": { "enum": ["fresh", "stale", "unknown"] },
+    "artifact": { "type": "string" },
+    "limitations": { "type": "string" }
+  },
+  "additionalProperties": true
+}

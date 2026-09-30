@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://royascaff.dev/schemas/v1/document.schema.json",
+  "title": "RoyaScaff Canonical Document Header",
+  "type": "object",
+  "required": ["document_id", "title", "layer", "schema_version", "document_status", "owners"],
+  "properties": {
+    "document_id": { "type": "string", "pattern": "^DOC-(?:[A-Z0-9]+-){1,}[A-Z0-9]+$" },
+    "title": { "type": "string", "minLength": 1 },
+    "layer": { "type": "string", "minLength": 1 },
+    "schema_version": { "type": "integer", "minimum": 1 },
+    "document_status": { "enum": ["draft", "in-review", "approved", "deprecated", "superseded"] },
+    "owners": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+  },
+  "additionalProperties": true
+}
+

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://royascaff.dev/schemas/v1.3.1/execution-task.schema.json",
+  "title": "RoyaScaff Executable Task",
+  "type": "object",
+  "required": ["id", "goal", "task_class", "criterion_ids", "decision_ids", "preconditions", "inputs", "allowed_paths", "forbidden_inventions", "steps", "outputs", "checks", "done_when", "recovery", "escalation", "handoff"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^TASK-(?:[A-Z0-9]+-){1,}[A-Z0-9]+$" },
+    "goal": { "type": "string", "minLength": 1 },
+    "task_class": { "enum": ["foundation", "optional"] },
+    "criterion_ids": { "type": "array", "items": { "type": "string", "pattern": "^CRIT-" }, "minItems": 1, "uniqueItems": true },
+    "decision_ids": { "type": "array", "items": { "type": "string", "pattern": "^(?:DEC|RDR|PAT)-" }, "uniqueItems": true },
+    "preconditions": { "type": "array", "items": { "type": "string" } },
+    "inputs": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "allowed_paths": { "type": "array", "items": { "type": "string" } },
+    "forbidden_inventions": { "type": "array", "items": { "type": "string" } },
+    "steps": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "outputs": { "type": "array", "items": { "type": "string" } },
+    "checks": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "done_when": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "recovery": { "type": "array", "items": { "type": "string" } },
+    "escalation": { "type": "string", "minLength": 1 },
+    "context_tier": { "enum": ["compact", "standard", "rigorous"] },
+    "handoff": { "type": "string" }
+  },
+  "additionalProperties": true
+}

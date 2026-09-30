@@ -1,0 +1,31 @@
+{
+  "name": "royascaff-engine-1.3-concept2",
+  "version": "1.3.0-concept.2",
+  "description": "Markdown-first SDLC knowledge compiler for RoyaScaff v1.3 concept 2",
+  "license": "MIT",
+  "type": "commonjs",
+  "bin": {
+    "royascaff13": "bin/royascaff13.js"
+  },
+  "scripts": {
+    "test": "node --test tests/engine.test.js",
+    "validate:demo": "node bin/royascaff13.js validate project ../engine-1.3-sdlc-concept2-demo/project",
+    "index:demo": "node bin/royascaff13.js index ../engine-1.3-sdlc-concept2-demo/project",
+    "context:demo": "node bin/royascaff13.js context build --task TASK-POLLS-EDIT-01 --project ../engine-1.3-sdlc-concept2-demo/project"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "schemas",
+    "engine",
+    "skills",
+    "README.md"
+  ],
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "yaml": "^2.8.1"
+  }
+}
