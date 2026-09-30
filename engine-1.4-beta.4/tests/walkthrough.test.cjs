@@ -29,9 +29,16 @@ test("walkthrough in git: init → discover → approve project → plan → app
   // A person's look is confirmed in a terminal (D9): run the CLI inside a pseudo-terminal and answer "yes".
   const look = (...args) => {
     const cmd = [process.execPath, BIN, ...args, "--path", repo].map((a) => `'${String(a).replace(/'/g, "'\\''")}'`).join(" ");
-    const r = process.platform === "darwin"
-      ? spawnSync("script", ["-q", "/dev/null", "sh", "-c", cmd], { input: "yes\n", encoding: "utf8", env: { ...env, ROYASCAFF_NO_TTY: "" } })
-      : spawnSync("script", ["-qec", cmd, "/dev/null"], { input: "yes\n", encoding: "utf8", env: { ...env, ROYASCAFF_NO_TTY: "" } });
+    // `script` gives the command a terminal. The answer is typed only after the prompt has appeared
+    // (text typed ahead can be discarded by the terminal, as on macOS), and it reaches `script`
+    // through a real pipe from sh (macOS `script` refuses Node's socket as stdin).
+    const scriptCall = process.platform === "darwin" ? 'script -q /dev/null sh -c "$LOOK_CMD"' : 'script -qec "$LOOK_CMD" /dev/null';
+    const shell = `out="$LOOK_OUT"; : > "$out"
+( i=0; while ! grep -q "Type yes" "$out" 2>/dev/null && [ $i -lt 600 ]; do sleep 0.1; i=$((i+1)); done; echo yes ) | ${scriptCall} > "$out" 2>&1
+status=$?; cat "$out"; exit $status`;
+    const outFile = path.join(os.tmpdir(), `rs-look-${process.pid}-${Date.now()}.txt`);
+    const r = spawnSync("sh", ["-c", shell], { encoding: "utf8", env: { ...env, ROYASCAFF_NO_TTY: "", LOOK_CMD: cmd, LOOK_OUT: outFile } });
+    fs.rmSync(outFile, { force: true });
     if (r.status !== 0) throw new Error(`royascaff ${args.join(" ")} (in a terminal) failed:\n${r.stdout}${r.stderr}`);
     return r.stdout;
   };

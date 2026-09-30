@@ -29,4 +29,4 @@
 
 ## Words
 
-mesh, meshes, shader, shaders, instanced, bloom, fps, webgl, three, canvas
+mesh, meshes, shader, shaders, instanced, bloom, fps, webgl, threejs, canvas

@@ -1,7 +1,7 @@
 {
   "name": "royascaff",
   "version": "1.4.0-beta.4",
-  "description": "RoyaScaff engine 1.4 \u2014 navigate and trace AI-assisted software delivery",
+  "description": "RoyaScaff engine 1.4 — navigate and trace AI-assisted software delivery",
   "bin": {
     "royascaff": "bin/royascaff.cjs",
     "sdlc": "bin/royascaff.cjs"
@@ -16,7 +16,11 @@
     "README.md"
   ],
   "scripts": {
-    "test": "node --require ./tests/env.cjs --test tests/*.test.cjs"
+    "test": "node --require ./tests/env.cjs --test tests/*.test.cjs",
+    "pack:check": "npm pack --dry-run",
+    "deploy:dry": "node scripts/deploy.cjs --dry-run",
+    "deploy": "node scripts/deploy.cjs",
+    "prepublishOnly": "npm test --silent"
   },
   "engines": {
     "node": ">=18"
@@ -28,6 +32,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/roya-tech-team/royascaffold.git",
-    "directory": "engine-1.4"
+    "directory": "engine-1.4-beta.4"
   }
 }

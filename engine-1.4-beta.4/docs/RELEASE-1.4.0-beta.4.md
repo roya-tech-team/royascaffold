@@ -1,7 +1,7 @@
 # RoyaScaff 1.4.0-beta.4 — release notes
 
 > **For:** the next benchmark rerun and the pilot team
-> **Channel:** npm dist-tag `beta` (not published yet) — `npm install royascaff` still gives 1.2.5
+> **Channel:** npm dist-tag `beta` (not published yet) — `npm install royascaff` still gives the stable 1.2.6; `npm install royascaff@beta` gives this version
 > **Based on:** beta.3 plus the owner's review of it (plan files 16 and 17)
 
 ## Why this release

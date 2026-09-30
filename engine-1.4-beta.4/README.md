@@ -12,6 +12,17 @@
 Plan: `benchmark/3d-network/version1.4-plan/` (design in file 02, decisions in file 08,
 build plan in file 09). Engine 1.3 and 1.2 stay unchanged beside this folder.
 
+## Publish to npm
+
+```bash
+npm login                          # once, as the package owner
+npm run deploy:dry                 # login, new version, tests, package contents — no upload
+npm run deploy                     # the same, then npm publish under the version's tag
+npm run deploy -- --otp=123456     # when your account asks for a two-factor code
+```
+
+A pre-release version (`1.4.0-beta.4`) is published under its tag (`beta`), so `npm install royascaff` keeps giving the stable version and `npm install royascaff@beta` gives this one. The script stops if the version is already on npm: raise `version` in `package.json` first. `npm publish` on its own also runs the tests (`prepublishOnly`).
+
 ## Build status
 
 | Step | Scope | Status |

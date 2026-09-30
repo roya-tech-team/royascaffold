@@ -59,7 +59,16 @@ function build(repo, from, flags) {
 // Applies to `repo`, runs index, checks that no ID was lost. Returns the outcome.
 function applyAt(repo, from, flags, before) {
   const built = build(repo, from, flags);
-  const statusFiles = ["project/STATUS.md", "STATUS.md"].filter((f) => !fs.existsSync(path.join(repo, f)));
+  // Exact-case existence: on a case-insensitive disk (macOS, Windows) a 1.2 `status.md` would
+  // otherwise hide that the board `STATUS.md` is a new file, and rollback would keep the wrong name.
+  const existsExact = (rel) => {
+    try {
+      return fs.readdirSync(path.join(repo, path.dirname(rel))).includes(path.basename(rel));
+    } catch {
+      return false;
+    }
+  };
+  const statusFiles = ["project/STATUS.md", "STATUS.md"].filter((f) => !existsExact(f));
   const manifest = applyPlan(built.plan, built.manifestDir, { royascaff_migration: `${from} → 1.4`, code: built.code });
   let indexError = null;
   try {
@@ -67,7 +76,7 @@ function applyAt(repo, from, flags, before) {
   } catch (e) {
     indexError = e.message;
   }
-  const created = statusFiles.filter((f) => fs.existsSync(path.join(repo, f)));
+  const created = statusFiles.filter((f) => existsExact(f));
   if (created.length) {
     manifest.created.push(...created);
     fs.writeFileSync(path.join(repo, built.manifestDir, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
