@@ -36,17 +36,24 @@ function initProject(start, flags = {}) {
   const created = [];
   const { docText } = require("../templates.cjs");
   const apps_ = apps.map((a) => `### APP-${code}-${a.name.toUpperCase()} · ${a.name} app\n\n- **Path:** ${a.dir}\n- **Build:**\n- **Typecheck:**\n- **Lint:**\n- **Test:**\n`).join("\n");
-  const vars = { CODE: code, OWNER: owner, NAME: flags.name, APPS: apps_ || "_Add one `### APP-" + code + "-WEB · web app` record per app, with Path and commands._\n" };
+  const { KNOWN } = require("../adapters.cjs");
+  const adapters = String(flags.adapter || "generic").split(",").map((x) => x.trim()).filter(Boolean);
+  const unknownAdapters = adapters.filter((a) => !KNOWN().includes(a));
+  if (unknownAdapters.length) throw new Error(`Unknown adapter: ${unknownAdapters.join(", ")} (use ${KNOWN().join(", ")})`);
+  const vars = { CODE: code, OWNER: owner, NAME: flags.name, PROFILE: flags.lite ? "lite" : "standard", ADAPTERS: adapters.join(", "), APPS: apps_ || "_Add one `### APP-" + code + "-WEB · web app` record per app, with Path and commands._\n" };
   const files = {
     "profile.md": "profile",
     "knowledge/00-roadmap/roadmap.md": "roadmap",
+    "knowledge/00-discovery/discovery.md": "discovery",
     "knowledge/01-business/brd.md": "brd",
+    "knowledge/04-design/architecture.md": "architecture",
     "knowledge/02-requirements/requirements.md": "requirements",
     "knowledge/04-design/decisions.md": "decisions",
     "knowledge/05-implementation/components.md": "components",
     "knowledge/05-implementation/tests.md": "tests",
   };
   for (const [rel, name] of Object.entries(files)) writeNew(path.join(projectDir, rel), docText(name, vars), created);
+  writeNew(path.join(projectDir, "log.md"), require("../events.cjs").logTemplate("project"), created);
   for (const d of ["PLAYBOOK.md", "GLOSSARY.md"]) writeNew(path.join(projectDir, d), fs.readFileSync(path.join(ENGINE, "docs", d), "utf8"), created);
   for (const a of apps) fs.mkdirSync(path.join(repo, a.dir), { recursive: true });
   require("./views.cjs").indexCommand(repo);
@@ -88,7 +95,17 @@ function install(start, flags = {}) {
   if (!tools.length) tools.push("cursor", "claude");
   const cli = cliCommand();
   const written = [];
-  for (const tool of tools) written.push(...copySkill(path.join(repo, `.${tool}`, "skills", "royascaff"), cli));
+  for (const tool of tools) {
+    const target = path.join(repo, `.${tool}`, "skills", "royascaff");
+    written.push(...copySkill(target, cli));
+    const { DIR } = require("../adapters.cjs");
+    for (const f of fs.readdirSync(DIR).filter((x) => x.endsWith(".md"))) {
+      const out = path.join(target, "adapters", f);
+      fs.mkdirSync(path.dirname(out), { recursive: true });
+      fs.writeFileSync(out, fs.readFileSync(path.join(DIR, f), "utf8"));
+      written.push(out);
+    }
+  }
   const created = [];
   const projectDir = path.join(repo, "project");
   if (fs.existsSync(projectDir)) for (const d of ["PLAYBOOK.md", "GLOSSARY.md"]) writeNew(path.join(projectDir, d), fs.readFileSync(path.join(ENGINE, "docs", d), "utf8"), created);

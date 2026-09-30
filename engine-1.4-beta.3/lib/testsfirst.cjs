@@ -1,0 +1,99 @@
+"use strict";
+
+// Step 12c (plan file 14), WP-C4 · P5: tests first for must requirements and NFRs (H4), and tests
+// that run the code instead of reading it. Deterministic: IDs, events, exit codes and file text.
+
+const fs = require("fs");
+const path = require("path");
+
+const priority = (rec) => String((rec && rec.fields.Priority) || "").trim().toLowerCase();
+
+// Must requirements and NFRs the change delivers (through its slices).
+function mustTargets(model, change) {
+  const ids = new Set(change.slices.flatMap((s) => (model.slices.get(s) ? model.slices.get(s).delivers : [])));
+  return [...ids].filter((id) => ["requirement", "nfr"].includes(model.records.get(id)?.kind) && priority(model.records.get(id)) === "must");
+}
+
+// TEST- records with Check: runner:test that verify the requirement.
+function runnerTestsFor(model, reqId) {
+  const rec = model.records.get(reqId);
+  const ids = new Set(rec ? rec.relations.filter((x) => x.type === "verified_by").map((x) => x.to) : []);
+  for (const x of model.incoming.get(reqId) || []) if (x.type === "verifies") ids.add(x.from);
+  return [...ids].filter((id) => model.records.get(id)?.kind === "test" && /^runner:test\b/i.test(String(model.records.get(id).fields.Check || "").trim()));
+}
+
+function missingTests(model, change) {
+  return mustTargets(model, change).filter((id) => !runnerTestsFor(model, id).length);
+}
+
+// Tests-first applies to feature changes of 1.4 projects that deliver a must requirement and whose
+// apps declare a Test command.
+function applies(model, change) {
+  if (!model.is14 || change.kind !== "feature" || !mustTargets(model, change).length) return false;
+  const runner = require("./runner.cjs");
+  return runner.appsForChange(model, change).some((a) => a.commands.Test);
+}
+
+const SKIP = new Set(["node_modules", ".git", "dist", "build", "coverage", ".next", ".cache", "out", "vendor"]);
+const TEST_FILE = /(\.test\.|\.spec\.)[cm]?[jt]sx?$|__tests__\/.+\.[cm]?[jt]sx?$/;
+
+function walk(dir, rel, out) {
+  let entries;
+  try {
+    entries = fs.readdirSync(dir, { withFileTypes: true });
+  } catch {
+    return;
+  }
+  for (const e of entries) {
+    if (SKIP.has(e.name)) continue;
+    const r = rel ? `${rel}/${e.name}` : e.name;
+    if (e.isDirectory()) walk(path.join(dir, e.name), r, out);
+    else if (e.isFile() && TEST_FILE.test(r)) out.push(r);
+  }
+}
+
+// Why a test file text reads application source instead of running it, or null.
+function readsSource(text) {
+  if (/(?:from\s*|import\s*\(\s*)['"`][^'"`]+\?raw['"`]/.test(text)) return "imports source as text (?raw)";
+  const re = /\b(readFileSync|readFile|readTextFile)\s*\(([^;]{0,200}?)\)/g;
+  let m;
+  while ((m = re.exec(text))) {
+    const args = m[2];
+    if (/['"`][^'"`]*(?:^|[\/.])src\//.test(args) || /['"`]src['"`]/.test(args) || /['"`][^'"`]*\.(?:[cm]?[jt]sx?|vue|svelte)['"`]/.test(args)) return `reads application source as text (${m[1]})`;
+  }
+  return null;
+}
+
+// Test files in the apps a change touches that read source instead of running it.
+function sourceReaders(model, apps) {
+  const out = [];
+  for (const app of apps) {
+    const base = path.join(model.repo, app.path || ".");
+    const files = [];
+    walk(base, "", files);
+    for (const f of files) {
+      let text = "";
+      try {
+        text = fs.readFileSync(path.join(base, f), "utf8");
+      } catch {
+        continue;
+      }
+      const why = readsSource(text);
+      if (why) out.push({ file: path.posix.join(app.path || ".", f), why });
+    }
+  }
+  return out;
+}
+
+// Index of the event where the change became ready (or started), -1 when unknown.
+function readyAt(events) {
+  let at = -1;
+  events.forEach((e, i) => {
+    if (e.event === "change.advanced" && /→ (ready|in-progress)\b/.test(e.note || "") && at < 0) at = i;
+  });
+  return at;
+}
+
+const recordedAfterTheFact = (events) => events.some((e) => e.event === "change.advanced" && /recorded after the fact/.test(e.note || ""));
+
+module.exports = { mustTargets, runnerTestsFor, missingTests, applies, readsSource, sourceReaders, readyAt, recordedAfterTheFact, TEST_FILE };

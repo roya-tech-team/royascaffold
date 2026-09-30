@@ -72,6 +72,24 @@ const RULES = {
         ? `classify every layer as ${IMPACT_STATES.join(" / ")}${missing.length ? `; missing: ${missing.join(", ")}` : ""}${bad.length ? `; not classified: ${bad.join(", ")}` : ""}`
         : "every impact layer is classified"));
     }
+    if (table && model.is14) {
+      // A3: a layer marked "changed" names what changes, and every ID it names exists.
+      const header = table.header.map((h) => h.toLowerCase());
+      const si = header.indexOf("state");
+      const ai = header.findIndex((h) => /affected/.test(h));
+      const { findIds } = require("./parse/ids.cjs");
+      const empty = [];
+      const unknown = [];
+      for (const r of table.rows) {
+        if ((r.cells[si] || "").trim().toLowerCase() !== "changed") continue;
+        const cell = ai >= 0 ? (r.cells[ai] || "").replace(/`/g, "").trim() : "";
+        if (!cell || /^[—?-]$/.test(cell)) empty.push((r.cells[0] || "").trim());
+        for (const id of findIds(cell)) if (!model.records.has(id)) unknown.push(id);
+      }
+      out.push(check("impact-named", !empty.length && !unknown.length, empty.length || unknown.length
+        ? `${empty.length ? `name the affected IDs or paths of every "changed" layer (${empty.join(", ")})` : ""}${empty.length && unknown.length ? "; " : ""}${unknown.length ? `these IDs do not exist: ${[...new Set(unknown)].join(", ")}` : ""}`
+        : "every changed layer names what it affects"));
+    }
     out.push(check("risk", RISKS.includes(change.risk), RISKS.includes(change.risk) ? `risk: ${change.risk}` : `set risk to one of ${RISKS.join(", ")}`));
     if (change.kind === "feature") {
       const ok = change.slices.length > 0 && change.slices.every((s) => model.slices.has(s));
@@ -90,6 +108,14 @@ const RULES = {
     const after = section(body, ["After-state", "After state", "Proposed after-state"]);
     const needsDesign = !["chore"].includes(change.kind);
     if (needsDesign) out.push(check("after-state", hasContent(after), hasContent(after) ? "after-state is written" : "write the `## After-state` section (the design)"));
+    if (model.is14 && ["feature", "refactor"].includes(change.kind) && hasContent(after)) {
+      // A3 / C-006: the design names the records it rests on (a decision, component or contract)
+      // or the architecture page, so material choices are traceable.
+      const { findIds } = require("./parse/ids.cjs");
+      const design = findIds(after).filter((id) => /^(ADR|CMP|CTR)-/.test(id) && model.records.has(id));
+      const ok = design.length > 0 || /architecture\.md/.test(after);
+      out.push(check("design-records", ok, ok ? `the design rests on ${design.join(", ") || "the architecture page"}` : "name the decisions (ADR-), components (CMP-) or contracts (CTR-) the design uses, or link architecture.md: royascaff new record decision|component|contract …"));
+    }
     const broken = model.issues.filter((i) => i.severity === "error" && i.where && i.where.startsWith(`${change.dir}/`));
     out.push(check("links", broken.length === 0, broken.length ? `fix ${broken.length} broken link(s) in this change: ${broken.map((b) => b.message).join("; ")}` : "all links in this change resolve"));
     if (["medium", "high", "critical"].includes(change.risk)) {
@@ -152,6 +178,12 @@ const RULES = {
       const passed = fresh && /^pass/i.test(lastCheck.note || "");
       out.push(check("checks", Boolean(passed), passed ? `checks passed ${lastCheck.when}` : fresh ? `last check failed: ${lastCheck.note}` : `run the full checks after the last task (\`royascaff check ${change.id}\`)`));
     }
+    // R8: a UI change of medium risk or more is looked at by a person before it is verified.
+    const { adaptersOf } = require("./adapters.cjs");
+    if (model.is14 && adaptersOf(model).includes("web-ui") && ["feature", "polish"].includes(change.kind) && ["medium", "high", "critical"].includes(change.risk)) {
+      const looked = events.some((e, i) => i > lastTaskDoneAt && e.event === "check.run" && isHuman(e.by) && /^pass\b/i.test(e.note || "") && !/ — .*[✓✗]/.test(e.note || ""));
+      out.push(check("visual-check", looked, looked ? "a person looked at the UI" : `a person opens the app, tries the flow and records it: royascaff check ${change.id} --result pass --note "looked at …" (the AI cannot record this)`, { approval: true, say: `royascaff check ${change.id} --result pass --note "looked at …"` }));
+    }
     const rule = EVIDENCE_REQUIRED[change.kind] || "none";
     if (rule === "per-requirement") {
       const delivered = [...new Set(change.slices.flatMap((s) => (model.slices.get(s) ? model.slices.get(s).delivers : [])))];
@@ -165,10 +197,18 @@ const RULES = {
   },
   // verified → reconciled: Main is consistent; high risk needs a second approval.
   reconciled(ctx) {
-    const { model, change } = ctx;
+    const { model, change, body } = ctx;
     const out = [];
     const errors = model.issues.filter((i) => i.severity === "error");
     out.push(check("main-valid", errors.length === 0, errors.length ? `${errors.length} validation error(s) in the project — run \`royascaff validate\`` : "project validates"));
+    if (model.is14) out.push(...recordedChecks(model, change, body));
+    if (model.is14 && String(model.profile.knowledge_profile || "standard") === "standard" && ["feature", "refactor"].includes(change.kind)) {
+      // B3: the standard profile keeps a quality strategy (lite projects do not need one).
+      const qfile = path.join(model.root, "knowledge/06-quality/quality.md");
+      const { sections, onlyTemplate } = require("./approvals.cjs");
+      const ok = fs.existsSync(qfile) && sections(fs.readFileSync(qfile, "utf8")).some((s) => !onlyTemplate(s.lines));
+      out.push(check("quality-strategy", ok, ok ? "the quality strategy is written" : "standard profile: write the quality strategy (royascaff new doc quality), or set knowledge_profile: lite in profile.md for a prototype"));
+    }
     if (["high", "critical"].includes(change.risk)) {
       const events = change.events || [];
       const verifiedAt = events.filter((e) => e.event === "change.advanced" && /→ verified/.test(e.note || "")).pop();
@@ -178,16 +218,66 @@ const RULES = {
     return out;
   },
   closed(ctx) {
-    const { change, status } = ctx;
+    const { change, status, model } = ctx;
     const open = change.tasks.filter((t) => status.tasks.get(t).state !== "done");
-    return [check("no-open-tasks", open.length === 0, open.length ? `open tasks: ${open.join(", ")}` : "no open tasks")];
+    const out = [check("no-open-tasks", open.length === 0, open.length ? `open tasks: ${open.join(", ")}` : "no open tasks")];
+    const drift = require("./derive/drift.cjs");
+    if (model.is14 && drift.gitEnabled(model)) {
+      const dirty = drift.uncommittedKnowledge(model);
+      out.push(check("committed", dirty.length === 0, dirty.length
+        ? `commit the project knowledge first (${dirty.length} file(s): ${dirty.slice(0, 4).map((d) => d.path).join(", ")}${dirty.length > 4 ? ", …" : ""}): git add ${drift.context(model).projectRel || "."} && git commit -m "${change.id}: record"`
+        : "the project knowledge is committed"));
+    }
+    return out;
   },
 };
+
+// A4: Check & Record really records. Source files this change touched are owned by a component
+// (Code globs), and a change that said "Architecture: changed" edited the architecture page.
+function recordedChecks(model, change, body) {
+  const drift = require("./derive/drift.cjs");
+  if (!drift.gitEnabled(model)) return [check("recorded", true, "knowledge recording is checked with git", { pending: "no git" })];
+  const { filesChangedSince, workingChanges, resolve } = require("./git.cjs");
+  const { patternList, matchesAny } = require("./glob.cjs");
+  const opened = (change.events || []).find((e) => e.event === "change.opened");
+  const base = opened && resolve(model.repo, opened.git);
+  if (!base) return [check("recorded", true, "no recorded commit to compare with", { pending: "no base commit" })];
+  const ctx = drift.context(model);
+  const touched = [...new Set([...filesChangedSince(model.repo, base), ...workingChanges(model.repo).map((w) => w.path)])];
+  const { SOURCE_EXTENSIONS } = require("./files.cjs");
+  const globs = [...model.records.values()].filter((r) => r.kind === "component").flatMap((r) => patternList(r.fields.Code));
+  const exclude = patternList(model.profile.code_exclude);
+  const unowned = touched.filter((f) => !ctx.isKnowledge(f) && SOURCE_EXTENSIONS.includes(path.extname(f)) && !matchesAny(f, exclude) && !matchesAny(f, globs));
+  const out = [check("code-owned", unowned.length === 0, unowned.length
+    ? `record the code in the knowledge: ${unowned.length} changed source file(s) belong to no component (${unowned.slice(0, 4).join(", ")}${unowned.length > 4 ? ", …" : ""}) — add them to a component's Code globs (royascaff new record component … --code "<glob>")`
+    : "every changed source file belongs to a component")];
+  const impact = section(body, ["Impact"]);
+  const table = impact ? readTables(impact).find((t) => t.header.map((h) => h.toLowerCase()).includes("state")) : null;
+  if (table) {
+    const si = table.header.map((h) => h.toLowerCase()).indexOf("state");
+    const archChanged = table.rows.some((r) => /^architecture/i.test((r.cells[0] || "").trim()) && (r.cells[si] || "").trim().toLowerCase() === "changed");
+    if (archChanged) {
+      const page = ctx.repoPath("knowledge/04-design/architecture.md");
+      const edited = touched.includes(page);
+      out.push(check("architecture-updated", edited, edited ? "architecture.md was updated" : "the Impact says Architecture changed: update knowledge/04-design/architecture.md to describe the system as it now is"));
+    }
+  }
+  return out;
+}
 
 // The requirements a feature change delivers must not have changed since the change was opened
 // (or since the last confirmed refinement) without someone reviewing them.
 function refinementGate(ctx) {
   const { model, change } = ctx;
+  if (model.approvals && change.kind === "feature") {
+    // 1.4: refinement is the person's plan approval. A requirement (or what it links to) edited
+    // after approval — also inside this change — needs the person to approve the plan again.
+    const caps = [...new Set(change.slices.map((s) => model.slices.get(s)).filter(Boolean).map((s) => s.feature))];
+    const pending = caps.filter((c) => (model.approvals.features.get(c) || { state: "none" }).state !== "approved");
+    return pending.length
+      ? check("refinement", false, `the plan of ${pending.join(", ")} changed after it was approved: a person reviews it, then runs royascaff approve ${pending.join(" ")}`, { approval: true, say: `royascaff approve ${pending.join(" ")}` })
+      : check("refinement", true, `the plan of ${caps.join(", ") || "this change"} is unchanged since a person approved it`);
+  }
   if (change.kind !== "feature" || !change.slices.some((s) => model.slices.get(s))) return check("refinement", true, "no slice to refine");
   const drift = require("./derive/drift.cjs");
   if (!drift.gitEnabled(model)) return check("refinement", true, "refinement needs git history (not a git repository)", { pending: "no git" });

@@ -127,11 +127,34 @@ function newRecord(start, kindArg, title, opts = {}) {
   const model = buildModel(start);
   const owner = opts.owner || (Array.isArray(model.profile.owners) && model.profile.owners[0]) || "team";
   const id = `${spec.prefix}-${model.code}-${nextNumber(model.records.keys(), `${spec.prefix}-${model.code}`)}`;
-  const file = path.join(project.projectDir, spec.file);
-  const content = fs.existsSync(file) ? fs.readFileSync(file, "utf8") : docText(spec.doc, { CODE: model.code, OWNER: owner, NAME: model.profile.project_name || model.code });
+  const rel = typeof spec.file === "function" ? spec.file(opts) : spec.file;
+  const doc = typeof spec.doc === "function" ? spec.doc(opts) : spec.doc;
+  if (opts.feature && kind === "question" && !model.features.has(opts.feature)) throw new Error(`${opts.feature} is not a feature`);
+  const file = path.join(project.projectDir, rel);
+  const content = fs.existsSync(file) ? fs.readFileSync(file, "utf8") : docText(doc, { CODE: model.code, OWNER: owner, NAME: model.profile.project_name || model.code });
   const list = (v) => (v ? String(v).split(",").map((x) => x.trim()).filter(Boolean).join(", ") : "");
-  transactional(start, file, insertRecord(content, recordBlock(kind, id, title, { owner, priority: opts.priority, feature: opts.feature, code: opts.code, realizes: list(opts.realizes), verifies: list(opts.verifies), check: opts.check })));
-  return { id, kind, file: spec.file };
+  transactional(start, file, insertRecord(content, recordBlock(kind, id, title, { owner, priority: opts.priority, feature: opts.feature, code: opts.code, realizes: list(opts.realizes), verifies: list(opts.verifies), check: opts.check, topic: opts.topic, basis: opts.basis, scope: opts.scope, includes: list(opts.includes), applies: list(opts.applies) })));
+  return { id, kind, file: rel };
 }
 
-module.exports = { newFeature, newSlice, newRecord, transactional, ROADMAP };
+// new doc <kind>: create a layer document from its template (never overwrites).
+const DOCS = {
+  architecture: "knowledge/04-design/architecture.md",
+  data: "knowledge/04-design/data.md",
+  experience: "knowledge/04-design/experience.md",
+  security: "knowledge/04-design/security.md",
+  quality: "knowledge/06-quality/quality.md",
+  operations: "knowledge/07-operations/operations.md",
+};
+function newDoc(start, kind) {
+  if (!DOCS[kind]) throw new Error(`Usage: royascaff new doc <${Object.keys(DOCS).join("|")}>`);
+  const project = findProject(start);
+  const model = buildModel(start);
+  const file = path.join(project.projectDir, DOCS[kind]);
+  if (fs.existsSync(file)) throw new Error(`${DOCS[kind]} already exists: edit it`);
+  const owner = (Array.isArray(model.profile.owners) && model.profile.owners[0]) || "team";
+  transactional(start, file, docText(kind, { CODE: model.code, OWNER: owner, NAME: model.profile.project_name || model.code }));
+  return { kind, file: DOCS[kind] };
+}
+
+module.exports = { newFeature, newSlice, newRecord, newDoc, transactional, ROADMAP, DOCS };

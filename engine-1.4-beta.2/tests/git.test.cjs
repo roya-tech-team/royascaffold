@@ -51,6 +51,7 @@ function repo() {
 function closeCalendar(root) {
   work.recordCheck(root, "CHG-CAMP-002", { result: "pass", ...AI });
   put(root, "project/changes/CHG-CAMP-002/evidence/evidence.md", "### EVD-CAMP-003 · Calendar\n\n- **Result:** pass\n- **Proves:** REQ-CAMP-003\n");
+  commit(root, "CHG-CAMP-002: evidence");
   assert.equal(work.advance(root, "CHG-CAMP-002", "closed", ME).reached, "closed");
   commit(root, "royascaff: close CHG-CAMP-002");
 }
@@ -96,6 +97,11 @@ test("record attaches the commit to a new change; it then closes through the nor
   assert.deepEqual(drift(root).untrackedCommits, []);
   work.recordCheck(root, r.id, { result: "pass", ...ME });
   put(root, `project/changes/${r.id}/evidence/e.md`, "### EVD-CAMP-020 · Regression\n\n- **Result:** pass\n- **Proves:** REQ-CAMP-001\n");
+  // R2: a change cannot close while its knowledge is not in git.
+  const refused = work.advance(root, r.id, "closed", ME);
+  assert.equal(refused.reached, "reconciled");
+  assert.match(refused.steps[refused.steps.length - 1].checks.find((c) => c.id === "committed").message, /commit the project knowledge first[\s\S]*git add project && git commit/);
+  commit(root, `${r.id}: record`);
   assert.equal(work.advance(root, r.id, "closed", ME).reached, "closed");
 });
 
@@ -115,7 +121,7 @@ test("starting a task backs up the developer's uncommitted files in its paths �
   closeCalendar(root);
   const opened = work.openSlice(root, "SLC-CAMP-002-B", { ...ME, risk: "low" });
   const cf = path.join(root, "project/changes", opened.id, "change.md");
-  fs.writeFileSync(cf, fs.readFileSync(cf, "utf8").replace(/\| \? \|/g, "| referenced |").replace(/_How the system[^\n]*_/, "Drag posts."));
+  fs.writeFileSync(cf, fs.readFileSync(cf, "utf8").replace(/\| \? \|/g, "| referenced |").replace(/_How the system[^\n]*_/, "Drag posts in CMP-CAMP-CALENDAR."));
   const t = work.newTask(root, opened.id, "Draggable posts", { inputs: "REQ-CAMP-004", paths: "apps/web/src/calendar/**", checks: "test", done: "posts move" }).id;
   work.advance(root, opened.id, "ready", ME);
   commit(root, "royascaff: plan");
@@ -159,22 +165,18 @@ test("a Done requirement whose code changes afterwards shows 'changed since veri
   assert.equal(drift(root).featureChanged.has("CAP-CAMP-001"), false);
 });
 
-test("refinement: a slice whose requirements changed since planning must be reviewed before it opens", () => {
+test("refinement is the person's plan approval: an edited requirement stops the slice until re-approved", () => {
   const { root } = repo();
-  assert.equal(drift(root).refinement.get("SLC-CAMP-003-A").state, "unknown", "fixture Planned at is not a real commit");
-  work.refine(root, "SLC-CAMP-003-A", ME);
-  commit(root, "royascaff: re-plan slice");
-  assert.equal(drift(root).refinement.get("SLC-CAMP-003-A").state, "ok");
+  assert.equal(drift(root).refinement.size, 0, "1.4 projects: plan approvals decide refinement, not commits");
   const req = path.join(root, "project/knowledge/02-requirements/requirements.md");
   fs.writeFileSync(req, fs.readFileSync(req, "utf8").replace("### REQ-CAMP-005 · Client approves a post", "### REQ-CAMP-005 · Client approves or rejects a post"));
   commit(root, "product owner widened approval");
-  assert.deepEqual(drift(root).refinement.get("SLC-CAMP-003-A").changed, ["REQ-CAMP-005"]);
-  assert.match(indexCommand(root).board, /⚠ needs refinement: REQ-CAMP-005/);
-  assert.throws(() => work.openSlice(root, "SLC-CAMP-003-A", { ...ME, force: true }), /needs refinement: REQ-CAMP-005 changed since it was planned/);
-  const opened = work.openSlice(root, "SLC-CAMP-003-A", { ...ME, force: true, risk: "low", "confirm-refinement": true });
-  const events = buildModel(root).changes.get(opened.id).events;
-  assert.deepEqual(events.map((e) => e.event), ["change.opened", "refinement.confirmed"]);
-  assert.match(events[1].note, /REQ-CAMP-005/);
+  assert.match(indexCommand(root).board, /CAP-CAMP-003 · Client approval \| 📝 Outlined \|[^\n]*⚠ plan changed since approval/);
+  assert.throws(() => work.openSlice(root, "SLC-CAMP-003-A", { ...AI, force: true }), /changed since its plan was approved/);
+  assert.throws(() => work.refine(root, "SLC-CAMP-003-A", ME), /royascaff approve CAP-CAMP-003/);
+  require("../lib/commands/approve.cjs").approveFeatures(root, ["CAP-CAMP-003"], ME);
+  const opened = work.openSlice(root, "SLC-CAMP-003-A", { ...AI, force: true, risk: "low" });
+  assert.deepEqual(buildModel(root).changes.get(opened.id).events.map((e) => e.event), ["change.opened"]);
 });
 
 test("the ready gate catches requirement changes made after the change was opened", () => {
@@ -182,18 +184,41 @@ test("the ready gate catches requirement changes made after the change was opene
   closeCalendar(root);
   const opened = work.openSlice(root, "SLC-CAMP-002-B", { ...ME, risk: "low" });
   const cf = path.join(root, "project/changes", opened.id, "change.md");
-  fs.writeFileSync(cf, fs.readFileSync(cf, "utf8").replace(/\| \? \|/g, "| referenced |").replace(/_How the system[^\n]*_/, "Drag posts."));
+  fs.writeFileSync(cf, fs.readFileSync(cf, "utf8").replace(/\| \? \|/g, "| referenced |").replace(/_How the system[^\n]*_/, "Drag posts in CMP-CAMP-CALENDAR."));
   work.newTask(root, opened.id, "Draggable posts", { inputs: "REQ-CAMP-004", paths: "apps/web/src/calendar/**", checks: "test", done: "posts move" });
   commit(root, "royascaff: open and plan");
   const req = path.join(root, "project/knowledge/02-requirements/requirements.md");
   fs.writeFileSync(req, fs.readFileSync(req, "utf8").replace("### REQ-CAMP-004 · Move a post to another day", "### REQ-CAMP-004 · Move a post to another day or week"));
-  let r = work.advance(root, opened.id, "ready", ME);
+  let r = work.advance(root, opened.id, "ready", AI);
   const refinement = r.steps[r.steps.length - 1].checks.find((c) => c.id === "refinement");
   assert.equal(refinement.ok, false);
-  assert.match(refinement.message, /REQ-CAMP-004 — review them, then: royascaff refine/);
-  work.refine(root, opened.id, { ...ME, note: "week moves are fine for this slice" });
-  r = work.advance(root, opened.id, "ready", ME);
+  assert.match(refinement.message, /the plan of CAP-CAMP-002 changed after it was approved: a person reviews it, then runs royascaff approve CAP-CAMP-002/);
+  const n = nextCommand(root);
+  assert.ok([n.text, ...n.others].some((t) => /^Waiting for a person: the plan of CAP-CAMP-002 changed after it was approved/.test(t)));
+  require("../lib/commands/approve.cjs").approveFeatures(root, ["CAP-CAMP-002"], ME);
+  r = work.advance(root, opened.id, "ready", AI);
   assert.equal(r.reached, "ready");
-  const confirm = buildModel(root).changes.get(opened.id).events.find((e) => e.event === "refinement.confirmed");
-  assert.match(confirm.note, /REQ-CAMP-004@[0-9a-f]{8}/);
+});
+
+// Step 12b · WP2 (R2, R5): knowledge is committed with the code; a task stays inside its paths.
+test("task done needs the task's code and knowledge committed, and only files inside its allowed paths", () => {
+  const { root } = repo();
+  closeCalendar(root);
+  const opened = work.openSlice(root, "SLC-CAMP-002-B", { ...ME, risk: "low" });
+  const cf = path.join(root, "project/changes", opened.id, "change.md");
+  fs.writeFileSync(cf, fs.readFileSync(cf, "utf8").replace(/\| \? \|/g, "| referenced |").replace(/_How the system[^\n]*_/, "Drag posts in CMP-CAMP-CALENDAR."));
+  const t = work.newTask(root, opened.id, "Draggable posts", { inputs: "REQ-CAMP-004", paths: "apps/web/src/calendar/**", checks: "test", done: "posts move" }).id;
+  work.advance(root, opened.id, "ready", ME);
+  assert.match(indexCommand(root).board, /⚠ Project knowledge not committed \(\d+ file\(s\)\): [^\n]*`project\/changes\/CHG-CAMP-004\/change\.md`/);
+  work.taskAction(root, t, "start", "", AI);
+  put(root, "apps/web/src/calendar/drag.ts", "export const drag = 1;\n");
+  assert.throws(() => work.taskAction(root, t, "done", "drag works", AI), /commit its work and its knowledge first[\s\S]*apps\/web\/src\/calendar\/drag\.ts[\s\S]*git add apps\/web\/src\/calendar\/drag\.ts project && git commit -m "TASK-CAMP-006: <what changed>"/);
+  put(root, "apps/web/src/settings.ts", "export const also = 1;\n");
+  commit(root, `${t}: drag posts`);
+  assert.throws(() => work.taskAction(root, t, "done", "drag works", AI), /changed files outside its allowed paths \(apps\/web\/src\/calendar\/\*\*\): apps\/web\/src\/settings\.ts/);
+  assert.throws(() => work.taskAction(root, t, "done", "drag works", { ...AI, "outside-ok": "fine" }), /outside its allowed paths/);
+  const r = work.taskAction(root, t, "done", "drag works", { ...ME, "outside-ok": "the setting belongs to this slice" });
+  assert.equal(r.state, "done");
+  const done = buildModel(root).changes.get(opened.id).events.filter((e) => e.event === "task.done").pop();
+  assert.match(done.note, /outside allowed paths \(apps\/web\/src\/settings\.ts\) accepted by islam: the setting belongs to this slice/);
 });

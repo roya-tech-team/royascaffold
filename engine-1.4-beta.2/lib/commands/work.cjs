@@ -89,11 +89,20 @@ function openSlice(start, sliceId, flags = {}) {
   const slice = model.slices.get(sliceId);
   if (!slice) throw new Error(`${sliceId} is not a slice on the roadmap`);
   if (slice.change) throw new Error(`${sliceId} already has change ${slice.change}`);
+  if (model.approvals) {
+    // Plan approvals (P1): nothing is built before a person approved the project and this feature's plan.
+    const override = flags.force && isHuman(who(flags, model.repo));
+    const project = model.approvals.project.state;
+    const feature = (model.approvals.features.get(slice.feature) || { state: "none" }).state;
+    if (project !== "approved" && !override) throw new Error(`The project is ${project === "stale" ? "changed since it was approved" : "not approved yet"}: finish the discovery, then a person runs royascaff approve project (see royascaff next)`);
+    if (feature !== "approved" && !override) throw new Error(`${slice.feature} ${feature === "stale" ? "changed since its plan was approved" : "has no approved plan"}: a person reviews it, then runs royascaff approve ${slice.feature} (or royascaff approve roadmap)`);
+  }
   const waits = slice.depends_on.filter((d) => status.slices.has(d) && status.slices.get(d).state !== "done");
   if (waits.length && !flags.force) throw new Error(`${sliceId} waits for ${waits.join(", ")} (use --force to open it anyway)`);
   let refinement = null;
-  if (drift.gitEnabled(model)) {
+  if (!model.approvals && drift.gitEnabled(model)) {
     refinement = drift.refinementCheck(model, drift.context(model), slice, slice.planned_at);
+    if (refinement.state === "needs" && flags["confirm-refinement"] && !isHuman(who(flags, model.repo))) throw new Error(`${sliceId} needs refinement: only a person confirms it (they run royascaff open ${sliceId} --confirm-refinement)`);
     if (refinement.state === "needs" && !flags["confirm-refinement"]) {
       throw new Error(`${sliceId} needs refinement: ${refinement.changed.join(", ")} changed since it was planned (${refinement.base}). Review them (like sprint planning), then: royascaff open ${sliceId} --confirm-refinement`);
     }
@@ -238,6 +247,31 @@ function taskAction(start, taskId, action, note, flags = {}) {
   } else if (action === "done") {
     if (state !== "doing") throw new Error(`${taskId} is ${state}: start it before marking it done`);
     if (!note) throw new Error(`Say what was done and what is left: royascaff task ${taskId} done "<hand-off note>"`);
+    let outsideNote = "";
+    if (model.is14 && drift.gitEnabled(model)) {
+      const ctx = drift.context(model);
+      const { matchesAny } = require("../glob.cjs");
+      const { workingChanges, filesChangedSince } = require("../git.cjs");
+      const allowed = drift.taskPaths(model, taskId);
+      // R2: the task's code and the knowledge it changed are committed together, before done.
+      const dirtyCode = workingChanges(model.repo).filter((w) => !ctx.isKnowledge(w.path) && matchesAny(w.path, allowed)).map((w) => w.path);
+      const dirtyKnowledge = drift.uncommittedKnowledge(model).map((w) => w.path);
+      if (dirtyCode.length || dirtyKnowledge.length) {
+        const files = [...dirtyCode, ...dirtyKnowledge];
+        throw new Error(`${taskId} is not marked done: commit its work and its knowledge first (${files.length} file(s): ${files.slice(0, 5).join(", ")}${files.length > 5 ? ", …" : ""}):\n  git add ${[...new Set([...dirtyCode, ctx.projectRel || "."])].join(" ")} && git commit -m "${taskId}: <what changed>"`);
+      }
+      // R5: the task changed only files inside its allowed paths (knowledge excepted).
+      const started = (change.events || []).filter((e) => e.target === taskId && e.event === "task.started").pop();
+      const base = started && resolveCommit(model.repo, started.git);
+      if (base) {
+        const outside = filesChangedSince(model.repo, base).filter((f) => !ctx.isKnowledge(f) && !matchesAny(f, allowed));
+        if (outside.length) {
+          const accepted = flags["outside-ok"] && isHuman(who(flags, model.repo));
+          if (!accepted) throw new Error(`${taskId} changed files outside its allowed paths (${allowed.join(", ") || "none"}): ${outside.join(", ")}.\nMove the change back into the task's paths, widen the task's plan before it starts, or a person accepts it: royascaff task ${taskId} done "…" --outside-ok "<reason>"`);
+          outsideNote = ` — outside allowed paths (${outside.join(", ")}) accepted by ${who(flags, model.repo)}: ${flags["outside-ok"]}`;
+        }
+      }
+    }
     // Quick checks after each task (Q17) — on for projects created by `init` (checks_on_task_done: quick).
     if (String(model.profile.checks_on_task_done || "off") === "quick") {
       const apps = runner.appsForChange(model, { ...change, tasks: [taskId] }).filter((a) => runner.QUICK.some((k) => a.commands[k]));
@@ -251,7 +285,7 @@ function taskAction(start, taskId, action, note, flags = {}) {
         }
       }
     }
-    record(model, change, { event: "task.done", target: taskId, note }, flags);
+    record(model, change, { event: "task.done", target: taskId, note: `${note}${outsideNote}` }, flags);
   } else if (action === "block") {
     if (state === "done") throw new Error(`${taskId} is already done`);
     if (!note) throw new Error(`Say why it is blocked: royascaff task ${taskId} block "<reason>"`);
@@ -291,9 +325,14 @@ function recordCheck(start, changeId, flags = {}) {
 function writeCheckEvidence(model, status, change, run, apps) {
   const scope = new Set([...change.slices.flatMap((s) => (model.slices.get(s) ? model.slices.get(s).delivers : [])), ...change.affects]);
   const proves = [];
+  // R7: when the run covered every app that has a Test command, the whole suite passed, so it
+  // proves every runner-checked TEST- in the project, not only this change's.
+  const testApps = runner.appsOf(model).filter((a) => a.commands.Test).map((a) => a.id);
+  const wholeSuite = testApps.length > 0 && testApps.every((id) => apps.some((a) => a.id === id));
   if (run.pass) {
     for (const rec of model.records.values()) {
       if (rec.kind !== "test" || !/^runner:/i.test(String(rec.fields.Check || "").trim())) continue;
+      if (wholeSuite) { proves.push(rec.id); continue; }
       const verifies = rec.relations.filter((r) => r.type === "verifies").map((r) => r.to);
       const verifiedBy = [...scope].filter((req) => (model.records.get(req)?.relations || []).some((r) => r.type === "verified_by" && r.to === rec.id));
       if (verifies.some((v) => scope.has(v)) || verifiedBy.length) proves.push(rec.id);
@@ -367,6 +406,13 @@ function recordWork(start, refs, note, flags = {}) {
 // refine <CHG-…>: the change's requirements were reviewed after they changed.
 function refine(start, id, flags = {}) {
   const { model } = load(start);
+  if (model.approvals) {
+    const change = model.changes.get(id);
+    const slice = model.slices.get(id) || (change && model.slices.get(change.slice));
+    const cap = slice ? slice.feature : "CAP-…";
+    throw new Error(`In a 1.4 project a person re-approves the plan instead: review it, then run royascaff approve ${cap}`);
+  }
+  if (!isHuman(who(flags, model.repo))) throw new Error("Only a person confirms a refinement (it is the sprint-planning review). Ask them to run it.");
   const head = git(model.repo, ["rev-parse", "--short", "HEAD"]);
   if (model.changes.has(id)) {
     const change = model.changes.get(id);

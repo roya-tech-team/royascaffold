@@ -1,0 +1,32 @@
+{
+  "adapter": "web-ui",
+  "includes": [
+    "node"
+  ],
+  "legacyAppTypes": [
+    "web"
+  ],
+  "requiresDocs": [
+    "experience"
+  ],
+  "visualBar": true,
+  "personLook": {
+    "kinds": [
+      "feature",
+      "polish"
+    ],
+    "minRisk": "medium"
+  },
+  "smoke": {
+    "template": "assets/web-smoke.mjs",
+    "script": "scripts/royascaff-smoke.mjs",
+    "command": "node scripts/royascaff-smoke.mjs",
+    "requiredFor": [
+      "feature",
+      "polish"
+    ],
+    "installCheck": "playwright",
+    "install": "npm i -D playwright && npx playwright install chromium",
+    "env": {}
+  }
+}

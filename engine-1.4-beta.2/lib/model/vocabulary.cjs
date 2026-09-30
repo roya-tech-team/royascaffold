@@ -30,6 +30,8 @@ const KIND_BY_PREFIX = {
   INC: "incident",
   APP: "app",
   DOC: "document",
+  QST: "question",
+  ASM: "assumption",
 };
 
 function kindOf(id) {
@@ -54,6 +56,7 @@ const RELATION_KEYS = {
   affects: "affects",
   handoff: "handoff",
   includes: "includes",
+  "applies to": "applies_to",
   // 1.3 typed relation labels
   satisfies: "satisfies",
   "constrained by": "constrained_by",

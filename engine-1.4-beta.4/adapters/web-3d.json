@@ -1,0 +1,28 @@
+{
+  "adapter": "web-3d",
+  "includes": [
+    "web-ui"
+  ],
+  "smoke": {
+    "env": {
+      "ROYASCAFF_CHECK_3D": "1",
+      "ROYASCAFF_FPS_MIN": "30",
+      "ROYASCAFF_EDGE_MAX": "0.5"
+    }
+  },
+  "tradeoffs": {
+    "say": "lighting, antialiasing, pixel ratio or post-processing reduced",
+    "added": [
+      "antialias\\s*[:=]\\s*false",
+      "\\bdpr\\s*=\\s*\\{?\\s*1\\s*\\}?",
+      "setPixelRatio\\(\\s*1\\s*\\)",
+      "MeshBasicMaterial"
+    ],
+    "removed": [
+      "<(directional|point|spot|hemisphere|ambient)Light\\b",
+      "new\\s+(Directional|Point|Spot|Hemisphere)Light",
+      "EffectComposer|<Bloom\\b|UnrealBloomPass",
+      "MeshStandardMaterial|MeshPhysicalMaterial"
+    ]
+  }
+}

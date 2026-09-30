@@ -21,6 +21,8 @@ const EVENT_TYPES = [
   "backup.saved",
   "refinement.confirmed",
   "migration.applied",
+  "project.approved",
+  "feature.approved",
 ];
 
 const COLUMNS = ["When", "Event", "Target", "By", "Git", "Note"];

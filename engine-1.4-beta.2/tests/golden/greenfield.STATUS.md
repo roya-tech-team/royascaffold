@@ -47,4 +47,7 @@ _Say "royascaff continue" to start the first item._
 ## Health
 
 - Validation: 0 errors · 0 warnings (run `royascaff validate` for details)
-- Records: 36 · features 5 · slices 4 · changes 3 · tasks 5
+- Discovery: 1 question(s), 0 open · 1 assumption(s) · project approved by islam (2026-09-19)
+- Docs vs code: 502 doc lines / 0 app lines
+- Largest open context pack: TASK-CAMP-004 ~609 of 12,000 tokens
+- Records: 43 · features 5 · slices 4 · changes 3 · tasks 5

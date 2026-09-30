@@ -255,6 +255,14 @@ function buildModel(start) {
   validate(model, issue);
   if (model.is14) readability(model, files, issue);
   model.incoming = incomingIndex(model);
+  if (model.is14) {
+    const { computeApprovals } = require("../approvals.cjs");
+    model.approvals = computeApprovals(model, files);
+    for (const p of model.approvals.problems) issue("warning", "log-problem", `project log ${p}`, "log.md");
+    for (const e of model.approvals.events) {
+      if (e.target !== "project" && !model.features.has(e.target) && !model.changes.has(e.target)) issue("warning", "event-target-unknown", `project log line ${e.line}: ${e.event} targets ${e.target}, which does not exist`, "log.md");
+    }
+  }
   return model;
 }
 
@@ -293,9 +301,28 @@ function validate(model, issue) {
     }
   }
   unmappedSource(model, issue);
+  if (model.is14) requiredFields(model, issue);
   for (const feature of model.features.values()) {
     const rec = known.get(feature.id);
     if (model.is14 && !feature.horizonSet) issue("warning", "feature-without-horizon", `${feature.id} has no Horizon (defaults to backlog)`, where(rec));
+  }
+}
+
+// A5: the fields each record kind needs (plan 09 §3.1), and no ID ranges inside relations.
+function requiredFields(model, issue) {
+  const has = (rec, key) => String(rec.fields[key] || "").trim() !== "";
+  const at = (rec) => `${rec.file}:${rec.line}`;
+  for (const rec of model.records.values()) {
+    if (rec.origin !== "record") continue;
+    if (["requirement", "nfr"].includes(rec.kind) && !rec.relations.some((x) => ["feature", "satisfies"].includes(x.type))) issue("warning", "requirement-without-feature", `${rec.id} belongs to no feature (add - **Feature:** CAP-…): it never rolls up`, at(rec));
+    if (rec.kind === "component" && !has(rec, "Code")) issue("warning", "component-without-code", `${rec.id} has no Code globs: the code map cannot place its files`, at(rec));
+    if (rec.kind === "test" && !has(rec, "Check")) issue("warning", "test-without-check", `${rec.id} has no Check (runner:test or manual)`, at(rec));
+    if (rec.kind === "test" && !rec.relations.some((x) => x.type === "verifies")) issue("warning", "test-without-verifies", `${rec.id} verifies nothing (add - **Verifies:** REQ-…)`, at(rec));
+    if (rec.kind === "feature" && ["now", "next"].includes((model.features.get(rec.id) || {}).horizon) && !rec.relations.some((x) => x.type === "outcome")) issue("warning", "feature-without-outcome", `${rec.id} is in Now/Next but serves no outcome (add - **Outcome:** OUT-…)`, at(rec));
+    for (const [key, value] of Object.entries(rec.fields)) {
+      if (!require("./vocabulary.cjs").relationType(key)) continue;
+      if (/[A-Z][A-Z0-9]*(?:-[A-Z0-9]+){2,}`?\s*(?:through|thru|to|–|—|\.\.)\s*`?[A-Z0-9-]*\d/.test(String(value))) issue("warning", "id-range-in-relation", `${rec.id} → ${key} uses an ID range; list every ID (a range links only its two ends)`, at(rec));
+    }
   }
 }
 
@@ -320,7 +347,28 @@ function unmappedSource(model, issue) {
 const MAX_LINES = 300;
 const TECHNICAL_WORDS = ["endpoint", "endpoints", "component", "components", "database", "props", "css", "schema", "controller", "repository", "microservice", "sql", "json", "hook", "hooks"];
 
+// B4 "link, don't copy": a paragraph of 40+ words that appears in two knowledge files.
+function duplicateParagraphs(files, issue) {
+  const seen = new Map();
+  for (const file of files) {
+    if (!file.path.startsWith("knowledge/")) continue;
+    const body = renderMarkdown(file).replace(/^---\n[\s\S]*?\n---\n?/, "").replace(/(```|~~~)[\s\S]*?\1/g, "");
+    for (const para of body.split(/\n\s*\n/)) {
+      const p = para.trim();
+      if (!p || /^(#|\||>|<!--)/.test(p) || /^- \*\*/.test(p)) continue;
+      const norm = p.replace(/\s+/g, " ").toLowerCase();
+      if (norm.split(" ").length < 40) continue;
+      const other = seen.get(norm);
+      if (other && other !== file.path) issue("warning", "duplicate-paragraph", `${file.path} repeats a paragraph from ${other} ("${p.slice(0, 50).replace(/\s+/g, " ")}…"): link to it instead of copying`, file.path);
+      else if (!other) seen.set(norm, file.path);
+    }
+  }
+}
+
 function readability(model, files, issue) {
+  duplicateParagraphs(files, issue);
+  const { adaptersOf, readAdapter } = require("../adapters.cjs");
+  const words = [...new Set([...TECHNICAL_WORDS, ...adaptersOf(model).flatMap((n) => (readAdapter(n) || { words: [] }).words)])];
   const { headerCard } = require("../context.cjs");
   for (const file of files) {
     if (!file.path.startsWith("knowledge/")) continue;
@@ -330,7 +378,7 @@ function readability(model, files, issue) {
     if (lines > MAX_LINES) issue("warning", "large-file", `${file.path} has ${lines} lines (over ${MAX_LINES}): split it by module or feature`, file.path);
     if (file.path.startsWith("knowledge/01-business/")) {
       const prose = text.replace(/^---\n[\s\S]*?\n---\n?/, "").replace(/```[\s\S]*?```/g, "").replace(/`[^`]*`/g, "");
-      const found = TECHNICAL_WORDS.filter((w) => new RegExp(`\\b${w}\\b`, "i").test(prose));
+      const found = words.filter((w) => new RegExp(`\\b${w}\\b`, "i").test(prose));
       if (found.length) issue("warning", "technical-words-in-business", `${file.path} uses technical words (${found.join(", ")}): keep business documents in business language`, file.path);
     }
   }

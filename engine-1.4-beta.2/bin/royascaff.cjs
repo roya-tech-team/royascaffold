@@ -15,7 +15,7 @@ try {
 const { findProject, listMarkdown } = require("../lib/project.cjs");
 const { exportProject, renderExport, roundTrip } = require("../lib/io/exchange.cjs");
 const { validateCommand, showRecord } = require("../lib/commands/inspect.cjs");
-const { newFeature, newSlice, newRecord } = require("../lib/commands/plan.cjs");
+const { newFeature, newSlice, newRecord, newDoc } = require("../lib/commands/plan.cjs");
 const { indexCommand, statusCommand, tasksCommand, traceCommand, logCommand } = require("../lib/commands/views.cjs");
 const work = require("../lib/commands/work.cjs");
 const { nextCommand, briefCommand } = require("../lib/commands/navigate.cjs");
@@ -24,6 +24,8 @@ const setup = require("../lib/commands/setup.cjs");
 const { usageCommand, feedbackCommand } = require("../lib/commands/feedback.cjs");
 const usageLib = require("../lib/usage.cjs");
 const { migrateCommand, renderMigrate } = require("../lib/commands/migrate.cjs");
+const { approveProject, approveFeatures } = require("../lib/commands/approve.cjs");
+const { adoptCommand } = require("../lib/commands/adopt.cjs");
 
 // Local usage counters (Q21): one line per command, written when the process exits.
 const USAGE = { started: Date.now(), cmd: null, sub: null, result: "ok", failed_checks: [], where: null };
@@ -47,15 +49,17 @@ const HELP = `RoyaScaff ${pkg.version}
 Usage: royascaff <command> [path] [options]
 
 Commands:
-  init [path] --name "…" --code CODE [--app web=apps/web]   Start a new project (project/ + apps/)
+  init [path] --name "…" --code CODE [--app web=apps/web] [--adapter web-ui|web-api|generic] [--lite]
+                               Start a new project (project/ + apps/)
   install [path] [--cursor] [--claude]   Install the royascaff navigator skill into your AI tools
   where [path]                 Show the detected project folder and what will be scanned
   next [path] [--json]         The single next action (and the stage card to read)
   brief [CHG-…] [path]         One-page resume for a new session
-  context <TASK-…> [path] [--save] [--out FILE]
+  context <TASK-…> [path] [--out FILE]
                                Everything one task needs, built from its inputs (budgeted, never cut)
   status [path] [--json]       Regenerate and print the board (project/STATUS.md)
   index [path]                 Regenerate STATUS.md, the root pointer and summary blocks
+  cache clear [path]           Remove project/.cache (rebuilt on demand; backups are kept)
   tasks [path] [--open] [--change CHG-…] [--feature CAP-…]
                                List tasks across changes with their state
   trace <CAP-…|REQ-…> [path]   Follow a feature or requirement: slices, changes, tasks, tests, evidence, code
@@ -71,16 +75,22 @@ Work (every command records an event and refreshes STATUS.md):
                                Start the change that delivers a planned slice
   open --kind bug|polish|refactor|chore|knowledge "<title>" [path] [--affects REQ-…] [--risk …]
                                Start a change that is not a slice (a fix, a refactor, …)
-  new record <outcome|requirement|nfr|concept|invariant|workflow|decision|contract|component|test> "<title>" [path]
-                               [--feature CAP-…] [--priority …] [--code globs] [--realizes REQ-…] [--verifies REQ-…] [--check runner:test|manual]
+  new record <question|assumption|outcome|requirement|nfr|concept|invariant|workflow|decision|contract|component|rule|test|release> "<title>" [path]
+                               [--feature CAP-…] [--topic …] [--basis …] [--scope project] [--includes CHG-…] [--applies …] [--priority …] [--code globs]
+                               [--realizes REQ-…] [--verifies REQ-…] [--check runner:test|manual]
+  new doc <architecture|data|experience|security|quality|operations> [path]
+                               Create a layer document from its template (never overwrites)
   new task <CHG-…> "<title>" [path] [--goal …] [--inputs …] [--paths …] [--checks …] [--done …] [--depends …]
   advance <CHG-…> --to <status> [path] [--reason …]   Move a change forward through its gates (or back / cancelled with --reason)
   approve <CHG-…> [path] [--by NAME] [--note …]       A person approves the design (or the recording, for high risk)
+  approve project [path]                              A person approves the discovery, brief, architecture and stack
+  approve roadmap | CAP-… [CAP-…] [path]              A person approves feature plans (needed before a slice opens)
   block <CHG-…> --reason "…" [path] · unblock <CHG-…> [path]
   task <TASK-…> start|done|block "<note>" [path] [--reopen]
   check <CHG-…> [path] [--quick]   Run the apps' Build/Typecheck/Lint/Test commands and write evidence
   check <CHG-…> --result pass|fail --note "…" [path]   Record a check that ran outside the engine
   task <TASK-…> done "…" --skip-checks "<reason>"     Mark done although the quick checks failed
+  task <TASK-…> done "…" --outside-ok "<reason>"      A person accepts files changed outside the task's paths
 
 Work done outside the engine (git):
   record <commit…> --as bug|polish|refactor|chore [--affects …] "what was done" [--path P]
@@ -98,6 +108,9 @@ Work done outside the engine (git):
   render FILE --out DIR        Render an exchange JSON file back to Markdown files
   roundtrip [path] [--json]    Check Markdown -> JSON -> Markdown is byte-identical
 
+Existing code:
+  adopt [path] [--json]        Modules of each app and how much is owned by components (one module at a time)
+
 Migrate a project from engine 1.3 or 1.2 (nothing is deleted):
   migrate [path] [--from 1.3|1.2] [--code CODE]   Dry run: shows what would move and validates the result
   migrate [path] --apply [--force]                Apply it (needs a clean git tree unless --force)
@@ -109,7 +122,7 @@ Options:
   --help        Show this help
 `;
 
-const VALUE_FLAGS = new Set(["out", "path", "horizon", "outcome", "priority", "owner", "delivers", "depends", "order", "change", "feature", "since", "limit", "to", "reason", "by", "note", "kind", "affects", "risk", "result", "goal", "inputs", "paths", "checks", "done", "as", "slice", "files", "name", "code", "app", "skip-checks", "realizes", "verifies", "check", "from"]);
+const VALUE_FLAGS = new Set(["out", "path", "horizon", "outcome", "priority", "owner", "delivers", "depends", "order", "change", "feature", "since", "limit", "to", "reason", "by", "note", "kind", "affects", "risk", "result", "goal", "inputs", "paths", "checks", "done", "as", "slice", "files", "name", "code", "app", "skip-checks", "realizes", "verifies", "check", "from", "topic", "basis", "scope", "outside-ok", "adapter", "includes", "applies"]);
 const SUBCOMMANDS = new Set(["new", "task", "backups"]);
 
 function parseArgs(argv) {
@@ -211,7 +224,7 @@ function main() {
       const r = nextCommand(flags.path || target || ".");
       if (flags.json) return process.stdout.write(`${JSON.stringify(r, null, 2)}\n`);
       const gate = r.gate && !r.gate.ok ? `\n${r.gate.checks.filter((c) => !c.ok).map((c) => `  ✗ ${c.message}`).join("\n")}` : "";
-      return process.stdout.write(`▶ ${r.text}${gate}${r.card ? `\n  card: ${r.card}` : ""}${r.say ? `\n  say:  ${r.say}` : ""}\n`);
+      return process.stdout.write(`▶ ${r.text}${gate}${r.card ? `\n  card: ${r.card}` : ""}${r.adapter_cards ? `\n  adapter: ${r.adapter_cards.join(", ")}` : ""}${r.say ? `\n  say:  ${r.say}` : ""}\n`);
     }
     case "brief": {
       const isChange = target && /^CHG-/.test(target);
@@ -244,6 +257,18 @@ function main() {
       return process.exit(r.ok === false ? 1 : 0);
     }
     case "approve": {
+      if (target === "project") {
+        const r = approveProject(flags.path || positional[2] || ".", flags);
+        if (flags.json) return process.stdout.write(`${JSON.stringify(r, null, 2)}\n`);
+        return process.stdout.write(`Project approved by ${r.by} (hash ${r.hash}): ${r.questions} question(s) answered, decisions ${r.decisions.join(", ")}${r.assumptions.length ? `\nAssumptions you confirmed:\n${r.assumptions.map((x) => `  - ${x.id} · ${x.title}`).join("\n")}` : ""}\n`);
+      }
+      if (target === "roadmap" || /^CAP-/.test(target || "")) {
+        const ids = positional.slice(1).filter((p) => p === "roadmap" || /^CAP-/.test(p));
+        const where = flags.path || positional.slice(1).find((p) => p !== "roadmap" && !/^CAP-/.test(p)) || ".";
+        const r = approveFeatures(where, ids, flags);
+        if (flags.json) return process.stdout.write(`${JSON.stringify(r, null, 2)}\n`);
+        return process.stdout.write(`${r.approved.map((f) => `Approved ${f.id} · ${f.title} (${f.horizon}): ${f.requirements} requirement(s), slices ${f.slices.join(", ") || "none yet"}`).join("\n")}\nby ${r.by}\n`);
+      }
       const r = work.approve(flags.path || positional[2] || ".", target, flags);
       return process.stdout.write(flags.json ? `${JSON.stringify(r, null, 2)}\n` : `${r.id} approved by ${r.by} (design ${r.design})\n`);
     }
@@ -322,6 +347,23 @@ function main() {
       if (st.length) lines.push("Time in each status (median hours):", ...st.map(([k, v]) => `  ${k.padEnd(12)} ${v.median_hours} h over ${v.changes} change(s)`));
       return process.stdout.write(`${lines.join("\n")}\n`);
     }
+    case "cache": {
+      if (target !== "clear") fail("Usage: royascaff cache clear [path]");
+      const project = findProject(flags.path || positional[2] || ".");
+      const dir = path.join(project.projectDir, ".cache");
+      const existed = fs.existsSync(dir);
+      fs.rmSync(dir, { recursive: true, force: true });
+      return process.stdout.write(`${existed ? "Removed" : "Nothing to remove:"} ${path.relative(project.repo, dir)} (backups in .backups/ are kept)\n`);
+    }
+    case "continue": {
+      const r = nextCommand(flags.path || target || ".");
+      return process.stdout.write(`"royascaff continue" is a sentence for your AI chat (Cursor or Claude Code), not a terminal command.\nWhat the AI will do next:\n▶ ${r.text}${r.card ? `\n  card: ${r.card}` : ""}\n`);
+    }
+    case "adopt": {
+      const r = adoptCommand(flags.path || target || ".");
+      if (flags.json) { delete r.text; return process.stdout.write(`${JSON.stringify(r, null, 2)}\n`); }
+      return process.stdout.write(`${r.text}\n`);
+    }
     case "migrate": {
       const r = migrateCommand(flags.path || target || ".", flags);
       if (flags.json) process.stdout.write(`${JSON.stringify(r, null, 2)}\n`);
@@ -358,6 +400,11 @@ function main() {
         const r = newRecord(flags.path || positional[4] || ".", positional[2], positional[3], flags);
         if (flags.json) return process.stdout.write(`${JSON.stringify(r, null, 2)}\n`);
         return process.stdout.write(`Added ${r.id} (${r.kind}) to ${r.file} — fill in the placeholder lines\n`);
+      }
+      if (what === "doc") {
+        const r = newDoc(flags.path || positional[3] || ".", positional[2]);
+        if (flags.json) return process.stdout.write(`${JSON.stringify(r, null, 2)}\n`);
+        return process.stdout.write(`Created ${r.file} from its template — replace the hint lines with the real content\n`);
       }
       if (what === "task") {
         const r = work.newTask(flags.path || positional[4] || ".", positional[2], positional[3], flags);

@@ -1,0 +1,24 @@
+# Distinctive phrases of the benchmark prompts (3D knowledge network). The engine's templates,
+# cards, adapters, docs and code must never contain them: an example copied from a benchmark
+# hints the answer to the model under test. One phrase per line, matched case-insensitively.
+overdo bloom
+real search functionality
+knowledge universe
+interactive 3d network
+3d knowledge network
+3d ecosystem
+knowledge graph
+graph document
+hub label
+re-seed
+reseed
+neighborhood
+visible clusters
+dummy nodes
+node types
+edge rendering
+focus mode
+command / search bar
+do not overengineer
+design quality bar
+KUNI

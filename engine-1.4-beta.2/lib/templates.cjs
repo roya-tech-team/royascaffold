@@ -8,7 +8,7 @@ const fs = require("fs");
 const path = require("path");
 
 const DIR = path.join(__dirname, "..", "templates", "files");
-const PLACEHOLDERS = ["CODE", "OWNER", "NAME", "ID", "TITLE", "KIND", "SCOPE", "RISK", "WHAT", "APPS"];
+const PLACEHOLDERS = ["CODE", "OWNER", "NAME", "ID", "TITLE", "KIND", "SCOPE", "RISK", "WHAT", "APPS", "PROFILE", "ADAPTERS"];
 
 function fill(text, vars) {
   return text.replace(/\{\{([A-Z]+)\}\}/g, (whole, key) => (vars[key] !== undefined ? String(vars[key]) : whole));
@@ -48,13 +48,17 @@ const RECORD_KINDS = {
   concept: { prefix: "CON", doc: "domain", file: "knowledge/03-domain/domain.md", fields: (o) => [["Owner", o.owner]], body: "_What this business word means._" },
   invariant: { prefix: "INV", doc: "domain", file: "knowledge/03-domain/domain.md", fields: (o) => [["Owner", o.owner], ["Constrained by", o.feature || ""]], body: "_The rule that must always hold, and what happens when something would break it._" },
   workflow: { prefix: "WF", doc: "domain", file: "knowledge/03-domain/domain.md", fields: (o) => [["Owner", o.owner]], body: "_Trigger, steps, states and failures. Add a Mermaid diagram when it has more than a few steps._" },
-  decision: { prefix: "ADR", doc: "decisions", file: "knowledge/04-design/decisions.md", fields: (o) => [["Owner", o.owner], ["Supports", o.feature || ""]], body: "**Options:** _…_\n**Choice:** _…_\n**Why:** _…_\n**Consequences:** _…_" },
+  decision: { prefix: "ADR", doc: "decisions", file: "knowledge/04-design/decisions.md", fields: (o) => [["Owner", o.owner], ...(o.scope ? [["Scope", o.scope]] : []), ["Supports", o.feature || ""]], body: "**Options:** _…_\n**Choice:** _…_\n**Why:** _…_\n**Consequences:** _…_" },
   contract: { prefix: "CTR", doc: "contracts", file: "knowledge/04-design/contracts.md", fields: (o) => [["Owner", o.owner], ["Supports", o.feature || ""]], body: "_Inputs, outputs, errors and who calls it._" },
   component: { prefix: "CMP", doc: "components", file: "knowledge/05-implementation/components.md", fields: (o) => [["Owner", o.owner], ["Code", o.code || ""], ["Realizes", o.realizes || ""]], body: "" },
+  question: { prefix: "QST", doc: (o) => (o.feature ? "questions" : "discovery"), file: (o) => (o.feature ? "knowledge/00-roadmap/questions.md" : "knowledge/00-discovery/discovery.md"), fields: (o) => (o.feature ? [["Feature", o.feature]] : [["Topic", o.topic || ""]]).concat([["Answer", ""], ["Source", ""]]), body: "" },
+  assumption: { prefix: "ASM", doc: "discovery", file: "knowledge/00-discovery/discovery.md", fields: (o) => [["Topic", o.topic || ""], ["Basis", o.basis || ""]], body: "" },
+  rule: { prefix: "RULE", doc: "rules", file: "knowledge/04-design/rules.md", fields: (o) => [["Owner", o.owner], ["Applies to", o.applies || o.feature || ""]], body: "_The rule, in one or two sentences, and what breaking it would look like._" },
+  release: { prefix: "REL", doc: "releases", file: "releases/releases.md", fields: (o) => [["Owner", o.owner], ["Includes", o.includes || ""], ["Date", new Date().toISOString().slice(0, 10)]], body: "_Where it was deployed, and the check that was done after deploying._" },
   test: { prefix: "TEST", doc: "tests", file: "knowledge/05-implementation/tests.md", fields: (o) => [["Owner", o.owner], ["Check", o.check || "runner:test"], ["Verifies", o.verifies || ""]], body: "" },
 };
 
-const KIND_ALIASES = { req: "requirement", out: "outcome", adr: "decision", cmp: "component", ctr: "contract", inv: "invariant", con: "concept", wf: "workflow" };
+const KIND_ALIASES = { qst: "question", asm: "assumption", req: "requirement", out: "outcome", adr: "decision", cmp: "component", ctr: "contract", inv: "invariant", con: "concept", wf: "workflow" };
 
 function recordBlock(kind, id, title, opts) {
   const spec = RECORD_KINDS[kind];

@@ -29,7 +29,7 @@ const examples = (name) => {
 
 test("templates: only known placeholders, a title and a header card, examples never parsed as records", () => {
   const names = listTemplates();
-  assert.deepEqual(names, ["brd", "change", "components", "contracts", "decisions", "domain", "nfr", "plan", "profile", "requirements", "roadmap", "tests"]);
+  assert.deepEqual(names, ["architecture", "brd", "change", "components", "contracts", "data", "decisions", "discovery", "domain", "experience", "nfr", "operations", "plan", "profile", "quality", "questions", "releases", "requirements", "roadmap", "rules", "security", "tests"]);
   for (const name of names) {
     const raw = fs.readFileSync(path.join(DIR, `${name}.md`), "utf8");
     const unknown = [...raw.matchAll(/\{\{([A-Z]+)\}\}/g)].map((m) => m[1]).filter((p) => !PLACEHOLDERS.includes(p));
@@ -71,7 +71,8 @@ test("new record: every kind gets the next ID, lands in its home file above the 
   assert.equal(newRecord(repo, "req", "Second requirement", { priority: "must" }).id, "REQ-EXM-002");
   assert.throws(() => newRecord(repo, "requirement", "Broken", { feature: "CAP-EXM-404" }), /CAP-EXM-404 does not exist/);
   assert.throws(() => newRecord(repo, "widget", "X"), /Usage: royascaff new record/);
-  assert.deepEqual(buildModel(repo).issues, []);
+  // Records created without their links are valid but flagged, so nothing stays an orphan silently.
+  assert.deepEqual([...new Set(buildModel(repo).issues.map((i) => `${i.severity}:${i.code}`))].sort(), ["warning:component-without-code", "warning:requirement-without-feature", "warning:test-without-verifies"]);
   const f = newFeature(repo, "Results", { horizon: "now" });
   const roadmap = fs.readFileSync(path.join(repo, "project/knowledge/00-roadmap/roadmap.md"), "utf8");
   assert.ok(roadmap.indexOf(`## ${f.id} · Results`) < roadmap.indexOf("## Record format"), "features go above the example");

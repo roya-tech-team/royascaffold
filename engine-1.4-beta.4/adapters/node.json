@@ -1,0 +1,66 @@
+{
+  "adapter": "node",
+  "legacyAppTypes": [],
+  "tests": {
+    "files": [
+      "(\\.test\\.|\\.spec\\.)[cm]?[jt]sx?$",
+      "(^|/)__tests__/.+\\.[cm]?[jt]sx?$"
+    ],
+    "readsSource": [
+      {
+        "pattern": "(?:from\\s*|import\\s*\\(\\s*)['\"`][^'\"`]+\\?raw['\"`]",
+        "why": "imports source as text (?raw)"
+      },
+      {
+        "call": "\\b(readFileSync|readFile|readTextFile)\\s*\\(([^;]{0,200}?)\\)",
+        "args": [
+          "['\"`][^'\"`]*(?:^|[\\/.])src\\/",
+          "['\"`]src['\"`]",
+          "['\"`][^'\"`]*\\.(?:[cm]?[jt]sx?|vue|svelte)['\"`]"
+        ],
+        "why": "reads application source as text ($1)"
+      }
+    ]
+  },
+  "deps": {
+    "manifest": "package.json",
+    "fields": [
+      "dependencies"
+    ],
+    "scriptsField": "scripts",
+    "ignore": [
+      "^@types/"
+    ],
+    "sourceFiles": "\\.(?:[cm]?[jt]sx?|vue|svelte|astro|html|css|scss|sass|less)$|config\\.[cm]?[jt]s$",
+    "skipFolders": [
+      "node_modules",
+      ".git",
+      "dist",
+      "build",
+      "coverage",
+      ".next",
+      ".cache",
+      "out",
+      "vendor",
+      "scripts"
+    ],
+    "imports": [
+      "\\bfrom\\s*['\"]([^'\"]+)['\"]",
+      "\\bimport\\s*['\"]([^'\"]+)['\"]",
+      "\\bimport\\s*\\(\\s*['\"]([^'\"]+)['\"]\\s*\\)",
+      "\\brequire\\s*\\(\\s*['\"]([^'\"]+)['\"]\\s*\\)",
+      "@(?:import|use|forward)\\s+(?:url\\()?['\"]([^'\"]+)['\"]"
+    ],
+    "implicit": [
+      {
+        "pattern": "@tailwind\\s+(base|components|utilities)",
+        "package": "tailwindcss"
+      }
+    ],
+    "specifier": {
+      "skip": "^[./]|^node:|^[a-z]+://|^~/|^#",
+      "separator": "/",
+      "scopePrefix": "@"
+    }
+  }
+}

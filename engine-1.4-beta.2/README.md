@@ -1,4 +1,4 @@
-# RoyaScaff Engine 1.4 — beta.2 working copy (in development)
+# RoyaScaff Engine 1.4 — beta.2
 
 > Copy of `engine-1.4/` (frozen as `1.4.0-beta.1`), made 2026-09-30 to build step 12b
 > (plan files 10 and 11). All step 12b work happens here; `engine-1.4/` is not edited.
@@ -23,7 +23,15 @@ build plan in file 09). Engine 1.3 and 1.2 stay unchanged beside this folder.
 | 10 | Templates: 12 files with header cards and fenced worked examples, used by `init`, `open`, `new feature`; `new record <kind>` for 10 record kinds; readability warnings (header card, > 300 lines, technical words in business files) | ✅ done (2026-09-29): 113 tests pass |
 | 11 | `feedback "…" --kind …` (report to review and send), `usage`, local usage counters (command shapes only, never text; off by env or profile), time in each status from the change logs | ✅ done (2026-09-29): 117 tests pass |
 | 12 | Migration 1.3 → 1.4 and 1.2 → 1.4: `migrate` (dry run on a temporary copy), `--apply`, `--rollback`; nothing deleted, originals snapshotted, `_legacy/<ver>/MIGRATION.md`; `migrate.md` card | ✅ done (2026-09-29): 126 tests pass; the five real projects migrate with 0 errors, 0 lost IDs, byte-identical rollback |
-| 13 | Acceptance run, then `rc` → `1.4.0` — plan file 09 §5 | next |
+| 12b | Final review fixes (plan files 10 and 11), built in this copy, work package by work package | ✅ done (2026-09-30): 156 tests pass · package `1.4.0-beta.2` (not published) |
+| 12b · WP1 | Discover stage (`discovery.md`, 8 topics, `QST-`/`ASM-` records, tech options + recommendation), `architecture.md` and `project/log.md` from `init`, `approve project`, `approve roadmap` / `approve CAP-…` (people only, hashed, stale on edit), features 📝 Outlined until approved, `open` refused without approvals, `discover.md` card | ✅ done (2026-09-30): 131 tests pass |
+| 12b · WP2 | Git truth: `task done` needs the task's code **and** the project knowledge committed, and refuses files changed outside the task's allowed paths (a person may accept with `--outside-ok "<reason>"`); `advance --to closed` needs the knowledge committed; the board shows "⚠ Project knowledge not committed". Refinement in 1.4 projects = the person's plan approval (feature hash now includes the records the requirements link to; `refine` and `--confirm-refinement` are for people only). `context --save` refused for AI actors and needs `--reason` | ✅ done (2026-09-30): 132 tests pass |
+| 12b · WP3 | Engine bugs A1–A6: baseline Done for existing work (closed knowledge/migration change with `affects:` + passing evidence); `next` orders must → should → could inside a horizon; Understand gate: "changed" layers name existing IDs or paths; Design gate: the After-state names an ADR-/CMP-/CTR- record or the architecture page; Record gate: changed source files belong to a component, and an architecture change edits the architecture page; warnings for missing Feature / Code / Check / Verifies / Outcome and ID ranges in relations; `next --json` says `initialized` | ✅ done (2026-09-30): 137 tests pass |
+| 12b · WP4+5 | `knowledge_profile: standard` (default) or `lite` (`init --lite`); `new doc architecture|quality`; standard feature/refactor changes need a written quality strategy before Record. NFRs proven by evidence without a slice; a feature whose slices are all done but whose NFRs are unproven is 🧪 Checking ("prove NFR-…", also in `next`); a full check that ran every app with a Test command proves every runner-checked TEST- in the project | ✅ done (2026-09-30): 140 tests pass |
+| 12b · WP6 | Adapters `generic`, `web-ui`, `web-api` (1.4 cards: Design, Rules, Check, Words; ≤ 600 tokens) in `adapters/`; `init --adapter`, `install` copies them; `next --json` names `adapter_cards` at Design and Check; every Context Pack carries the adapter's Rules; the adapter's Words extend the business-language check. R8: with `web-ui`, a feature/polish change of medium risk or more needs a person's recorded look (`check --result pass --note "looked at …"`) before verified — `next` shows it as a human step | ✅ done (2026-09-30): 145 tests pass |
+| 12b · WP7 | `new doc architecture|data|experience|security|quality|operations` (new templates; experience holds UI states and design tokens); record kinds `rule` (RULE-, `Applies to`) and `release` (REL-, `Includes` → 🚀 Released, now also for features); richer brief (scope, core workflow, key words); design card: layer trigger table + the core rules; fix card covers fix, polish and refactor; `adopt` lists each app's modules and the share owned by components, and `next` proposes the first unowned module | ✅ done (2026-09-30): 150 tests pass |
+| 12b · WP8+9 | Health on the board and in `status --json` (docs vs code, saved pack lines, largest open pack, code owned by components); duplicate-paragraph warning; `cache clear`; `royascaff continue` in the terminal explains itself. Migration adds discovery, architecture page and project log (unique document IDs), 1.2 profiles get their adapters, a 1.3 migration change `affects` what it documented. PLAYBOOK, GLOSSARY, release notes `docs/RELEASE-1.4.0-beta.2.md`; scripted walkthrough in git through the CLI from `init` to ✅ Done | ✅ done (2026-09-30): 156 tests pass |
+| 13 | Acceptance run (benchmark rerun with this engine), then `rc` → `1.4.0` — plan file 09 §5 | next |
 
 ## Start a project (pilot)
 
@@ -34,7 +42,7 @@ node bin/royascaff.cjs install <repo>      # navigator skill for Cursor and Clau
 
 Then, in the AI tool: **royascaff continue**.
 
-An existing 1.3 or 1.2 project: `node bin/royascaff.cjs migrate <repo>` (dry run), then `--apply` (undo: `--rollback`). Release notes: `docs/RELEASE-1.4.0-beta.1.md`.
+An existing 1.3 or 1.2 project: `node bin/royascaff.cjs migrate <repo>` (dry run), then `--apply` (undo: `--rollback`). Release notes: `docs/RELEASE-1.4.0-beta.2.md` (beta.1: `docs/RELEASE-1.4.0-beta.1.md`).
 
 ## Try it
 

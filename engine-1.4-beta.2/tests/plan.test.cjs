@@ -60,13 +60,13 @@ test("new feature creates the roadmap file when a project has none", () => {
   const r = newFeature(root, "First feature", { horizon: "now" });
   assert.equal(r.id, "CAP-NEW-001");
   assert.match(roadmap(root), /document_id: DOC-NEW-ROADMAP/);
-  assert.deepEqual(buildModel(root).issues, []);
+  assert.deepEqual(buildModel(root).issues.map((i) => i.code), ["feature-without-outcome"], "a Now feature should say which outcome it serves");
 });
 
 test("CLI: validate exit codes and show output", () => {
   const ok = spawnSync(process.execPath, [BIN, "validate", path.join(__dirname, "fixtures", "greenfield")], { encoding: "utf8" });
   assert.equal(ok.status, 0);
-  assert.match(ok.stdout, /Validation PASS: 36 records · 5 features · 4 slices · 3 changes · 5 tasks/);
+  assert.match(ok.stdout, /Validation PASS: 43 records · 5 features · 4 slices · 3 changes · 5 tasks/);
   const show = spawnSync(process.execPath, [BIN, "show", "CAP-CAMP-002", path.join(__dirname, "fixtures", "greenfield")], { encoding: "utf8" });
   assert.match(show.stdout, /CAP-CAMP-002 · Schedule posts {3}\[feature\] {3}🔨 Building/);
   assert.match(show.stdout, /🔨 Building {2}SLC-CAMP-002-A · Calendar with posts · delivers REQ-CAMP-003 · CHG-CAMP-002 4 Build \(tasks 1\/2\)/);

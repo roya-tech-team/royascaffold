@@ -37,7 +37,7 @@ test("every card the engine or the skill points to exists", () => {
   const fromSkill = [...situations.matchAll(/`([a-z-]+\.md)`/g)].map((m) => m[1]);
   assert.ok(fromSkill.length >= 6);
   for (const c of [...named, ...fromSkill]) assert.ok(cards.has(c), `missing card ${c}`);
-  assert.deepEqual([...cards].sort(), ["adopt.md", "build.md", "check-record.md", "design.md", "fix.md", "migrate.md", "plan-feature.md", "plan.md", "record-manual.md", "start.md", "understand.md"]);
+  assert.deepEqual([...cards].sort(), ["adopt.md", "build.md", "check-record.md", "design.md", "discover.md", "fix.md", "migrate.md", "plan-feature.md", "plan.md", "record-manual.md", "start.md", "understand.md"]);
 });
 
 test("init creates project/ + apps/ with a clean profile; refuses twice and bad codes", () => {
@@ -47,12 +47,12 @@ test("init creates project/ + apps/ with a clean profile; refuses twice and bad 
   const r = initProject(repo, { name: "Client Portal", code: "port", app: "web=apps/web,api=apps/api" });
   assert.equal(r.code, "PORT");
   assert.ok(fs.existsSync(path.join(repo, "apps/web")) && fs.existsSync(path.join(repo, "apps/api")));
-  for (const f of ["profile.md", "STATUS.md", "PLAYBOOK.md", "GLOSSARY.md", "knowledge/00-roadmap/roadmap.md", "knowledge/02-requirements/requirements.md"]) assert.ok(fs.existsSync(path.join(repo, "project", f)), f);
+  for (const f of ["profile.md", "STATUS.md", "log.md", "PLAYBOOK.md", "GLOSSARY.md", "knowledge/00-discovery/discovery.md", "knowledge/04-design/architecture.md", "knowledge/00-roadmap/roadmap.md", "knowledge/02-requirements/requirements.md"]) assert.ok(fs.existsSync(path.join(repo, "project", f)), f);
   const m = buildModel(repo);
   assert.deepEqual(m.issues, []);
   assert.deepEqual([m.is14, m.code, m.profile.project_name], [true, "PORT", "Client Portal"]);
   assert.deepEqual([...m.records.values()].filter((x) => x.kind === "app").map((x) => [x.id, x.fields.Path]), [["APP-PORT-WEB", "apps/web"], ["APP-PORT-API", "apps/api"]]);
-  assert.deepEqual([nextCommand(repo).kind, nextCommand(repo).card], ["start", "start.md"]);
+  assert.deepEqual([nextCommand(repo).kind, nextCommand(repo).card], ["discover", "discover.md"]);
   assert.throws(() => initProject(repo, { name: "Again", code: "PORT" }), /already set up/);
 });
 
@@ -69,7 +69,7 @@ test("install puts the navigator into Cursor and Claude Code, fills the CLI, nev
     assert.match(skill, /^---\nname: royascaff\n/);
     assert.match(skill, /CLI: `npx royascaff@beta`/);
     assert.doesNotMatch(skill, /\{\{CLI\}\}/);
-    assert.equal(fs.readdirSync(path.join(repo, tool, "skills/royascaff/cards")).length, 11);
+    assert.equal(fs.readdirSync(path.join(repo, tool, "skills/royascaff/cards")).length, 12);
   }
   assert.equal(fs.readFileSync(path.join(repo, "project/PLAYBOOK.md"), "utf8"), "# Our playbook\n");
   assert.deepEqual(install(repo, { cursor: true }).tools, ["cursor"]);
@@ -84,12 +84,33 @@ test("walkthrough through the CLI: init → plan → open → design → plan �
     return r.stdout;
   };
   run("init", "--name", "Client Portal", "--code", "PORT", "--app", "web=apps/web");
+  // Discover: topics from the request, one question, the stack as options, then the person answers.
+  assert.match(run("next"), /Discover the project: fill 8 empty topic/);
+  const disc = path.join(repo, "project/knowledge/00-discovery/discovery.md");
+  const fill = { "Users and roles": "Agency clients read their results.", "Problem and outcomes": "Clients ask by email.", "Scope and out of scope": "Results only; no billing.", "Success measures": "Fewer result emails.", Constraints: "Desktop first.", Technology: "- **Option A:** React web app\n- **Option B:** server pages\n\n**Recommendation:** Option A.", "Data and content": "Campaign reach per client.", "Look, feel and references": "The agency brand." };
+  let text = fs.readFileSync(disc, "utf8");
+  for (const [title, body] of Object.entries(fill)) text = text.replace(new RegExp(`(## \\d\\. ${title.replace(/[,]/g, ",")}\\n\\n)_[^\\n]*_`), `$1${body}`);
+  fs.writeFileSync(disc, text);
+  run("new", "record", "question", "Which option do you choose?", "--topic", "technology");
+  assert.match(run("next"), /Ask the person 1 open question/);
+  assert.throws(() => run("approve", "project"), /open question/);
+  fs.writeFileSync(disc, fs.readFileSync(disc, "utf8").replace("- **Answer:**\n", "- **Answer:** Option A\n"));
+  run("new", "record", "decision", "React web app", "--scope", "project");
+  const arch = path.join(repo, "project/knowledge/04-design/architecture.md");
+  fs.writeFileSync(arch, fs.readFileSync(arch, "utf8").replace(/(## 1\. Context\n\n)_[^\n]*_/, "$1Clients use the web app; it reads a results file."));
   const brd = path.join(repo, "project/knowledge/01-business/brd.md");
   fs.appendFileSync(brd, "\n### OUT-PORT-001 · Clients see their campaign results\n\n- **Owner:** islam\n");
+  assert.match(run("next"), /run: royascaff approve project/);
+  assert.throws(() => run("approve", "project", "--by", "ai:claude"), /must come from a person/);
+  assert.match(run("approve", "project"), /Project approved by islam/);
   run("new", "feature", "Results page", "--horizon", "now", "--outcome", "OUT-PORT-001");
   fs.appendFileSync(path.join(repo, "project/knowledge/02-requirements/requirements.md"), "\n### REQ-PORT-001 · Client sees reach per campaign\n\n- **Priority:** must\n- **Owner:** islam\n- **Feature:** CAP-PORT-001\n");
   fs.appendFileSync(path.join(repo, "project/knowledge/05-implementation/components.md"), "\n### CMP-PORT-RESULTS · Results page\n\n- **Owner:** islam\n- **Code:** apps/web/src/results/**\n- **Realizes:** REQ-PORT-001\n");
   run("new", "slice", "CAP-PORT-001", "Reach table", "--delivers", "REQ-PORT-001");
+  // The plan is 📝 Outlined until a person approves it; open refuses before that.
+  assert.match(run("next"), /royascaff approve roadmap/);
+  assert.throws(() => run("open", "SLC-PORT-001-A", "--risk", "low"), /has no approved plan/);
+  assert.match(run("approve", "roadmap"), /Approved CAP-PORT-001 · Results page \(now\)/);
   assert.match(run("next"), /Open slice SLC-PORT-001-A/);
   run("open", "SLC-PORT-001-A", "--risk", "low");
   const cf = path.join(repo, "project/changes/CHG-PORT-001/change.md");
@@ -101,6 +122,9 @@ test("walkthrough through the CLI: init → plan → open → design → plan �
   assert.match(run("context", "TASK-PORT-001"), /Change only files matching: `apps\/web\/src\/results\/\*\*`/);
   run("task", "TASK-PORT-001", "done", "reach table renders; no paging yet", "--by", "ai:claude");
   run("check", "CHG-PORT-001", "--result", "pass", "--note", "npm test");
+  assert.match(run("new", "doc", "quality"), /Created knowledge\/06-quality\/quality\.md/);
+  const q = path.join(repo, "project/knowledge/06-quality/quality.md");
+  fs.writeFileSync(q, fs.readFileSync(q, "utf8").replace(/(## 2\. Checks and who runs them\n\n)_[^\n]*_/, "$1Runner tests on every task; the owner reviews the results page."));
   fs.mkdirSync(path.join(repo, "project/changes/CHG-PORT-001/evidence"));
   fs.writeFileSync(path.join(repo, "project/changes/CHG-PORT-001/evidence/evidence.md"), "### EVD-PORT-001 · Reach table test\n\n- **Result:** pass\n- **Proves:** REQ-PORT-001\n");
   assert.match(run("advance", "CHG-PORT-001", "--to", "closed"), /CHG-PORT-001 is now closed/);

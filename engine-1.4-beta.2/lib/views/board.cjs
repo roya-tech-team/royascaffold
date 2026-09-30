@@ -14,7 +14,8 @@ const table = (header, rows) => (rows.length ? [`| ${header.join(" | ")} |`, `|$
 
 function lastEventOf(model) {
   let last = null;
-  for (const c of model.changes.values()) for (const e of c.events || []) if (!last || Date.parse(e.when) > Date.parse(last.when)) last = e;
+  const all = [...[...model.changes.values()].flatMap((c) => c.events || []), ...(model.approvals ? model.approvals.events : [])];
+  for (const e of all) if (!last || Date.parse(e.when) > Date.parse(last.when)) last = e;
   return last;
 }
 
@@ -53,6 +54,9 @@ function renderBoard(model, status, drift = null) {
     const missing = d.requirements.filter((r) => status.requirements.get(r).missingEvidence);
     if (missing.length) notes.push(`⚠ no passing evidence: ${missing.join(", ")}`);
     if (drift && drift.featureChanged.has(f.id)) notes.push(`⚠️ changed since verified: ${drift.featureChanged.get(f.id).join(", ")}`);
+    if (d.unprovenNfrs && d.unprovenNfrs.length) notes.push(`prove ${d.unprovenNfrs.join(", ")}`);
+    if (d.approval === "stale") notes.push("⚠ plan changed since approval");
+    else if (d.approval === "none" && ["now", "next"].includes(f.horizon) && (d.requirementsTotal || d.slicesTotal) && ["outlined", "planned"].includes(d.state)) notes.push("plan not approved yet");
     return [cap(f.horizon), title(model, f.id), LABELS[d.state], cap(d.depth), `${d.slicesDone}/${d.slicesTotal}`, `${d.requirementsDone}/${d.requirementsTotal}`, notes.join("; ")];
   });
   out.push("## Features", "", table(["Horizon", "Feature", "State", "Depth", "Slices done", "Requirements done", "Notes"], featureRows), "");
@@ -75,7 +79,11 @@ function renderBoard(model, status, drift = null) {
   if (drift && drift.git) {
     out.push("## ⚠ Work outside the engine", "");
     const loose = drift.uncommitted.filter((u) => !u.inTask);
-    if (!drift.untrackedCommits.length && !loose.length) out.push("_None: git history and the working tree match the recorded work._", "");
+    const knowledge = drift.uncommittedKnowledge || [];
+    if (!drift.untrackedCommits.length && !loose.length && !knowledge.length) out.push("_None: git history and the working tree match the recorded work._", "");
+    if (knowledge.length) {
+      out.push(`⚠ Project knowledge not committed (${knowledge.length} file(s)): ${knowledge.slice(0, 6).map((k) => `\`${k.path}\``).join(", ")}${knowledge.length > 6 ? ", …" : ""}. Commit it with the task's code; tasks and changes cannot close before.`, "");
+    }
     if (drift.untrackedCommits.length) {
       out.push("Commits no task or change covers:", "");
       out.push(table(["Commit", "Files", "Feature", "Record with"], drift.untrackedCommits.map((c) => [`${c.short} ${c.subject}`, c.files.join(", "), c.features.join(", "), `royascaff record ${c.short} --as bug|polish|refactor|chore "…"`])), "");
@@ -112,6 +120,17 @@ function renderBoard(model, status, drift = null) {
   const shown = [...errors, ...warnings].slice(0, 10);
   for (const i of shown) out.push(`  - ${i.severity === "error" ? "✗" : "!"} ${i.message}`);
   if (errors.length + warnings.length > shown.length) out.push(`  - … and ${errors.length + warnings.length - shown.length} more`);
+  if (model.approvals) {
+    const a = model.approvals;
+    const d = a.discovery;
+    const p = a.project;
+    const proj = p.state === "approved" ? `approved by ${p.by} (${p.when.slice(0, 10)})` : p.state === "stale" ? `⚠ changed since ${p.by} approved it` : "not approved yet";
+    out.push(`- Discovery: ${d.questions} question(s), ${d.open.length + d.openByFeature.length} open · ${d.assumptions.length} assumption(s) · project ${proj}`);
+  }
+  if (model.is14) {
+    const { healthOf, healthLines } = require("./health.cjs");
+    out.push(...healthLines(healthOf(model, status)));
+  }
   out.push(`- Records: ${model.records.size} · features ${model.features.size} · slices ${model.slices.size} · changes ${model.changes.size} · tasks ${model.tasks.size}`);
   out.push("");
   const fs = require("fs");
