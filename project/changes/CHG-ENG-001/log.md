@@ -14,3 +14,5 @@
 | 2026-10-01T02:25:56Z | task.done | TASK-ENG-001 | ai:claude | 3686242 | guard.cjs and the entry wiring are in; the e43 tests pass (the guard, the pinned tool script, the tag rule, the project itself) |
 | 2026-10-01T02:26:10Z | task.started | TASK-ENG-002 | ai:claude | 3686242 | bump to 1.5.0, accept a stable version in the package test |
 | 2026-10-01T02:26:48Z | task.done | TASK-ENG-002 | ai:claude | 7da2d25 | package.json is 1.5.0; contract-package accepts 1.5.0 and its pre-releases; the full suite runs in verify |
+| 2026-10-01T02:27:37Z | backup.saved | TASK-ENG-002 | ai:claude | 7b9ee5a | 1 uncommitted developer file(s) saved to .backups/TASK-ENG-002-20261001T022736Z and git stash f257d4703b: engine/skill/royascaff/cards/adopt.md |
+| 2026-10-01T02:27:37Z | task.started | TASK-ENG-002 | ai:claude | 7b9ee5a | reopened: the adopt card teaches scan, inferred records and adopt docs |
