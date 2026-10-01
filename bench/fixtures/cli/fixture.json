@@ -1,0 +1,6 @@
+{
+  "description": "A small command line tool with a spec: a to-do list in one file. Graded by script: every rule of the request is one check.",
+  "request": "request.md",
+  "grade": "script",
+  "reference": "reference"
+}

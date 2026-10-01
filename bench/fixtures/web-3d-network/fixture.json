@@ -1,0 +1,6 @@
+{
+  "description": "The 3D network web app of the 1.4 benchmark. The prompt and the reference image live in tools/3d-network/base-prompt-ai-test (outside this repository). Graded by a person with the benchmark's review sheet (tools/3d-network/review.csv), not by script.",
+  "request": "../../../../tools/3d-network/base-prompt-ai-test/prompt.md",
+  "pointer": "check out the sibling folder tools/3d-network next to this repository",
+  "grade": "manual"
+}
