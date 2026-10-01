@@ -3,7 +3,7 @@
     "scenario": "roundtrip",
     "exit": 0,
     "envelope": {
-      "contract": "1.0",
+      "contract": "1.1",
       "engine": "<engine-version>",
       "ok": true,
       "command": "roundtrip",

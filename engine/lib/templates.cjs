@@ -30,9 +30,9 @@ function insertRecord(text, block) {
   return `${text.slice(0, at).replace(/\n*$/, "\n")}\n${body}\n${text.slice(at)}`;
 }
 
-function changeTemplate({ id, kind, slice, affects, risk, owner, title, feature }) {
-  const scope = [slice ? `slice: ${slice}` : null, affects && affects.length ? `affects: [${affects.join(", ")}]` : null].filter(Boolean).map((l) => `${l}\n`).join("");
-  const what = slice ? `the work that delivers slice ${slice}${feature ? ` of ${feature}` : ""}` : `a ${kind} change${affects && affects.length ? ` affecting ${affects.join(", ")}` : ""}`;
+function changeTemplate({ id, kind, slice, affects, risk, owner, title, feature, reverts, baseline }) {
+  const scope = [slice ? `slice: ${slice}` : null, affects && affects.length ? `affects: [${affects.join(", ")}]` : null, reverts && reverts.length ? `reverts: [${reverts.join(", ")}]` : null, baseline ? `baseline: ${baseline}` : null].filter(Boolean).map((l) => `${l}\n`).join("");
+  const what = slice ? `the work that delivers slice ${slice}${feature ? ` of ${feature}` : ""}` : `a ${kind} change${affects && affects.length ? ` affecting ${affects.join(", ")}` : ""}${reverts && reverts.length ? ` reverting ${reverts.join(", ")}` : ""}`;
   return docText("change", { ID: id, KIND: kind, SCOPE: scope, RISK: risk, OWNER: owner, TITLE: title, WHAT: what });
 }
 

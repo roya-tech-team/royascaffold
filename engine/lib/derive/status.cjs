@@ -50,6 +50,7 @@ const DEPTHS = { idea: "Idea", outlined: "Outlined", sliced: "Sliced", designed:
 const REQUIREMENT_KINDS = ["requirement", "nfr", "use-case"];
 
 function deriveStatus(model) {
+  const evolve = require("../evolve.cjs");
   const tasks = new Map();
   const changes = new Map();
   const slices = new Map();
@@ -104,11 +105,11 @@ function deriveStatus(model) {
     const m = measureOf(model.records.get(reqId));
     if (m) return m.ok ? [m.evidence] : [];
     const targets = new Set([reqId, ...verifiersOf(reqId)]);
-    return [...model.evidence.values()].filter((e) => e.result === "pass" && !stale.has(e.id) && e.proves.some((p) => targets.has(p))).map((e) => e.id);
+    return [...model.evidence.values()].filter((e) => e.result === "pass" && !stale.has(e.id) && !model.reverted.has(e.change) && e.proves.some((p) => targets.has(p))).map((e) => e.id);
   };
   const staleProofOf = (reqId) => {
     const targets = new Set([reqId, ...verifiersOf(reqId)]);
-    return [...model.evidence.values()].filter((e) => e.result === "pass" && stale.has(e.id) && e.proves.some((p) => targets.has(p))).map((e) => e.id);
+    return [...model.evidence.values()].filter((e) => e.result === "pass" && stale.has(e.id) && !model.reverted.has(e.change) && e.proves.some((p) => targets.has(p))).map((e) => e.id);
   };
   const measures = new Map();
   function measureOf(rec) {
@@ -164,13 +165,14 @@ function deriveStatus(model) {
     }
     // E3.1: a requirement the AI inferred from existing code never counts as done until a person confirms it.
     if ((state === "done" || state === "released") && require("../inferred.cjs").isUnconfirmed(rec)) state = "unconfirmed";
-    requirements.set(rec.id, { id: rec.id, state, measure: measureOf(rec), slices: delivering.map((s) => s.id), baseline: baseline.map((c) => c.id), evidence: proof, staleEvidence: staleProof, missingEvidence: (delivering.some((s) => s.state === "done") || baseline.length > 0) && !proof.length });
+    const version = evolve.versionOf(model, rec.id);
+    requirements.set(rec.id, { id: rec.id, state, measure: measureOf(rec), slices: delivering.map((s) => s.id), baseline: baseline.map((c) => c.id), evidence: proof, staleEvidence: staleProof, missingEvidence: (delivering.some((s) => s.state === "done") || baseline.length > 0) && !proof.length, ...(version > 1 ? { version } : {}) });
   }
 
-  // Open bug/polish changes that affect a requirement or feature (they never make it Done).
+  // Open bug/polish/evolve changes that affect a requirement or feature (they never make it Done).
   const openFixes = new Map();
   for (const change of model.changes.values()) {
-    if (!["bug", "polish"].includes(change.kind)) continue;
+    if (!["bug", "polish", "evolve"].includes(change.kind)) continue;
     const stage = changes.get(change.id).stage;
     if (stage === "closed" || stage === "cancelled") continue;
     for (const target of change.affects) {

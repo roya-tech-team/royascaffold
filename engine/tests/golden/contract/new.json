@@ -3,7 +3,7 @@
     "scenario": "new task",
     "exit": 0,
     "envelope": {
-      "contract": "1.0",
+      "contract": "1.1",
       "engine": "<engine-version>",
       "ok": true,
       "command": "new",
@@ -20,7 +20,7 @@
     "scenario": "new record",
     "exit": 0,
     "envelope": {
-      "contract": "1.0",
+      "contract": "1.1",
       "engine": "<engine-version>",
       "ok": true,
       "command": "new",
@@ -37,7 +37,7 @@
     "scenario": "new feature",
     "exit": 0,
     "envelope": {
-      "contract": "1.0",
+      "contract": "1.1",
       "engine": "<engine-version>",
       "ok": true,
       "command": "new",
@@ -54,7 +54,7 @@
     "scenario": "new slice",
     "exit": 0,
     "envelope": {
-      "contract": "1.0",
+      "contract": "1.1",
       "engine": "<engine-version>",
       "ok": true,
       "command": "new",
@@ -75,7 +75,7 @@
     "scenario": "new doc",
     "exit": 0,
     "envelope": {
-      "contract": "1.0",
+      "contract": "1.1",
       "engine": "<engine-version>",
       "ok": true,
       "command": "new",

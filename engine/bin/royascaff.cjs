@@ -79,6 +79,10 @@ Work (every command records an event and refreshes STATUS.md):
                                until every Now feature is done and accepted; --force: people only)
   open --kind bug|polish|refactor|chore|knowledge "<title>" [path] [--affects REQ-…] [--risk …]
                                Start a change that is not a slice (a fix, a refactor, …)
+  change <REQ-…|NFR-…|WF-…|CTR-…> [more IDs] [path] [--before "…"] [--after "…"] [--why "…"] [--change CHG-…]
+                               Change something that exists: opens (or joins) an evolve change with a delta block
+                               (Before / After / Why) and lists every test, evidence, slice and component that
+                               depended on the old wording; the Understand gate wants each one handled
   new record <source|question|assumption|outcome|requirement|nfr|concept|invariant|workflow|decision|contract|component|rule|test|release> "<title>" [path]
                                [--quote "…"] [--covered REQ-…] [--feature CAP-…] [--topic …] [--basis …] [--scope project] [--includes CHG-…] [--applies …] [--priority …] [--code globs]
                                [--realizes REQ-…] [--verifies REQ-…] [--check runner:test|manual]
@@ -151,7 +155,7 @@ Options:
   --help        Show this help
 `;
 
-const VALUE_FLAGS = new Set(["out", "path", "horizon", "outcome", "priority", "owner", "delivers", "depends", "order", "change", "feature", "since", "limit", "to", "reason", "by", "note", "kind", "affects", "risk", "result", "goal", "inputs", "paths", "checks", "done", "as", "slice", "files", "name", "code", "app", "skip-checks", "realizes", "verifies", "check", "from", "topic", "basis", "scope", "outside-ok", "adapter", "includes", "applies", "quote", "covered", "bar", "approval-token", "verdict-file", "verdict", "line", "source-file"]);
+const VALUE_FLAGS = new Set(["out", "path", "horizon", "outcome", "priority", "owner", "delivers", "depends", "order", "change", "feature", "since", "limit", "to", "reason", "by", "note", "kind", "affects", "risk", "result", "goal", "inputs", "paths", "checks", "done", "as", "slice", "files", "name", "code", "app", "skip-checks", "realizes", "verifies", "check", "from", "topic", "basis", "scope", "outside-ok", "adapter", "includes", "applies", "quote", "covered", "bar", "approval-token", "verdict-file", "verdict", "line", "source-file", "before", "after", "why", "title", "budget"]);
 const SUBCOMMANDS = new Set(["new", "task", "backups"]);
 
 function parseArgs(argv) {
@@ -497,6 +501,13 @@ function main() {
       const r = scanCommand(flags.path || (firstIsPath ? first : positional[2]) || ".", firstIsPath ? null : first, flags);
       const { text, ...data } = r;
       return reply(data, `${text}\n`);
+    }
+    case "change": {
+      // change <REQ-…|WF-…|CTR-…> …: a delta on an existing requirement, workflow or contract (E6.1).
+      const isId = (p) => /^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$/.test(p);
+      const { changeCommand } = require("../lib/commands/evolve.cjs");
+      const r = changeCommand(flags.path || positional.slice(1).find((p) => !isId(p)) || ".", positional.slice(1).filter(isId), flags);
+      return reply(r, `${r.opened ? "Opened" : "Joined"} ${r.id} (evolve, risk ${r.risk}, ${r.status}) in ${r.file}\n${r.deltas.map((d) => `  Delta ${d.id} v${d.from} → v${d.to}${d.breaking ? ` BREAKING (removes ${d.removes.join(", ") || "something"})` : ""}`).join("\n")}\n${r.affected.length ? `Affected by the delta (${r.affected.length}):\n${r.affected.map((a) => `  - ${a.item} (${a.kind}) ${a.why}${a.handling ? ` → ${a.handling}` : ""}`).join("\n")}\n` : "Nothing else depends on it.\n"}Next: ${r.next}\n`);
     }
     case "inventory": {
       const { inventoryCommand } = require("../lib/commands/inventory.cjs");

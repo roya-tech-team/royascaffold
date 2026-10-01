@@ -15,7 +15,7 @@ const RISKS = ["low", "medium", "high", "critical"];
 const IMPACT_STATES = ["changed", "referenced", "unchanged", "not-applicable"];
 const IMPACT_LAYERS = ["business", "domain", "architecture", "data", "components", "quality"];
 const TASK_FIELDS = ["Goal", "Inputs", "Allowed paths", "Checks", "Done when"];
-const EVIDENCE_REQUIRED = { feature: "per-requirement", bug: "any", polish: "any", refactor: "any", chore: "none", knowledge: "none", migration: "none" };
+const EVIDENCE_REQUIRED = { feature: "per-requirement", bug: "any", polish: "any", refactor: "any", chore: "none", knowledge: "none", migration: "none", evolve: "any", rollback: "any" };
 
 // A section of change.md: text from `## <name>` to the next `## ` heading.
 function section(body, names) {
@@ -96,10 +96,16 @@ const RULES = {
       const ok = change.slices.length > 0 && change.slices.every((s) => model.slices.has(s));
       out.push(check("scope", ok, ok ? `delivers slice ${change.slices.join(", ")}` : "a feature change must name an existing slice"));
     }
-    else if (["bug", "polish"].includes(change.kind)) {
+    else if (["bug", "polish", "evolve"].includes(change.kind)) {
       const ok = change.affects.length > 0 && change.affects.every((a) => model.records.has(a));
-      out.push(check("scope", ok, ok ? `affects ${change.affects.join(", ")}` : "a bug/polish change must name the feature or requirement it affects"));
+      out.push(check("scope", ok, ok ? `affects ${change.affects.join(", ")}` : `a ${change.kind} change must name the feature or requirement it affects`));
     }
+    else if (change.kind === "rollback") {
+      const ok = change.reverts.length > 0 && change.reverts.every((a) => model.changes.has(a));
+      out.push(check("scope", ok, ok ? `reverts ${change.reverts.join(", ")}` : "a rollback change names the change(s) it reverts (reverts: in change.md)"));
+    }
+    // 1.6: a change of a requirement, workflow or contract holds its delta; everything that depended on the old wording is handled.
+    if (change.kind === "evolve") out.push(...require("./evolve.cjs").gateChecks(model, change, body, check));
     return out;
   },
   // analyzed → approved: the design exists and, for medium+ risk, a person approved it.
@@ -296,6 +302,7 @@ const RULES = {
     const errors = model.issues.filter((i) => i.severity === "error");
     out.push(check("main-valid", errors.length === 0, errors.length ? `${errors.length} validation error(s) in the project — run \`royascaff validate\`` : "project validates"));
     if (model.is14) out.push(...recordedChecks(model, change, body));
+    if (change.kind === "evolve") out.push(...require("./evolve.cjs").recordChecks(model, change, body, check));
     if (model.is14 && String(model.profile.knowledge_profile || "standard") === "standard" && ["feature", "refactor"].includes(change.kind)) {
       // B3: the standard profile keeps a quality strategy (lite projects do not need one).
       const qfile = path.join(model.root, "knowledge/06-quality/quality.md");

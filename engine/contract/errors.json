@@ -1,5 +1,5 @@
 {
-  "contract": "1.0",
+  "contract": "1.1",
   "note": "Stable error codes of the machine contract. Adding a code is a minor change; removing or renaming one is a major change (docs/CONTRACT.md). `exit` is the process exit status in --json mode: 1 = the work was refused or failed, 2 = the call itself was wrong. Generated from lib/contract.cjs.",
   "codes": {
     "NOT_A_PROJECT": {

@@ -3,7 +3,7 @@
     "scenario": "continue",
     "exit": 0,
     "envelope": {
-      "contract": "1.0",
+      "contract": "1.1",
       "engine": "<engine-version>",
       "ok": true,
       "command": "continue",
@@ -19,6 +19,7 @@
           "Continue TASK-CAMP-005 · Validate date order (CHG-CAMP-003, tasks 0/1)",
           "CHG-CAMP-004 is ready to move on: royascaff advance CHG-CAMP-004 --to approved",
           "Check CHG-CAMP-005: run the full checks after the last task (`royascaff check CHG-CAMP-005`)",
+          "Understand CHG-CAMP-006 · Change REQ-CAMP-001 (stage 1): classify every layer as changed / referenced / unchanged / not-applicable; not classified: Business, Requirements, Domain, Architecture, Data, Contracts, Experience, Security, Components & tests, Quality & operations; mark each as \"update\" or \"still valid (reason)\": SLC-CAMP-001-A, TEST-CAMP-001, EVD-CAMP-001, EVD-CAMP-003, CMP-CAMP-CAMPAIGNS",
           "The discovery, the brief or a project decision changed since islam approved them: review, then run royascaff approve project"
         ]
       },

@@ -1,0 +1,83 @@
+[
+  {
+    "scenario": "change a requirement",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "change",
+      "data": {
+        "id": "CHG-CAMP-006",
+        "kind": "evolve",
+        "opened": true,
+        "joined": false,
+        "risk": "medium",
+        "status": "draft",
+        "file": "changes/CHG-CAMP-006/change.md",
+        "deltas": [
+          {
+            "id": "REQ-CAMP-001",
+            "from": 1,
+            "to": 2,
+            "breaking": false,
+            "removes": []
+          }
+        ],
+        "affected": [
+          {
+            "item": "SLC-CAMP-001-A",
+            "kind": "slice",
+            "why": "delivers REQ-CAMP-001",
+            "handling": ""
+          },
+          {
+            "item": "TEST-CAMP-001",
+            "kind": "test",
+            "why": "REQ-CAMP-001 verified by it; it verifies REQ-CAMP-001",
+            "handling": ""
+          },
+          {
+            "item": "EVD-CAMP-001",
+            "kind": "evidence",
+            "why": "proved TEST-CAMP-001 (pass)",
+            "handling": ""
+          },
+          {
+            "item": "EVD-CAMP-003",
+            "kind": "evidence",
+            "why": "proved TEST-CAMP-001 (pass, verify)",
+            "handling": ""
+          },
+          {
+            "item": "CMP-CAMP-CAMPAIGNS",
+            "kind": "component",
+            "why": "it realizes REQ-CAMP-001",
+            "handling": ""
+          }
+        ],
+        "next": "Write Before/After/Why of each delta in changes/CHG-CAMP-006/change.md, mark every affected item \"update\" or \"still valid (reason)\", then: royascaff advance CHG-CAMP-006 --to analyzed"
+      },
+      "warnings": [],
+      "events": [
+        "EVT-CHG-CAMP-006-0001"
+      ]
+    }
+  },
+  {
+    "scenario": "change (not a requirement, workflow or contract)",
+    "exit": 2,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": false,
+      "command": "change",
+      "error": {
+        "code": "INVALID_INPUT",
+        "message": "CAP-CAMP-001 is a feature: only requirements (REQ-, NFR-, UC-), workflows (WF-) and contracts (CTR-) change through a delta"
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

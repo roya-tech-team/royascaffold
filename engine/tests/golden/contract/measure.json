@@ -3,7 +3,7 @@
     "scenario": "measure (an outcome that does not exist)",
     "exit": 1,
     "envelope": {
-      "contract": "1.0",
+      "contract": "1.1",
       "engine": "<engine-version>",
       "ok": false,
       "command": "measure",

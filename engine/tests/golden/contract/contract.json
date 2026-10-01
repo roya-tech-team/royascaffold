@@ -3,12 +3,12 @@
     "scenario": "contract",
     "exit": 0,
     "envelope": {
-      "contract": "1.0",
+      "contract": "1.1",
       "engine": "<engine-version>",
       "ok": true,
       "command": "contract",
       "data": {
-        "contract": "1.0",
+        "contract": "1.1",
         "engine": "<engine-version>",
         "commands": [
           "adapter",
@@ -19,6 +19,7 @@
           "block",
           "brief",
           "cache",
+          "change",
           "check",
           "ci",
           "confirm",

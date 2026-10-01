@@ -26,7 +26,8 @@ function detect(repo) {
   const nested = path.join(repo, "project");
   const p = tryProfile(path.join(nested, "profile.md")) || tryProfile(path.join(repo, "profile.md"));
   const fm = p && p.frontmatter ? p.frontmatter.data : null;
-  if (fm && String(fm.royascaff || "").startsWith("1.4")) return "1.4";
+  if (fm && /^1\.6/.test(String(fm.royascaff || ""))) return "1.6";
+  if (fm && /^1\.[45]/.test(String(fm.royascaff || ""))) return "1.4";
   if (fs.existsSync(path.join(nested, "changes", "build-program.md")) || (fs.existsSync(path.join(nested, "status.md")) && !fm)) return "1.2";
   if (fm && (fm.schema_version !== undefined || fm.layer)) return "1.3";
   if (["knowledge", "changes"].some((z) => fs.existsSync(path.join(repo, z)) || fs.existsSync(path.join(nested, z)))) return "1.3";

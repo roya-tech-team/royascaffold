@@ -43,7 +43,8 @@ function buildModel(start) {
   const files = data.files.filter((f) => !EXCLUDED.some((re) => re.test(f.path)));
   const profileFile = files.find((f) => f.path === "profile.md");
   const profile = profileFile && profileFile.frontmatter ? profileFile.frontmatter.data : {};
-  const is14 = String(profile.royascaff || "").startsWith("1.4");
+  // The 1.4 project format is also the format of engine 1.5 projects; a migrated 1.6 project says `royascaff: 1.6`.
+  const is14 = /^1\.[456]/.test(String(profile.royascaff || ""));
 
   const located = require("../project.cjs").findProject(start);
   const model = {
@@ -103,6 +104,8 @@ function buildModel(start) {
           slices: asList(fm.slice),
           slice: asList(fm.slice)[0] || null,
           affects: asList(fm.affects),
+          reverts: asList(fm.reverts),
+          baseline: fm.baseline ? String(fm.baseline) : null,
           dir: path.posix.dirname(file.path),
           file: file.path,
           tasks: [],
@@ -275,8 +278,11 @@ function buildModel(start) {
     model.evidence.set(rec.id, { id: rec.id, change: change ? change.id : null, kind: String(rec.fields.Kind || "check").trim().toLowerCase() || "check", result, proves, metrics, git: rec.fields["Git commit"] || null, fingerprint, file: rec.file, line: rec.line });
   }
 
+  // 1.6: a change a closed rollback reverted no longer delivers or proves anything.
+  model.reverted = new Set();
+  for (const change of model.changes.values()) if (change.kind === "rollback" && change.status === "closed") for (const id of change.reverts) model.reverted.add(id);
   for (const change of model.changes.values()) {
-    if (change.status === "cancelled") continue;
+    if (change.status === "cancelled" || model.reverted.has(change.id)) continue;
     for (const sid of change.slices) {
       const slice = model.slices.get(sid);
       if (slice) slice.change = change.id;
@@ -329,8 +335,8 @@ function validate(model, issue) {
     if (!change.status || !CHANGE_STATUSES.includes(change.status)) issue("error", "invalid-change-status", `${change.id} has status "${change.status}"`, at);
     if (change.kind === "feature" && !change.slices.length) issue(model.is14 ? "error" : "warning", "feature-change-without-slice", `${change.id} is a feature change but names no slice`, at);
     for (const sid of change.slices) if (!model.slices.has(sid)) issue("error", "unknown-slice", `${change.id} names slice ${sid}, which is not on the roadmap`, at);
-    if (["bug", "polish"].includes(change.kind) && !change.affects.length) issue("warning", "fix-without-affects", `${change.id} (${change.kind}) does not say which feature or requirement it affects`, at);
-    if (change.status !== "cancelled") {
+    if (["bug", "polish", "evolve"].includes(change.kind) && !change.affects.length) issue("warning", "fix-without-affects", `${change.id} (${change.kind}) does not say which feature or requirement it affects`, at);
+    if (change.status !== "cancelled" && !(model.reverted && model.reverted.has(change.id))) {
       for (const sid of change.slices) {
         if (openBySlice.has(sid)) issue("error", "slice-has-two-changes", `${sid} is claimed by ${openBySlice.get(sid)} and ${change.id}`, at);
         else openBySlice.set(sid, change.id);

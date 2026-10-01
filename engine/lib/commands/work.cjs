@@ -136,7 +136,9 @@ function openSlice(start, sliceId, flags = {}) {
 // open --kind bug|polish|refactor|chore|knowledge "<title>" [--affects …]
 function openOther(start, title, flags = {}) {
   const kind = (flags.kind || "").toLowerCase();
-  if (!CHANGE_KINDS.includes(kind) || kind === "feature") throw new Error(`Use \`royascaff open <SLC-…>\` for features, or --kind ${CHANGE_KINDS.filter((k) => k !== "feature").join("|")}`);
+  if (kind === "evolve") throw Object.assign(new Error("Use `royascaff change <REQ-…|WF-…|CTR-…>` to change a requirement, workflow or contract: it writes the delta and finds what depends on it"), { code: "INVALID_INPUT" });
+  if (kind === "rollback") throw Object.assign(new Error("Use `royascaff rollback <CHG-…|REL-…>` to revert a change or a release"), { code: "INVALID_INPUT" });
+  if (!CHANGE_KINDS.includes(kind) || kind === "feature") throw new Error(`Use \`royascaff open <SLC-…>\` for features, or --kind ${CHANGE_KINDS.filter((k) => !["feature", "evolve", "rollback"].includes(k)).join("|")}`);
   if (!title) throw new Error(`Usage: royascaff open --kind ${kind} "<title>"${["bug", "polish"].includes(kind) ? " --affects REQ-…" : ""}`);
   const affects = flags.affects ? String(flags.affects).split(",").map((x) => x.trim()).filter(Boolean) : [];
   if (["bug", "polish"].includes(kind) && !affects.length) throw new Error(`A ${kind} change needs --affects <REQ-… or CAP-…>`);
@@ -751,4 +753,4 @@ function backups(start, action, id) {
   return listBackups(model);
 }
 
-module.exports = { openSlice, openOther, newTask, advance, approve, setBlocked, taskAction, recordCheck, verify, judge, recordWork, refine, backups };
+module.exports = { createChange, nextId, setStatus, record, refreshBoard, openSlice, openOther, newTask, advance, approve, setBlocked, taskAction, recordCheck, verify, judge, recordWork, refine, backups };

@@ -3,7 +3,7 @@
     "scenario": "events",
     "exit": 0,
     "envelope": {
-      "contract": "1.0",
+      "contract": "1.1",
       "engine": "<engine-version>",
       "ok": true,
       "command": "events",
@@ -231,7 +231,7 @@
     "scenario": "events --since an event",
     "exit": 0,
     "envelope": {
-      "contract": "1.0",
+      "contract": "1.1",
       "engine": "<engine-version>",
       "ok": true,
       "command": "events",

@@ -3,7 +3,7 @@
     "scenario": "judge (the pack)",
     "exit": 0,
     "envelope": {
-      "contract": "1.0",
+      "contract": "1.1",
       "engine": "<engine-version>",
       "ok": true,
       "command": "judge",
@@ -34,7 +34,7 @@
     "scenario": "judge (the builder may not)",
     "exit": 1,
     "envelope": {
-      "contract": "1.0",
+      "contract": "1.1",
       "engine": "<engine-version>",
       "ok": false,
       "command": "judge",

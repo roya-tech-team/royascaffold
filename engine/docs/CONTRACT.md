@@ -1,4 +1,4 @@
-# The RoyaScaff machine contract (version 1.0)
+# The RoyaScaff machine contract (version 1.1)
 
 Other programs (Studio, scripts, CI, AI tools) can drive RoyaScaff without reading its Markdown or
 guessing at its text. This page is the promise they can rely on. It is short on purpose.
@@ -81,7 +81,7 @@ This is the rule for gates and checks: `advance` refused is `GATE_REFUSED`; `che
 
 ## 3. Commands
 
-`contract.commands` lists them. Today: adapter, adopt, advance, approve, backups, block, brief, cache, check, ci, confirm, context,
+`contract.commands` lists them. Today: adapter, adopt, advance, approve, backups, block, brief, cache, change, check, ci, confirm, context,
 continue, contract, events, export, feedback, index, init, install, inventory, judge, log, measure, migrate, new, next, open,
 record, refine, render, roundtrip, scan, show, smoke, status, task, tasks, trace, unblock, usage, validate, verify, where.
 
@@ -225,3 +225,17 @@ These are additions only. A program that ignores them keeps working.
   their `data` schemas are in `contract/schemas/`.
 - **Warnings.** When the engine that answers is the engine being changed (its folder is inside the repository it
   works on, outside `node_modules`), every envelope carries one warning saying so. Run the pinned copy instead.
+## 10. Evolve (added in 1.6; contract 1.1)
+
+The contract version is `1.1` since engine 1.6: everything in sections 9 and 10 is additive. A program written for `1.0`
+keeps working if it ignores what it does not know.
+
+- **`change <ID…>`** opens (or joins) a change of the new kind `evolve` for a requirement, workflow or contract. The change holds
+  one delta block per record (`## Delta REQ-… (v2 → v3)` with `Before:`, `After:`, `Why:`) and a table of everything that
+  depended on the old wording (`data.affected`: slices, tests, evidence, components, with the handling written so far:
+  `update` or `still valid (reason)`). A contract delta that removes something (`data.deltas[].removes`) is `breaking`.
+  The Understand gate (`advance … --to analyzed`) is refused (`GATE_REFUSED`, `missing`) until each affected item is handled.
+- **Versions.** A record's version is derived, never typed: 1 plus the deltas of the evolve changes a person approved
+  (status `approved` or later). `status` and `export` show `version` on a requirement only when it is above 1 (absent
+  means 1). Evidence of the old version turns stale (section 9) when a delta is approved.
+- **Change kinds.** `change.kind` can now also be `evolve` and `rollback`.

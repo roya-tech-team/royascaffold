@@ -7,7 +7,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const CONTRACT_VERSION = "1.0";
+const CONTRACT_VERSION = "1.1";
 
 // The stable error codes. This table is the source: the CLI must run from a copied bin/lib with no
 // package folders beside it (tests/boundary), so it cannot read a file at load time. The published
@@ -38,7 +38,7 @@ const ERRORS = {
 const ERRORS_FILE_NOTE = "Stable error codes of the machine contract. Adding a code is a minor change; removing or renaming one is a major change (docs/CONTRACT.md). `exit` is the process exit status in --json mode: 1 = the work was refused or failed, 2 = the call itself was wrong. Generated from lib/contract.cjs.";
 
 function errorsFileText() {
-  return `${JSON.stringify({ contract: "1.0", note: ERRORS_FILE_NOTE, codes: ERRORS }, null, 2)}\n`;
+  return `${JSON.stringify({ contract: CONTRACT_VERSION, note: ERRORS_FILE_NOTE, codes: ERRORS }, null, 2)}\n`;
 }
 
 function writeErrorsFile() {
@@ -54,7 +54,7 @@ try {
 
 // Every command the CLI dispatches (a test keeps this in step with bin/royascaff.cjs).
 const COMMANDS = [
-  "adapter", "adopt", "advance", "approve", "backups", "block", "brief", "cache", "check", "ci", "confirm", "context", "continue", "contract",
+  "adapter", "adopt", "advance", "approve", "backups", "block", "brief", "cache", "change", "check", "ci", "confirm", "context", "continue", "contract",
   "events", "export", "feedback", "index", "init", "install", "inventory", "judge", "log", "measure", "migrate", "new", "next", "open", "record",
   "refine", "render", "roundtrip", "scan", "show", "smoke", "status", "task", "tasks", "trace", "unblock", "usage", "validate", "verify", "where",
 ];

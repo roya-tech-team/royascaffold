@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.1/change.schema.json",
+  "title": "royascaff change: data",
+  "description": "The `data` of the contract envelope for `change`. An evolve change was opened or joined for a requirement, workflow or contract: `deltas` lists each delta block (version from → to, and whether it is breaking: a contract that removes something), `affected` lists everything that depended on the old wording with its handling (`update` or `still valid (reason)`; empty until written). Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": ["id", "kind", "opened", "joined", "risk", "status", "file", "deltas", "affected"],
+  "properties": {
+    "id": { "type": "string" },
+    "kind": { "const": "evolve" },
+    "opened": { "type": "boolean" },
+    "joined": { "type": "boolean" },
+    "risk": { "type": "string" },
+    "status": { "type": "string" },
+    "file": { "type": "string" },
+    "next": { "type": "string" },
+    "deltas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "from", "to", "breaking"],
+        "properties": {
+          "id": { "type": "string" },
+          "from": { "type": "integer" },
+          "to": { "type": "integer" },
+          "breaking": { "type": "boolean" },
+          "removes": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "affected": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["item", "kind", "why", "handling"],
+        "properties": {
+          "item": { "type": "string" },
+          "kind": { "type": "string" },
+          "why": { "type": "string" },
+          "handling": { "type": "string" }
+        }
+      }
+    }
+  }
+}

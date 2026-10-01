@@ -90,6 +90,11 @@ function fingerprintOf(model, change) {
   const cov = coverage(model, change);
   const lines = [];
   for (const f of new Set([...cov.files, ...cov.tests, ...cov.lockfiles])) lines.push(`${f}\0${hashFile(path.join(model.repo, f))}`);
+  // 1.6: the version of a requirement, workflow or contract the change covers (only once a delta changed it), so
+  // evidence of the old wording goes stale when a person approves a delta.
+  const evolve = require("./evolve.cjs");
+  const scope = new Set([...change.affects, ...change.slices.flatMap((s) => (model.slices.get(s) ? model.slices.get(s).delivers : []))]);
+  for (const id of evolve.versionedIds(model)) if (scope.has(id)) lines.push(`version\0${id}\0${evolve.versionOf(model, id)}`);
   lines.sort();
   lines.push(`engine\0${require("./contract.cjs").ENGINE_VERSION}`);
   return { hash: sha(lines.join("\n")).slice(0, 12), files: cov.files.length + cov.tests.length + cov.lockfiles.length, coverage: cov };

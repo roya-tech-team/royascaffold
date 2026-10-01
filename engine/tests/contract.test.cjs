@@ -30,7 +30,7 @@ test("contract --json prints the contract version, the engine version, the comma
   const env = JSON.parse(r.stdout);
   assert.deepEqual(validate(envelopeSchema, env), []);
   assert.equal(env.contract, contract.CONTRACT_VERSION);
-  assert.equal(env.contract, "1.0");
+  assert.equal(env.contract, "1.1");
   assert.equal(env.engine, pkg.version);
   assert.equal(env.ok, true);
   assert.equal(env.command, "contract");
@@ -42,7 +42,7 @@ test("contract --json prints the contract version, the engine version, the comma
 test("contract without --json is readable text and also succeeds", () => {
   const r = run(["contract"]);
   assert.equal(r.status, 0, r.stderr);
-  assert.match(r.stdout, /Contract 1\.0/);
+  assert.match(r.stdout, /Contract 1\.1/);
   assert.match(r.stdout, new RegExp(pkg.version.replace(/\./g, "\\.")));
 });
 

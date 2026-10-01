@@ -96,6 +96,8 @@ function scenarios() {
   add("confirm", "confirm (an AI may not)", (c) => ["confirm", "REQ-CAMP-001", "--by", "ai:claude", c.root], "HUMAN_REQUIRED", (c) => edit(c.root, "knowledge/02-requirements/requirements.md", (t) => t.replace("**Verified by:** TEST-CAMP-999", "**Verified by:** TEST-CAMP-001").replace("- **Verified by:** TEST-CAMP-001\n", "- **Verified by:** TEST-CAMP-001\n- **Basis:** inferred from apps/web/src/campaigns\n- **Inferred on:** 2026-09-30\n")));
   add("confirm", "confirm", (c) => ["confirm", "REQ-CAMP-001", "--by", "islam", c.root]);
   add("adopt", "adopt docs", (c) => ["adopt", "docs", "apps/web", c.root]);
+  add("change", "change a requirement", (c) => ["change", "REQ-CAMP-001", "--after", "A planner saves a campaign with a name of at most 80 characters.", "--why", "SRC-CAMP-003", "--by", "ai:claude", c.root]);
+  add("change", "change (not a requirement, workflow or contract)", (c) => ["change", "CAP-CAMP-001", c.root], "INVALID_INPUT");
   add("adapter", "adapter new", (c) => ["adapter", "new", "demo-stack", "--includes", "node", c.root]);
   add("adapter", "adapter test", (c) => ["adapter", "test", "demo-stack", c.root]);
   add("adapter", "adapter test (a manifest that does not fit)", (c) => ["adapter", "test", "broken-stack", c.root], "CHECK_FAILED", (c) => {

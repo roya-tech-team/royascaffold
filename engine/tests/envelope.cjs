@@ -11,7 +11,7 @@ function parse(stdout) {
 function unwrap(stdout) {
   const env = parse(stdout);
   assert.equal(env.ok, true, `expected a success envelope, got: ${stdout.slice(0, 300)}`);
-  assert.equal(env.contract, "1.0");
+  assert.equal(env.contract, "1.1");
   return env.data;
 }
 

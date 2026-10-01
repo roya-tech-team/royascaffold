@@ -33,6 +33,8 @@ const KIND_BY_PREFIX = {
   QST: "question",
   ASM: "assumption",
   SRC: "source",
+  FLAG: "flag",
+  EXP: "experiment",
 };
 
 function kindOf(id) {
@@ -78,6 +80,9 @@ const RELATION_KEYS = {
   migrates: "migrates",
   "owned by": "owned_by",
   "called components": "calls",
+  // 1.6: flags hide records; a deprecated record names the slice that removes it.
+  hides: "hides",
+  "removal slice": "removal_slice",
 };
 
 function relationType(fieldKey) {
@@ -86,7 +91,8 @@ function relationType(fieldKey) {
 
 const HORIZONS = ["now", "next", "later", "backlog"];
 
-const CHANGE_KINDS = ["feature", "bug", "polish", "refactor", "chore", "knowledge", "migration"];
+// 1.6: `evolve` changes a requirement, workflow or contract (it holds the delta); `rollback` reverts a change or release.
+const CHANGE_KINDS = ["feature", "bug", "polish", "refactor", "chore", "knowledge", "migration", "evolve", "rollback"];
 
 // 1.3 `intent` values -> 1.4 change kind.
 const INTENT_TO_KIND = {
