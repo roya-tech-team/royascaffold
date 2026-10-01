@@ -24,9 +24,10 @@ function normalizer(ctx) {
   const text = (s) => {
     let out = slash(s);
     for (const [from, to] of places) out = out.split(from).join(to);
-    return out.split(contract.ENGINE_VERSION).join("<engine-version>").replace(/\d{8}T\d{6}Z/g, "<stamp>");
+    return out.split(contract.ENGINE_VERSION).join("<engine-version>").replace(/\d{8}T\d{6}Z/g, "<stamp>").replace(/fingerprint [0-9a-f]{12}/g, "fingerprint <fingerprint>");
   };
   const walk = (v, key) => {
+    if (typeof v === "string" && key === "fingerprint") return "<fingerprint>"; // it covers the engine version
     if (typeof v === "string") return text(v);
     if (typeof v === "number" && /^(hours|ms|avg_ms|median_hours|max_hours|approx_tokens)$/.test(key || "")) return "<varies>";
     if (Array.isArray(v)) return v.map((x) => walk(x, key));

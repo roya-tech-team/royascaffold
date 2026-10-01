@@ -47,7 +47,7 @@ function exportFull(start) {
     engine: require("../contract.cjs").ENGINE_VERSION,
     links,
     status: { features: plain(status.features), requirements: plain(status.requirements), slices: plain(status.slices), changes: plain(status.changes), tasks: plain(status.tasks) },
-    evidence: [...model.evidence.values()],
+    evidence: [...model.evidence.values()].map((e) => ({ ...e, stale: status.stale.has(e.id) })),
     issues: model.issues,
     board: renderBoard(model, status, computeDrift(model, status)),
   };

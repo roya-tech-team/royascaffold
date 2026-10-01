@@ -1,6 +1,12 @@
 {
   "adapter": "node",
   "legacyAppTypes": [],
+  "lockfiles": [
+    "package-lock.json",
+    "npm-shrinkwrap.json",
+    "yarn.lock",
+    "pnpm-lock.yaml"
+  ],
   "tests": {
     "files": [
       "(\\.test\\.|\\.spec\\.)[cm]?[jt]sx?$",

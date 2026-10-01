@@ -15,6 +15,7 @@ const LABELS = {
   done: "✅ Done",
   released: "🚀 Released",
   "partly-done": "⚠️ Partly done",
+  stale: "⚠️ Stale",
   blocked: "⛔ Blocked",
 };
 
@@ -93,13 +94,20 @@ function deriveStatus(model) {
     for (const x of model.incoming.get(reqId) || []) if (x.type === "verifies") out.add(x.from);
     return out;
   };
+  // E1.2: evidence whose fingerprint no longer matches the code is stale: it proves nothing until
+  // `royascaff verify` runs again.
+  const stale = require("../fingerprint.cjs").staleEvidence(model);
   const proofOf = (reqId) => {
     // D6: an NFR whose Measure is a metric expression is proven by the latest evidence that reports
     // that metric, when the value satisfies it — and by nothing else.
     const m = measureOf(model.records.get(reqId));
     if (m) return m.ok ? [m.evidence] : [];
     const targets = new Set([reqId, ...verifiersOf(reqId)]);
-    return [...model.evidence.values()].filter((e) => e.result === "pass" && e.proves.some((p) => targets.has(p))).map((e) => e.id);
+    return [...model.evidence.values()].filter((e) => e.result === "pass" && !stale.has(e.id) && e.proves.some((p) => targets.has(p))).map((e) => e.id);
+  };
+  const staleProofOf = (reqId) => {
+    const targets = new Set([reqId, ...verifiersOf(reqId)]);
+    return [...model.evidence.values()].filter((e) => e.result === "pass" && stale.has(e.id) && e.proves.some((p) => targets.has(p))).map((e) => e.id);
   };
   const measures = new Map();
   function measureOf(rec) {
@@ -111,7 +119,7 @@ function deriveStatus(model) {
     if (x) {
       const [, name, op, raw] = x;
       const want = Number(raw);
-      const latest = [...model.evidence.values()].filter((e) => e.metrics && name in e.metrics).sort((a, b) => Number((b.id.match(/(\d+)$/) || [0, 0])[1]) - Number((a.id.match(/(\d+)$/) || [0, 0])[1]))[0];
+      const latest = [...model.evidence.values()].filter((e) => e.metrics && name in e.metrics && !stale.has(e.id)).sort((a, b) => Number((b.id.match(/(\d+)$/) || [0, 0])[1]) - Number((a.id.match(/(\d+)$/) || [0, 0])[1]))[0];
       const v = latest ? latest.metrics[name] : null;
       const ok = latest ? ({ ">=": v >= want, "≥": v >= want, "<=": v <= want, "≤": v <= want, "==": v === want, "=": v === want, "<": v < want, ">": v > want })[op] : false;
       result = { expr: `${name} ${op} ${raw}`, name, value: v, evidence: latest ? latest.id : null, ok: Boolean(ok) };
@@ -133,25 +141,27 @@ function deriveStatus(model) {
     if (!REQUIREMENT_KINDS.includes(rec.kind)) continue;
     const delivering = [...model.slices.values()].filter((s) => s.delivers.includes(rec.id)).map((s) => slices.get(s.id));
     const proof = proofOf(rec.id);
+    const staleProof = proof.length ? [] : staleProofOf(rec.id);
     const baseline = delivering.length ? [] : baselineFor(rec);
     let state;
     if (draftFiles.has(rec.file)) state = "idea";
-    else if (baseline.length) state = proof.length ? "done" : "checking";
+    else if (baseline.length) state = proof.length ? "done" : staleProof.length ? "stale" : "checking";
     else if (!delivering.length && rec.kind === "nfr" && proof.length) state = "done"; // R6: an NFR is proven by evidence, with or without a slice
     else if (!delivering.length) state = "outlined";
     else {
-      const perSlice = delivering.map((s) => (s.state === "done" && !proof.length ? "checking" : s.state));
+      const perSlice = delivering.map((s) => (s.state === "done" && !proof.length ? (staleProof.length ? "stale" : "checking") : s.state));
       if (perSlice.every((s) => s === "done")) {
         const releasedAll = delivering.every((s) => s.change && changes.get(s.change).released);
         state = releasedAll ? "released" : "done";
       } else if (perSlice.includes("blocked")) state = "blocked";
+      else if (perSlice.includes("stale")) state = "stale";
       else if (perSlice.includes("checking")) state = "checking";
       else if (perSlice.includes("building")) state = "building";
       else if (perSlice.includes("designing")) state = "designing";
       else if (perSlice.includes("done")) state = "partly-done";
       else state = "planned";
     }
-    requirements.set(rec.id, { id: rec.id, state, measure: measureOf(rec), slices: delivering.map((s) => s.id), baseline: baseline.map((c) => c.id), evidence: proof, missingEvidence: (delivering.some((s) => s.state === "done") || baseline.length > 0) && !proof.length });
+    requirements.set(rec.id, { id: rec.id, state, measure: measureOf(rec), slices: delivering.map((s) => s.id), baseline: baseline.map((c) => c.id), evidence: proof, staleEvidence: staleProof, missingEvidence: (delivering.some((s) => s.state === "done") || baseline.length > 0) && !proof.length });
   }
 
   // Open bug/polish changes that affect a requirement or feature (they never make it Done).
@@ -181,6 +191,7 @@ function deriveStatus(model) {
     let state;
     if (!sl.length && !rq.length) state = "idea";
     else if (sl.some((s) => s.state === "blocked")) state = "blocked";
+    else if (rq.some((r) => r.state === "stale")) state = "stale";
     else if (all.every((s) => s === "done" || s === "released")) state = all.every((s) => s === "released") ? "released" : "done";
     else if (unprovenNfrs.length && rq.every((r) => r.state === "done" || r.state === "released" || unprovenNfrs.includes(r))) state = "checking";
     else if (all.some((s) => s === "done" || s === "released" || s === "partly-done")) state = "partly-done";
@@ -217,7 +228,7 @@ function deriveStatus(model) {
     for (const s of slices.values()) s.approval = (features.get(s.feature) || {}).approval || "none";
   }
 
-  return { tasks, changes, slices, requirements, features };
+  return { tasks, changes, slices, requirements, features, stale };
 }
 
 module.exports = { deriveStatus, LABELS, STAGE_LABELS, STAGE_OF_STATUS, DEPTHS };

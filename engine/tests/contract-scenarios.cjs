@@ -85,7 +85,9 @@ function scenarios() {
   add("usage", "usage", (c) => ["usage", c.root]);
   add("cache", "cache clear", (c) => ["cache", "clear", c.root]);
   add("measure", "measure (an outcome that does not exist)", (c) => ["measure", "OUT-CAMP-404", "--result", "met", "--note", "x", c.root], "UNKNOWN_ID");
-  
+  add("verify", "verify", (c) => ["verify", "CHG-CAMP-002", c.root, "--by", "ai:claude"], "ok", (c) => edit(c.root, "profile.md", (t) => ["Build", "Typecheck", "Lint"].reduce((s, k) => s.replace(new RegExp(`- \\*\\*${k}:\\*\\* .*`), `- **${k}:**`), t).replace(/- \*\*Test:\*\* .*/, "- **Test:** node -e 0")));
+  add("judge", "judge (the pack)", (c) => ["judge", "CHG-CAMP-002", c.root]);
+  add("judge", "judge (the builder may not)", (c) => ["judge", "CHG-CAMP-002", "--line", "REQ-CAMP-003#1", "--verdict", "met", "--reason", "looks right", "--by", "ai:claude", c.root], "GATE_REFUSED");
   add("continue", "continue", (c) => ["continue", c.root]);
   add("adopt", "adopt", (c) => ["adopt", c.root]);
   add("migrate", "migrate (dry run, 1.3)", (c) => ["migrate", c.old, "--from", "1.3", "--code", "KUNI"]);

@@ -98,6 +98,12 @@ Work (every command records an event and refreshes STATUS.md):
   measure OUT-… --result met|not-met --note "…"   A person records whether an outcome was reached
   smoke init [path] [--app APP-…]  Install the Playwright smoke check (web-ui): three screen sizes, console
                                    errors, every button, screenshots with the evidence
+  verify <CHG-…> [path]            The machine proof of a change: runs every check (the apps' and the adapters'),
+                                   judges each typed acceptance line, writes evidence with a fingerprint.
+                                   Evidence turns stale when the code it covered changes
+  judge <CHG-…> [path]             Build the judge pack for a separate AI session (not the builder) and record its
+                                   verdicts: --verdict-file FILE, or --line KEY --verdict met|not-met|unclear --reason "…".
+                                   High and critical risk need a met verdict for every must line before verified
   check <CHG-…> --red [path]       Run only the Test commands and expect them to FAIL: proof the acceptance
                                    tests came first (needed for must requirements before verified)
   task <TASK-…> done "…" --skip-checks "<reason>"     Mark done although the quick checks failed
@@ -113,8 +119,8 @@ Work done outside the engine (git):
   show <ID> [path] [--json]    Show one record: fields, links, slices, changes, backlinks
   new feature "<title>" [path] [--horizon now|next|later|backlog] [--outcome OUT-…] [--priority P]
                                Add a feature (CAP-) to the roadmap
-  new slice <CAP-…> "<title>" [path] [--delivers REQ-…,REQ-…] [--depends SLC-…] [--order N]
-                               Add a slice (SLC-) to a feature
+  new slice <CAP-…> "<title>" [path] [--delivers REQ-…,REQ-…] [--depends SLC-…] [--order N] [--foundation]
+                               Add a slice (SLC-) to a feature (--foundation: it is done before the feature's other slices open)
   export [path] [--out FILE]   Export all project Markdown to the JSON exchange format
   render FILE --out DIR        Render an exchange JSON file back to Markdown files
   roundtrip [path] [--json]    Check Markdown -> JSON -> Markdown is byte-identical
@@ -133,7 +139,7 @@ Options:
   --help        Show this help
 `;
 
-const VALUE_FLAGS = new Set(["out", "path", "horizon", "outcome", "priority", "owner", "delivers", "depends", "order", "change", "feature", "since", "limit", "to", "reason", "by", "note", "kind", "affects", "risk", "result", "goal", "inputs", "paths", "checks", "done", "as", "slice", "files", "name", "code", "app", "skip-checks", "realizes", "verifies", "check", "from", "topic", "basis", "scope", "outside-ok", "adapter", "includes", "applies", "quote", "covered", "bar", "approval-token"]);
+const VALUE_FLAGS = new Set(["out", "path", "horizon", "outcome", "priority", "owner", "delivers", "depends", "order", "change", "feature", "since", "limit", "to", "reason", "by", "note", "kind", "affects", "risk", "result", "goal", "inputs", "paths", "checks", "done", "as", "slice", "files", "name", "code", "app", "skip-checks", "realizes", "verifies", "check", "from", "topic", "basis", "scope", "outside-ok", "adapter", "includes", "applies", "quote", "covered", "bar", "approval-token", "verdict-file", "verdict", "line"]);
 const SUBCOMMANDS = new Set(["new", "task", "backups"]);
 
 function parseArgs(argv) {
@@ -341,6 +347,26 @@ function main() {
       if (r.result === "pass" || r.result === "red") return reply(r, text);
       const failing = (r.results || []).filter((x) => !x.pass).map((x) => `${x.app} ${x.kind}: ${x.command}`);
       return reply(r, text, { refuse: { code: "CHECK_FAILED", message: r.manual ? `${r.id}: a failed check was recorded` : `${r.id}: the ${r.mode} checks failed`, missing: failing } });
+    }
+    case "verify": {
+      if (!target) fail("Usage: royascaff verify <CHG-…> [path]");
+      const r = work.verify(flags.path || positional[2] || ".", target, flags);
+      const lines = r.results.map((x) => `  ${x.pass ? "✓" : x.timedOut ? "⏱" : "✗"} ${x.app} ${x.kind.padEnd(9)} ${x.command}  (${(x.ms / 1000).toFixed(1)}s)`);
+      for (const x of r.results.filter((y) => !y.pass)) lines.push(`--- ${x.kind} output (last lines) ---`, x.tail);
+      lines.push("Acceptance lines:", ...r.lines.map((l) => `  ${l.result === "pass" ? "✓" : l.result === "fail" ? "✗" : "·"} ${l.key} [${l.type || "untyped"}] ${l.text}${l.why ? `  (${l.why})` : ""}`));
+      lines.push(`Verify ${r.result.toUpperCase()} — evidence ${r.evidence}, fingerprint ${r.fingerprint}${r.proves.length ? `, proves ${r.proves.join(", ")}` : ""}`);
+      if (r.repair && r.repair.blocked) lines.push(`Repair limit reached (${r.repair.failures} failed attempts): the change is blocked; a person decides.`);
+      else if (r.result === "fail") lines.push(`Repair attempts left: ${r.repair.left} of ${r.repair.limit}`);
+      if (r.result === "pass") return reply(r, `${lines.join("\n")}\n`);
+      USAGE.result = "refused";
+      const failing = [...r.results.filter((x) => !x.pass).map((x) => `${x.app} ${x.kind}: ${x.command}`), ...r.lines.filter((l) => l.result === "fail").map((l) => `${l.key} [${l.type}] ${l.text}`)];
+      return reply(r, `${lines.join("\n")}\n`, { refuse: { code: "CHECK_FAILED", message: `${r.id}: verify failed`, missing: failing } });
+    }
+    case "judge": {
+      if (!target) fail("Usage: royascaff judge <CHG-…> [--verdict-file FILE | --line KEY --verdict met|not-met|unclear --reason \"…\"] [--by ai:<tool>:judge]");
+      const r = work.judge(flags.path || positional[2] || ".", target, flags);
+      if (r.mode === "pack") return reply(r, `Judge pack for ${r.id}: ${r.pack}\nBuilt by: ${r.builders.join(", ") || "unknown"} (they cannot judge). ${r.lines.length} line(s) to judge.\nGive the pack to a separate AI session; record its verdicts with: royascaff judge ${r.id} --verdict-file <file> --by ai:<tool>:judge\n`);
+      return reply(r, `${r.id}: ${r.recorded.length} verdict(s) recorded by ${r.judge} (${r.summary.met} met · ${r.summary.notMet} not met · ${r.summary.unclear} unclear) in ${r.evidence}${r.state.ok ? "\nEvery required line is met." : ""}${r.state.unclear.length ? `\nUnclear lines go to a person: ${r.state.unclear.join(", ")}` : ""}${r.repair.blocked ? `\nRepair limit reached: the change is blocked; a person decides.` : ""}\n`);
     }
     case "init": {
       const r = setup.initProject(flags.path || target || ".", flags);

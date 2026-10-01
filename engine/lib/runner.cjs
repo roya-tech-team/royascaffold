@@ -66,7 +66,19 @@ function runChecks(model, apps, mode, options = {}) {
   const kinds = mode === "quick" ? QUICK : mode === "red" ? RED : FULL;
   const timeoutMs = (Number(model.profile.check_timeout_seconds) || 600) * 1000;
   const results = [];
-  for (const app of apps) for (const kind of kinds) if (app.commands[kind]) results.push(runOne(model.repo, app, kind, app.commands[kind], timeoutMs, kind === "Smoke" ? smokeEnv(model, app, options) : {}));
+  for (const app of apps) {
+    for (const kind of kinds) if (app.commands[kind]) results.push(runOne(model.repo, app, kind, app.commands[kind], timeoutMs, kind === "Smoke" ? smokeEnv(model, app, options) : {}));
+    // E1.2: checks the adapters declare (`checks: { <type>: <command> }`) that the app does not declare itself.
+    // `unit` stands in for the app's Test and `smoke` for its Smoke command.
+    if (mode === "full") {
+      for (const [type, command] of Object.entries(options.extra || {})) {
+        const own = { unit: "Test", smoke: "Smoke" }[type];
+        if (own && app.commands[own]) continue;
+        if (typeof command !== "string" || !command.trim()) continue;
+        results.push(runOne(model.repo, app, type, command.trim(), timeoutMs, type === "smoke" ? smokeEnv(model, app, options) : {}));
+      }
+    }
+  }
   return { mode, results, pass: results.length > 0 && results.every((r) => r.pass) };
 }
 

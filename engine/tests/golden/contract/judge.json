@@ -1,0 +1,52 @@
+[
+  {
+    "scenario": "judge (the pack)",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "judge",
+      "data": {
+        "id": "CHG-CAMP-002",
+        "mode": "pack",
+        "pack": "project/.cache/judge/CHG-CAMP-002.md",
+        "fingerprint": "<fingerprint>",
+        "builders": [
+          "ai:claude"
+        ],
+        "lines": [
+          {
+            "key": "REQ-CAMP-003#1",
+            "req": "REQ-CAMP-003",
+            "must": true,
+            "type": null,
+            "text": "Calendar shows scheduled posts"
+          }
+        ],
+        "text": "# Judge pack · CHG-CAMP-002 · Calendar with posts\n\n> Kind feature · risk medium · status in-progress · fingerprint <fingerprint>\n\n## How to judge\n\nYou are not the builder. Judge each line below against the requirement, the design and the evidence, from this pack and the code. Do not trust the builder's notes.\n- Built by: ai:claude. Your identity must differ from these, and an AI judge uses `ai:<tool>:judge`.\n- For every line give a verdict: `met`, `not-met` or `unclear`, and a reason. Say `unclear` when you cannot tell: it goes to a person.\n- Write the verdicts as JSON, then record them:\n\n```json\n{\n  \"judge\": \"ai:<tool>:judge\",\n  \"verdicts\": [\n    {\n      \"line\": \"REQ-CAMP-003#1\",\n      \"verdict\": \"met\",\n      \"reason\": \"what you saw\"\n    }\n  ]\n}\n```\n\n  royascaff judge CHG-CAMP-002 --verdict-file <file> --by ai:<tool>:judge\n\n## Requirements and lines to judge\n\n### REQ-CAMP-003 — Calendar shows scheduled posts (must)\n\nLines to judge:\n\n- REQ-CAMP-003#1 [untyped] Calendar shows scheduled posts (the requirement has no acceptance lines: judge it as a whole)\n\n## Design (the change's After-state)\n\n_Not written._\n\n## Evidence\n\n- EVD-CAMP-003 · verify · pass · proves TEST-CAMP-001\n\n## Screenshots\n\n_None._\n\n## Changes\n\nNo diff available (no git history for this change). The files its evidence covers:\n\n- apps/web/README.md\n"
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "judge (the builder may not)",
+    "exit": 1,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": false,
+      "command": "judge",
+      "error": {
+        "code": "GATE_REFUSED",
+        "message": "ai:claude built the tasks of CHG-CAMP-002 and cannot judge it: the builder is not its own judge",
+        "missing": [
+          "a different identity: a separate AI session with the judge role (--by ai:<tool>:judge), or a person who did not build it"
+        ]
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

@@ -190,7 +190,12 @@ test("gate verified → reconciled: the project must validate; high risk needs a
   work.taskAction(root, "TASK-CAMP-004", "done", "posts on their day", AI);
   work.recordCheck(root, "CHG-CAMP-002", { result: "pass", ...AI });
   write(root, "changes/CHG-CAMP-002/evidence/evidence.md", "### EVD-CAMP-003 · Calendar\n\n- **Result:** pass\n- **Proves:** REQ-CAMP-003\n");
+  // E1.3: a high-risk change needs a met verdict from a judge who did not build it.
   let r = work.advance(root, "CHG-CAMP-002", "reconciled", ME);
+  assert.equal(r.reached, "in-progress");
+  assert.deepEqual(failed(r), ["judge"]);
+  work.judge(root, "CHG-CAMP-002", { line: "REQ-CAMP-003#1", verdict: "met", reason: "posts show on their day", by: "ai:codex:judge" });
+  r = work.advance(root, "CHG-CAMP-002", "reconciled", ME);
   assert.equal(r.reached, "verified");
   assert.deepEqual(failed(r), ["approval"]);
   write(root, "knowledge/broken.md", "### REQ-CAMP-099 · Broken\n\n- **Feature:** CAP-CAMP-404\n");

@@ -18,6 +18,7 @@ const EVENT_TYPES = [
   "task.blocked",
   "check.run",
   "check.red",
+  "judge.recorded",
   "manual.recorded",
   "backup.saved",
   "refinement.confirmed",

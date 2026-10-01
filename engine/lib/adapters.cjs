@@ -74,10 +74,14 @@ const uniq = (xs) => [...new Set(xs)];
 // wins, and the first smoke/deps/tests definition is kept (later ones may add smoke env).
 function policyOf(names, projectDir = null) {
   const list = expanded(names, projectDir);
-  const p = { adapters: list, requiresDocs: [], visualBar: false, personLook: null, smoke: null, tests: null, deps: null, legacyAppTypes: {} };
+  const p = { adapters: list, requiresDocs: [], visualBar: false, personLook: null, smoke: null, tests: null, deps: null, legacyAppTypes: {}, checks: {}, lockfiles: [], layers: [], scan: null };
   for (const n of list) {
     const m = manifest(n, projectDir);
     p.requiresDocs = uniq([...p.requiresDocs, ...(m.requiresDocs || [])]);
+    p.checks = { ...p.checks, ...(m.checks || {}) }; // check type -> command (verify runs the ones an app does not declare)
+    p.lockfiles = uniq([...p.lockfiles, ...(m.lockfiles || [])]); // files that pin the dependencies (part of an evidence fingerprint)
+    p.layers = uniq([...p.layers, ...((m.layers && m.layers.requires) || [])]); // knowledge layers a module of this stack needs
+    if (m.scan) p.scan = { ...(p.scan || {}), ...m.scan, patterns: { ...((p.scan || {}).patterns || {}), ...(m.scan.patterns || {}) } };
     if (m.visualBar) p.visualBar = true;
     if (m.personLook) {
       const prev = p.personLook;

@@ -55,8 +55,8 @@ try {
 // Every command the CLI dispatches (a test keeps this in step with bin/royascaff.cjs).
 const COMMANDS = [
   "adopt", "advance", "approve", "backups", "block", "brief", "cache", "check", "context", "continue", "contract",
-  "events", "export", "feedback", "index", "init", "install", "log", "measure", "migrate", "new", "next", "open", "record",
-  "refine", "render", "roundtrip", "show", "smoke", "status", "task", "tasks", "trace", "unblock", "usage", "validate", "where",
+  "events", "export", "feedback", "index", "init", "install", "judge", "log", "measure", "migrate", "new", "next", "open", "record",
+  "refine", "render", "roundtrip", "show", "smoke", "status", "task", "tasks", "trace", "unblock", "usage", "validate", "verify", "where",
 ];
 
 // The engine's messages are plain sentences. Until each throw site carries its own `code`, this

@@ -126,7 +126,8 @@ function traceCommand(start, id) {
       const ev = model.evidence.get(e);
       lines.push(`${pad}  evidence ${t(e)}   ${ev.result}${ev.change ? ` (${ev.change})` : ""}`);
     }
-    if (!d.evidence.length) lines.push(`${pad}  evidence none yet`);
+    for (const e of d.staleEvidence || []) lines.push(`${pad}  evidence ${t(e)}   ⚠ stale (the code or tests changed since it ran: royascaff verify)`);
+    if (!d.evidence.length && !(d.staleEvidence || []).length) lines.push(`${pad}  evidence none yet`);
     const code = (model.incoming.get(rid) || []).filter((x) => ["realizes", "implements"].includes(x.type) || (x.type === "satisfies" && model.records.get(x.from)?.kind === "component")).map((x) => x.from);
     const realizedBy = r.relations.filter((x) => x.type === "realized_by").map((x) => x.to);
     for (const cmp of [...new Set([...code, ...realizedBy])]) {

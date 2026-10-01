@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/judge.schema.json",
+  "title": "royascaff judge: data",
+  "description": "The `data` of the contract envelope for `judge`. Without verdict flags (mode `pack`) it builds the judge pack for a separate AI session; with verdicts (mode `verdicts`) it records them as judge evidence. A builder identity is refused with GATE_REFUSED; an AI turning an unclear line into met is refused with HUMAN_REQUIRED. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": ["id", "mode", "fingerprint"],
+  "properties": {
+    "id": { "type": "string" },
+    "mode": { "type": "string", "enum": ["pack", "verdicts"] },
+    "fingerprint": { "type": "string" },
+    "pack": { "type": "string" },
+    "text": { "type": "string" },
+    "builders": { "type": "array", "items": { "type": "string" } },
+    "lines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["key", "req"],
+        "properties": {
+          "key": { "type": "string" },
+          "req": { "type": "string" },
+          "must": { "type": "boolean" },
+          "type": { "type": ["string", "null"] },
+          "text": { "type": "string" }
+        }
+      }
+    },
+    "judge": { "type": "string" },
+    "evidence": { "type": "string" },
+    "result": { "type": "string", "enum": ["met", "not-met", "unclear"] },
+    "recorded": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["line", "verdict", "reason"],
+        "properties": {
+          "line": { "type": "string" },
+          "verdict": { "type": "string", "enum": ["met", "not-met", "unclear"] },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "properties": { "met": { "type": "integer" }, "notMet": { "type": "integer" }, "unclear": { "type": "integer" } }
+    },
+    "state": {
+      "type": "object",
+      "properties": {
+        "needed": { "type": "boolean" },
+        "ok": { "type": "boolean" },
+        "missing": { "type": "array", "items": { "type": "string" } },
+        "notMet": { "type": "array", "items": { "type": "string" } },
+        "unclear": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "repair": {
+      "type": "object",
+      "properties": { "failures": { "type": "integer" }, "limit": { "type": "integer" }, "left": { "type": "integer" }, "blocked": { "type": "boolean" } }
+    }
+  }
+}

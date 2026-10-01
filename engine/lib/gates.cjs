@@ -268,10 +268,19 @@ const RULES = {
     if (rule === "per-requirement") {
       const delivered = [...new Set(change.slices.flatMap((s) => (model.slices.get(s) ? model.slices.get(s).delivers : [])))];
       const missing = delivered.filter((r) => !(status.requirements.get(r) && status.requirements.get(r).evidence.length));
-      out.push(check("evidence", missing.length === 0, missing.length ? `add passing evidence for ${missing.join(", ")}` : "every delivered requirement has passing evidence"));
+      const staleOnes = missing.filter((r) => status.requirements.get(r) && status.requirements.get(r).staleEvidence && status.requirements.get(r).staleEvidence.length);
+      out.push(check("evidence", missing.length === 0, missing.length ? `${staleOnes.length ? `the evidence for ${staleOnes.join(", ")} is stale (the code or tests changed since it ran): run royascaff verify ${change.id}; ` : ""}${missing.length > staleOnes.length ? `add passing evidence for ${missing.filter((r) => !staleOnes.includes(r)).join(", ")}` : ""}`.replace(/; $/, "") : "every delivered requirement has passing evidence"));
     } else if (rule === "any") {
-      const own = [...model.evidence.values()].filter((e) => e.change === change.id && e.result === "pass");
-      out.push(check("evidence", own.length > 0, own.length ? `${own.length} passing evidence record(s)` : "add passing evidence (for a bug: a regression check)"));
+      const isStale = (e) => Boolean(status.stale && status.stale.has(e.id));
+      const own = [...model.evidence.values()].filter((e) => e.change === change.id && e.result === "pass" && !isStale(e));
+      const staleOwn = [...model.evidence.values()].filter((e) => e.change === change.id && e.result === "pass" && isStale(e));
+      out.push(check("evidence", own.length > 0, own.length ? `${own.length} passing evidence record(s)` : staleOwn.length ? `the evidence is stale (the code or tests changed since it ran): run royascaff verify ${change.id}` : "add passing evidence (for a bug: a regression check)"));
+    }
+    // E1.3: the separate judge. High and critical risk need `met` for every must line; a recorded not-met stands
+    // until the line is judged again; `unclear` goes to a person.
+    if (model.is14) {
+      const j = require("./judge.cjs").gateCheck(model, change);
+      if (j) out.push(check(j.id, j.ok, j.message, { judge: true, ...(j.approval ? { approval: true, say: j.say } : {}) }));
     }
     return out;
   },

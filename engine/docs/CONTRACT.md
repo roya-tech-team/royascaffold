@@ -82,8 +82,8 @@ This is the rule for gates and checks: `advance` refused is `GATE_REFUSED`; `che
 ## 3. Commands
 
 `contract.commands` lists them. Today: adopt, advance, approve, backups, block, brief, cache, check, context,
-continue, contract, events, export, feedback, index, init, install, log, measure, migrate, new, next, open,
-record, refine, render, roundtrip, show, smoke, status, task, tasks, trace, unblock, usage, validate, where.
+continue, contract, events, export, feedback, index, init, install, judge, log, measure, migrate, new, next, open,
+record, refine, render, roundtrip, show, smoke, status, task, tasks, trace, unblock, usage, validate, verify, where.
 
 Each one has a schema for its `data`. The schemas list the fields a program may rely on. They allow
 extra fields, because adding a field is a minor change (section 6).

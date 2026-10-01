@@ -30,6 +30,7 @@ Add requirements with `royascaff new record requirement "<observable behavior>" 
 A signed-in client opens Results and sees each campaign with its reach.
 
 **Acceptance**
-- Campaigns are listed newest first, with reach as a whole number.
-- A campaign without data shows "No data yet", not zero.
+- [unit] Campaigns are listed newest first, with reach as a whole number.
+- [e2e] A campaign without data shows "No data yet", not zero.
+- [manual] The list reads well on a 375 px phone.
 ```

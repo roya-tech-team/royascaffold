@@ -770,7 +770,7 @@
                     "value": "TEST-CAMP-001"
                   }
                 ],
-                "body": "\nA planner enters client, name, start and end dates, and channels, then saves.\n\n**Acceptance**\n- Saving without a name shows an inline error.\n- The end date cannot be before the start date.\n"
+                "body": "\nA planner enters client, name, start and end dates, and channels, then saves.\n\n**Acceptance**\n- [e2e] Saving without a name shows an inline error.\n- [unit] The end date cannot be before the start date.\n"
               },
               {
                 "type": "record",
@@ -1261,7 +1261,7 @@
             "segments": [
               {
                 "type": "text",
-                "text": "# Log · project\n\n> Written by `royascaff`. Do not edit by hand.\n\n| When | Event | Target | By | Git | Note |\n|---|---|---|---|---|---|\n| 2026-09-19T15:00Z | project.approved | project | islam | a1b2c3d | hash 0fad272542 · base a075e25d10 · 1 question(s) answered · 1 assumption(s) confirmed |\n| 2026-09-19T16:00Z | feature.approved | CAP-CAMP-001 | islam | a1b2c3d | hash e4cebe4e6b · 2 requirement(s) · 1 slice(s) |\n| 2026-09-19T16:00Z | feature.approved | CAP-CAMP-002 | islam | a1b2c3d | hash 6b1470ad62 · 2 requirement(s) · 2 slice(s) |\n| 2026-09-19T16:00Z | feature.approved | CAP-CAMP-003 | islam | a1b2c3d | hash 1a0a339ee3 · 1 requirement(s) · 1 slice(s) |\n"
+                "text": "# Log · project\n\n> Written by `royascaff`. Do not edit by hand.\n\n| When | Event | Target | By | Git | Note |\n|---|---|---|---|---|---|\n| 2026-09-19T15:00Z | project.approved | project | islam | a1b2c3d | hash 0fad272542 · base a075e25d10 · 1 question(s) answered · 1 assumption(s) confirmed |\n| 2026-09-19T16:00Z | feature.approved | CAP-CAMP-001 | islam | a1b2c3d | hash 4a8b5e4255 · 2 requirement(s) · 1 slice(s) |\n| 2026-09-19T16:00Z | feature.approved | CAP-CAMP-002 | islam | a1b2c3d | hash 6b1470ad62 · 2 requirement(s) · 2 slice(s) |\n| 2026-09-19T16:00Z | feature.approved | CAP-CAMP-003 | islam | a1b2c3d | hash 1a0a339ee3 · 1 requirement(s) · 1 slice(s) |\n"
               }
             ]
           },
@@ -2397,6 +2397,7 @@
               "evidence": [
                 "EVD-CAMP-001"
               ],
+              "staleEvidence": [],
               "missingEvidence": false,
               "openFixes": [
                 "CHG-CAMP-003"
@@ -2413,6 +2414,7 @@
               "evidence": [
                 "EVD-CAMP-002"
               ],
+              "staleEvidence": [],
               "missingEvidence": false,
               "openFixes": []
             },
@@ -2425,6 +2427,7 @@
               ],
               "baseline": [],
               "evidence": [],
+              "staleEvidence": [],
               "missingEvidence": false,
               "openFixes": []
             },
@@ -2437,6 +2440,7 @@
               ],
               "baseline": [],
               "evidence": [],
+              "staleEvidence": [],
               "missingEvidence": false,
               "openFixes": []
             },
@@ -2449,6 +2453,7 @@
               ],
               "baseline": [],
               "evidence": [],
+              "staleEvidence": [],
               "missingEvidence": false,
               "openFixes": []
             },
@@ -2459,6 +2464,7 @@
               "slices": [],
               "baseline": [],
               "evidence": [],
+              "staleEvidence": [],
               "missingEvidence": false,
               "openFixes": []
             }
@@ -2646,26 +2652,32 @@
           {
             "id": "EVD-CAMP-001",
             "change": "CHG-CAMP-001",
+            "kind": "check",
             "result": "pass",
             "proves": [
               "TEST-CAMP-001"
             ],
             "metrics": {},
             "git": "c3d4e5f",
+            "fingerprint": null,
             "file": "changes/CHG-CAMP-001/evidence/evidence.md",
-            "line": 3
+            "line": 3,
+            "stale": false
           },
           {
             "id": "EVD-CAMP-002",
             "change": "CHG-CAMP-001",
+            "kind": "check",
             "result": "pass",
             "proves": [
               "REQ-CAMP-002"
             ],
             "metrics": {},
             "git": "c3d4e5f",
+            "fingerprint": null,
             "file": "changes/CHG-CAMP-001/evidence/evidence.md",
-            "line": 10
+            "line": 10,
+            "stale": false
           }
         ],
         "issues": [],

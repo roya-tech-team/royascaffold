@@ -66,6 +66,10 @@ function changeAction(model, status, change) {
     const blockedTask = change.tasks.map((t) => status.tasks.get(t)).find((t) => t.state === "blocked");
     const lastBlock = (change.events || []).filter((e) => e.target === change.id && e.event === "change.blocked").pop();
     const why = blockedTask ? `${blockedTask.id} is blocked${blockedTask.last && blockedTask.last.note ? `: ${blockedTask.last.note}` : ""}` : lastBlock && lastBlock.note ? lastBlock.note : "change is blocked";
+    if (lastBlock && require("../repair.cjs").isRepairBlock(lastBlock)) {
+      // E1.4: the repair loop ran out of attempts: a person decides.
+      return { kind: "repair-blocked", change: change.id, stage: c.stage, human: true, text: `Waiting for a person: ${change.id} — ${lastBlock.note}. Look at the failing lines (royascaff show ${change.id}), then royascaff unblock ${change.id} --reason "…" to allow more attempts`, say: `royascaff unblock ${change.id} --reason "…"` };
+    }
     return { kind: "unblock", change: change.id, stage: c.stage, human: true, text: `Unblock ${change.id} — ${why}`, say: blockedTask ? `royascaff task ${blockedTask.id} start` : `royascaff unblock ${change.id}` };
   }
   if (["understand", "design", "plan"].includes(c.stage)) return stageWork(model, status, change, c.stage);
@@ -78,7 +82,16 @@ function changeAction(model, status, change) {
     if (c.tasksDone < c.tasksTotal) return { kind: "waiting", change: change.id, stage: "build", text: `${change.id}: the remaining tasks are blocked or wait for others`, say: `royascaff show ${change.id}` };
     const gate = gateFor(model, status, change, "verified");
     const fails = failing(gate);
+    // E1.4: a failed verify (or a judge's not-met) while repair attempts are left is a repair action.
+    const repairAction = require("../repair.cjs").actionFor(model, change);
+    if (repairAction) return { ...repairAction, card: CARD.build, gate };
     if (!fails.length) return { kind: "advance", change: change.id, stage: "check", card: CARD.check, gate, text: `All ${c.tasksTotal} tasks of ${change.id} are done and proven: royascaff advance ${change.id} --to verified`, say: "royascaff continue" };
+    if (fails.every((f) => f.judge)) {
+      const human = fails.every((f) => f.approval);
+      return human
+        ? { kind: "judge-unclear", human: true, change: change.id, stage: "check", card: CARD.check, gate, text: `Waiting for a person: ${fails.map((f) => f.message).join("; ")}`, say: fails[0].say }
+        : { kind: "judge", change: change.id, stage: "check", card: CARD.check, gate, text: `A separate AI session (not the builder) judges ${change.id}: ${fails.map((f) => f.message).join("; ")}`, say: `royascaff judge ${change.id}` };
+    }
     if (fails.every((f) => f.approval)) {
       const own = fails.find((f) => f.say) || fails[0];
       return { kind: "person-check", human: true, change: change.id, stage: "check", card: CARD.check, gate, text: `Waiting for a person: ${fails.map((f) => f.message).join("; ")}`, say: own.say || "royascaff continue" };
@@ -102,8 +115,10 @@ function readySlices(model, status) {
   for (const slice of model.slices.values()) {
     const s = status.slices.get(slice.id);
     if (s.state !== "planned") continue;
-    const waitsFor = slice.depends_on.filter((d) => status.slices.has(d) && status.slices.get(d).state !== "done");
     const feature = model.features.get(slice.feature);
+    // E1.4: foundation before breadth: the slices a feature marks as foundation are done before its others open.
+    const foundationWaits = !slice.foundation && feature ? feature.foundation.filter((f) => f !== slice.id && status.slices.has(f) && status.slices.get(f).state !== "done") : [];
+    const waitsFor = [...new Set([...slice.depends_on.filter((d) => status.slices.has(d) && status.slices.get(d).state !== "done"), ...foundationWaits])];
     const horizon = feature ? feature.horizon : "backlog";
     const waitsForNow = horizon !== "now" ? now.map((f) => f.id) : [];
     out.push({ slice: slice.id, feature: slice.feature, horizon, order: slice.order || 0, ready: waitsFor.length === 0 && waitsForNow.length === 0, waitsFor, waitsForNow, foundation: deliversMustNfr(model, slice), approval: s.approval || null });

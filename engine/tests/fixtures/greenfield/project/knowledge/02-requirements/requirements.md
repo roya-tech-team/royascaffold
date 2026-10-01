@@ -25,8 +25,8 @@ owners: [product-owner]
 A planner enters client, name, start and end dates, and channels, then saves.
 
 **Acceptance**
-- Saving without a name shows an inline error.
-- The end date cannot be before the start date.
+- [e2e] Saving without a name shows an inline error.
+- [unit] The end date cannot be before the start date.
 
 ### REQ-CAMP-002 · List campaigns per client
 

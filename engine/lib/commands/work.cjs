@@ -109,6 +109,12 @@ function openSlice(start, sliceId, flags = {}) {
   }
   const waits = slice.depends_on.filter((d) => status.slices.has(d) && status.slices.get(d).state !== "done");
   if (waits.length && !flags.force) throw new Error(`${sliceId} waits for ${waits.join(", ")} (use --force to open it anyway)`);
+  // E1.4: foundation before breadth. A slice the feature marks as foundation is done before its other slices open.
+  const feat = model.features.get(slice.feature);
+  const foundationWaits = feat && !slice.foundation && !flags.recording ? feat.foundation.filter((f) => f !== sliceId && status.slices.has(f) && status.slices.get(f).state !== "done") : [];
+  if (foundationWaits.length && !(flags.force && isHuman(who(flags, model.repo)))) {
+    throw require("../authority.cjs").refuse("GATE_REFUSED", `${sliceId} waits for the foundation slice(s) ${foundationWaits.join(", ")} of ${slice.feature}: build the foundation first${flags.force ? " (--force is for people only)" : "; a person may open it anyway with --force"}`, foundationWaits.map((f) => `${f} done`));
+  }
   let refinement = null;
   if (!model.approvals && drift.gitEnabled(model)) {
     refinement = drift.refinementCheck(model, drift.context(model), slice, slice.planned_at);
@@ -264,6 +270,13 @@ function setBlocked(start, changeId, blocked, flags = {}) {
   const { model } = load(start);
   const change = changeOf(model, changeId);
   if (blocked && !flags.reason) throw new Error('Blocking needs --reason "…"');
+  if (!blocked) {
+    // E1.4: a block set by the repair limit is lifted by a person, who decides to allow more attempts.
+    const lastBlock = (change.events || []).filter((e) => e.target === change.id && /^change\.(un)?blocked$/.test(e.event)).pop();
+    if (lastBlock && require("../repair.cjs").isRepairBlock(lastBlock) && !isHuman(who(flags, model.repo))) {
+      throw require("../authority.cjs").refuse("HUMAN_REQUIRED", `${changeId} was blocked by the repair limit: only a person decides to allow more attempts`, ["a person: royascaff unblock " + changeId + ' --reason "…"']);
+    }
+  }
   record(model, change, { event: blocked ? "change.blocked" : "change.unblocked", target: changeId, note: flags.reason || "" }, flags);
   refreshBoard(start);
   return { id: changeId, blocked };
@@ -426,13 +439,21 @@ function recordCheck(start, changeId, flags = {}) {
     return { id: changeId, result, manual: true, note };
   }
   if (flags.red) return redCheck(start, model, change, flags);
+  return runChecksFor(start, model, status, change, flags, { verify: false });
+}
+
+// check (quick or full) and verify share one run. verify also runs the checks the adapters declare, judges
+// every typed acceptance line by what ran, and counts the failure for the repair loop.
+function runChecksFor(start, model, status, change, flags, { verify }) {
+  const changeId = change.id;
   const apps = runner.appsForChange(model, change);
+  const policy = require("../adapters.cjs").policy(model);
   if (!apps.length) throw new Error("No commands to run: add Build / Typecheck / Lint / Test to the APP- records in project/profile.md, or record a manual result with --result pass|fail --note \"…\"");
-  const mode = flags.quick ? "quick" : "full";
+  const mode = flags.quick && !verify ? "quick" : "full";
   // WP-C5: the Smoke command writes its screenshots next to the evidence of this run.
   const evdId = mode === "full" ? nextEvidenceId(model) : null;
   const shots = evdId && apps.some((a) => a.commands.Smoke) ? path.join(model.root, change.dir, "evidence", "shots", evdId) : null;
-  const run = runner.runChecks(model, apps, mode, { shots });
+  const run = runner.runChecks(model, apps, mode, { shots, ...(verify ? { extra: policy.checks } : {}) });
   // WP-C7 (P9): unused dependencies fail the full check; placeholder content is a warning.
   let content = { placeholders: [] };
   if (mode === "full" && model.is14) {
@@ -442,13 +463,40 @@ function recordCheck(start, changeId, flags = {}) {
     if (rules) run.results.push(rules);
     run.pass = run.results.length > 0 && run.results.every((x) => x.pass);
   }
-  const evidence = mode === "full" ? writeCheckEvidence(model, status, change, run, apps, evdId, shots, content.placeholders) : null;
-  const note = `${mode === "quick" ? "quick " : ""}${run.pass ? "pass" : "fail"}: ${apps.map((a) => a.id).join(", ")} — ${runner.summary(run)}${evidence ? ` (${evidence.id})` : ""}`;
+  const lines = verify ? require("../acceptance.cjs").evaluateLines(model, change, run.results) : [];
+  const linesFailing = lines.filter((l) => l.result === "fail").map((l) => l.key);
+  const result = run.pass && !linesFailing.length ? "pass" : "fail";
+  const fp = mode === "full" ? require("../fingerprint.cjs").fingerprintOf(model, change) : null;
+  const evidence = mode === "full" ? writeCheckEvidence(model, status, change, run, apps, evdId, shots, content.placeholders, { fingerprint: fp, kind: verify ? "verify" : "check", lines, result }) : null;
+  const note = `${mode === "quick" ? "quick " : ""}${result}: ${apps.map((a) => a.id).join(", ")} — ${runner.summary(run)}${evidence ? ` (${evidence.id})` : ""}${linesFailing.length ? ` · failing lines: ${linesFailing.join(", ")}` : ""}`;
   const after = buildModel(start);
   record(after, after.changes.get(changeId), { event: "check.run", target: changeId, note }, flags);
+  const out = { id: changeId, mode, result, results: run.results, evidence: evidence ? evidence.id : null, proves: evidence ? evidence.proves : [], shots: evidence ? evidence.shots : [], placeholders: content.placeholders, sourceReaders: model.is14 && mode === "full" ? require("../testsfirst.cjs").sourceReaders(model, apps) : [] };
+  if (verify) {
+    out.mode = "verify";
+    out.fingerprint = fp.hash;
+    out.lines = lines;
+    out.pending = lines.filter((l) => l.result === "pending").map((l) => l.key);
+    // The repair loop: after `repair_limit` failed attempts the change is blocked and a person decides.
+    const repair = require("../repair.cjs");
+    const reloaded = buildModel(start);
+    const state = repair.stateOf(reloaded, reloaded.changes.get(changeId));
+    out.repair = { failures: state.failures, limit: state.limit, left: Math.max(0, state.limit - state.failures) };
+    if (result === "fail" && state.exceeded) {
+      record(reloaded, reloaded.changes.get(changeId), { event: "change.blocked", target: changeId, note: repair.BLOCK_NOTE(state) }, flags);
+      out.repair.blocked = true;
+    }
+  }
   refreshBoard(start);
-  const sourceReaders = model.is14 && mode === "full" ? require("../testsfirst.cjs").sourceReaders(model, apps) : [];
-  return { id: changeId, mode, result: run.pass ? "pass" : "fail", results: run.results, evidence: evidence ? evidence.id : null, proves: evidence ? evidence.proves : [], shots: evidence ? evidence.shots : [], placeholders: content.placeholders, sourceReaders };
+  return out;
+}
+
+// verify <CHG-…>: the machine proof of a change (plan file 01 §4).
+function verify(start, changeId, flags = {}) {
+  const { model, status } = load(start);
+  const change = changeOf(model, changeId);
+  if (!["ready", "in-progress", "verified", "reconciled", "closed"].includes(change.status)) throw new Error(`${changeId} is ${change.status}: verify runs once the work is under way (royascaff advance ${changeId} --to ready)`);
+  return runChecksFor(start, model, status, change, flags, { verify: true });
 }
 
 // Evidence for a full run. It proves the runner-checked tests (`Check: runner:…`) that verify the
@@ -463,14 +511,15 @@ function nextEvidenceId(model) {
   return `EVD-${model.code}-${String(nextNum).padStart(3, "0")}`;
 }
 
-function writeCheckEvidence(model, status, change, run, apps, evdId = null, shotsDir = null, placeholders = []) {
+function writeCheckEvidence(model, status, change, run, apps, evdId = null, shotsDir = null, placeholders = [], opts = {}) {
+  const passed = opts.result ? opts.result === "pass" : run.pass;
   const scope = new Set([...change.slices.flatMap((s) => (model.slices.get(s) ? model.slices.get(s).delivers : [])), ...change.affects]);
   const proves = [];
   // R7: when the run covered every app that has a Test command, the whole suite passed, so it
   // proves every runner-checked TEST- in the project, not only this change's.
   const testApps = runner.appsOf(model).filter((a) => a.commands.Test).map((a) => a.id);
   const wholeSuite = testApps.length > 0 && testApps.every((id) => apps.some((a) => a.id === id));
-  if (run.pass) {
+  if (passed) {
     for (const rec of model.records.values()) {
       if (rec.kind !== "test" || !/^runner:/i.test(String(rec.fields.Check || "").trim())) continue;
       if (wholeSuite) { proves.push(rec.id); continue; }
@@ -489,19 +538,111 @@ function writeCheckEvidence(model, status, change, run, apps, evdId = null, shot
     "",
     `### ${id} · Full checks: ${apps.map((a) => a.title).join(", ")}`,
     "",
-    `- **Result:** ${run.pass ? "pass" : "fail"}`,
+    `- **Result:** ${passed ? "pass" : "fail"}`,
+    ...(opts.kind && opts.kind !== "check" ? [`- **Kind:** ${opts.kind}`] : []),
     ...(proves.length ? [`- **Proves:** ${proves.join(", ")}`] : []),
     `- **Command:** ${run.results.map((r) => `\`${r.command}\``).join(" · ")}`,
     `- **Git commit:** ${headShort(model.repo) || "—"}`,
+    ...(opts.fingerprint ? [`- **Fingerprint:** ${opts.fingerprint.hash} (${opts.fingerprint.files} file(s) and the engine version)`] : []),
     `- **Checks:** ${run.results.map((r) => `${r.kind.toLowerCase()} ${r.pass ? "pass" : r.timedOut ? "timed out" : `fail (exit ${r.exit})`} ${(r.ms / 1000).toFixed(1)}s`).join(" · ")}`,
     ...(shots.length ? [`- **Screenshots:** ${shots.map((s) => `shots/${id}/${s}`).join(", ")}`] : []),
     ...(metricsLine(run) ? [`- **Metrics:** ${metricsLine(run)}`] : []),
     ...(placeholders.length ? [`- **Placeholders:** ${require("../content.cjs").placeholderLine(placeholders)}`] : []),
+    ...(opts.lines && opts.lines.length ? ["", "**Acceptance lines**", "", ...opts.lines.map((l) => `- ${l.key} · ${l.type || "untyped"} · ${l.result}${l.why ? ` (${l.why})` : ""}`)] : []),
     "",
   ];
   for (const r of run.results.filter((x) => !x.pass)) lines.push(`**${r.kind} failed** in \`${r.cwd}\`:`, "", "```text", r.tail || "(no output)", "```", "");
   fs.appendFileSync(file, lines.join("\n"));
   return { id, proves, shots };
+}
+
+// judge <CHG-…>: build the judge pack for a separate AI session (no verdict flags), or record that
+// session's verdicts (--verdict-file FILE, or --line KEY --verdict met|not-met|unclear --reason "…").
+function readVerdicts(flags) {
+  const J = require("../judge.cjs");
+  if (flags["verdict-file"] !== undefined) {
+    if (flags["verdict-file"] === true) throw Object.assign(new Error("--verdict-file needs a file: --verdict-file verdicts.json"), { code: "INVALID_INPUT" });
+    let data;
+    try {
+      data = JSON.parse(fs.readFileSync(String(flags["verdict-file"]), "utf8"));
+    } catch (error) {
+      throw Object.assign(new Error(`Cannot read the verdict file ${flags["verdict-file"]}: ${error.message}`), { code: "INVALID_INPUT" });
+    }
+    const list = Array.isArray(data) ? data : data && data.verdicts;
+    if (!Array.isArray(list) || !list.length) throw Object.assign(new Error('The verdict file needs {"verdicts": [{"line", "verdict", "reason"}, …]}'), { code: "INVALID_INPUT" });
+    return { judge: Array.isArray(data) ? null : data.judge || null, verdicts: list.map((v) => ({ line: String(v.line || ""), verdict: String(v.verdict || "").toLowerCase(), reason: String(v.reason || "").trim() })) };
+  }
+  if (flags.verdict !== undefined || flags.line !== undefined) {
+    if (!flags.line || flags.line === true || !flags.verdict || flags.verdict === true) throw Object.assign(new Error('Usage: royascaff judge <CHG-…> --line REQ-…#1 --verdict met|not-met|unclear --reason "…"'), { code: "INVALID_INPUT" });
+    return { judge: null, verdicts: [{ line: String(flags.line), verdict: String(flags.verdict).toLowerCase(), reason: String(flags.reason === true ? "" : flags.reason || "").trim() }] };
+  }
+  return null;
+}
+
+function judge(start, changeId, flags = {}) {
+  const J = require("../judge.cjs");
+  const { model, status } = load(start);
+  const change = changeOf(model, changeId);
+  const input = readVerdicts(flags);
+  const lines = J.linesOf(model, change);
+  if (!input) {
+    const pack = J.buildPack(model, status, change);
+    const file = path.join(model.root, ".cache", "judge", `${changeId}.md`);
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, pack.text);
+    return { id: changeId, mode: "pack", pack: require("../project.cjs").toPosix(path.relative(model.repo, file)), fingerprint: pack.fingerprint, builders: pack.builders, lines: lines.map(({ key, req, must, type, text }) => ({ key, req, must, type, text })), text: pack.text };
+  }
+  const { refuse } = require("../authority.cjs");
+  const by = flags.by || input.judge || who({}, model.repo);
+  if (!by || by === "unknown") throw refuse("GATE_REFUSED", "Say who is judging: --by ai:<tool>:judge (an AI session) or --by <your name>", ["an identity for the judge"]);
+  if (J.builders(change).has(by)) throw refuse("GATE_REFUSED", `${by} built the tasks of ${changeId} and cannot judge it: the builder is not its own judge`, ["a different identity: a separate AI session with the judge role (--by ai:<tool>:judge), or a person who did not build it"]);
+  if (!isHuman(by) && !J.JUDGE_ID.test(by)) throw refuse("GATE_REFUSED", `An AI judge identifies itself as ai:<tool>:judge (got "${by}")`, ["--by ai:<tool>:judge"]);
+  if (!["ready", "in-progress", "verified", "reconciled"].includes(change.status)) throw new Error(`${changeId} is ${change.status}: the judge reviews work that is under way (ready, in-progress or verified)`);
+  const fp = require("../fingerprint.cjs").fingerprintOf(model, change);
+  if (![...model.evidence.values()].some((e) => e.change === changeId)) throw refuse("GATE_REFUSED", `${changeId} has no evidence yet: run royascaff verify ${changeId} first, so the judge has evidence to read`, [`royascaff verify ${changeId}`]);
+  const known = new Map(lines.map((l) => [l.key, l]));
+  const before = J.verdictsOf(model, change, fp.hash);
+  for (const v of input.verdicts) {
+    if (!known.has(v.line)) throw Object.assign(new Error(`${v.line || "(no line)"} is not a line of ${changeId}: ${[...known.keys()].join(", ") || "none"}`), { code: "UNKNOWN_ID" });
+    if (!J.VERDICTS.includes(v.verdict)) throw Object.assign(new Error(`The verdict of ${v.line} must be one of ${J.VERDICTS.join(", ")} (got "${v.verdict}")`), { code: "INVALID_INPUT" });
+    if (!v.reason) throw Object.assign(new Error(`Say why: the verdict of ${v.line} needs a reason`), { code: "INVALID_INPUT" });
+    const prev = before.get(v.line);
+    if (prev && prev.verdict === "unclear" && v.verdict === "met" && !isHuman(by)) throw refuse("HUMAN_REQUIRED", `${v.line} is unclear: only a person turns an unclear line into met`, ["a person: royascaff judge " + changeId + ` --line ${v.line} --verdict met --reason "…" --by <your name>`]);
+  }
+  const counts = { met: 0, "not-met": 0, unclear: 0 };
+  for (const v of input.verdicts) counts[v.verdict] += 1;
+  const overall = counts["not-met"] ? "not-met" : counts.unclear ? "unclear" : "met";
+  const id = nextEvidenceId(model);
+  const dir = path.join(model.root, change.dir, "evidence");
+  const file = path.join(dir, "judge.md");
+  fs.mkdirSync(dir, { recursive: true });
+  if (!fs.existsSync(file)) fs.writeFileSync(file, `# Judge verdicts · ${changeId}\n\n> **What:** verdicts of the judge on each acceptance line (written by the CLI)\n> **Read when:** a line was not met or unclear, or to see who judged\n`);
+  fs.appendFileSync(file, `\n${[
+    `### ${id} · Judge verdict`,
+    "",
+    `- **Kind:** judge`,
+    `- **Result:** ${overall}`,
+    `- **Judge:** ${by}`,
+    `- **Git commit:** ${headShort(model.repo) || "—"}`,
+    `- **Fingerprint:** ${fp.hash} (${fp.files} file(s) and the engine version)`,
+    "",
+    ...input.verdicts.map((v) => `- ${v.line} · ${v.verdict} · ${v.reason.replace(/\s+/g, " ")}`),
+    "",
+  ].join("\n")}`);
+  const after = buildModel(start);
+  const notMet = input.verdicts.filter((v) => v.verdict === "not-met").map((v) => v.line);
+  record(after, after.changes.get(changeId), { event: "judge.recorded", target: changeId, by, note: `met ${counts.met} · not-met ${counts["not-met"]} · unclear ${counts.unclear}${notMet.length ? ` · not-met lines: ${notMet.join(", ")}` : ""} · ${id}` }, flags);
+  const repair = require("../repair.cjs");
+  const reloaded = buildModel(start);
+  const rs = repair.stateOf(reloaded, reloaded.changes.get(changeId));
+  let blocked = false;
+  if (notMet.length && rs.exceeded) {
+    record(reloaded, reloaded.changes.get(changeId), { event: "change.blocked", target: changeId, by, note: repair.BLOCK_NOTE(rs) }, flags);
+    blocked = true;
+  }
+  const gs = J.gateState(reloaded, reloaded.changes.get(changeId));
+  refreshBoard(start);
+  return { id: changeId, mode: "verdicts", judge: by, evidence: id, fingerprint: fp.hash, result: overall, recorded: input.verdicts, summary: { met: counts.met, notMet: counts["not-met"], unclear: counts.unclear }, state: { needed: gs.needed, missing: gs.missing, notMet: gs.notMet, unclear: gs.unclear, ok: gs.ok }, repair: { failures: rs.failures, limit: rs.limit, left: rs.left, blocked } };
 }
 
 // record <commit…> --as bug|polish|refactor|chore [--affects …] "note"  (or --files a,b without git)
@@ -590,4 +731,4 @@ function backups(start, action, id) {
   return listBackups(model);
 }
 
-module.exports = { openSlice, openOther, newTask, advance, approve, setBlocked, taskAction, recordCheck, recordWork, refine, backups };
+module.exports = { openSlice, openOther, newTask, advance, approve, setBlocked, taskAction, recordCheck, verify, judge, recordWork, refine, backups };

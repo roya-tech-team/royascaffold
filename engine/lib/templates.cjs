@@ -43,7 +43,7 @@ function planTemplate(id) {
 // Record kinds that `royascaff new record <kind>` can create, with their home file.
 const RECORD_KINDS = {
   outcome: { prefix: "OUT", doc: "brd", file: "knowledge/01-business/brd.md", fields: (o) => [["Owner", o.owner]], body: "Measured by: _how you will know this outcome is reached._" },
-  requirement: { prefix: "REQ", doc: "requirements", file: "knowledge/02-requirements/requirements.md", fields: (o) => [["Priority", o.priority || "should"], ["Owner", o.owner], ["Feature", o.feature || ""], ["Verified by", o.verifies || ""]], body: "_What the user can do, and why (never how)._\n\n**Acceptance**\n- _A checkable criterion, including a failure case._" },
+  requirement: { prefix: "REQ", doc: "requirements", file: "knowledge/02-requirements/requirements.md", fields: (o) => [["Priority", o.priority || "should"], ["Owner", o.owner], ["Feature", o.feature || ""], ["Verified by", o.verifies || ""]], body: "_What the user can do, and why (never how)._\n\n**Acceptance**\n- _[unit|e2e|metric|manual|inspection] A checkable criterion, including a failure case._" },
   nfr: { prefix: "NFR", doc: "nfr", file: "knowledge/02-requirements/nfr.md", fields: (o) => [["Priority", o.priority || "should"], ["Owner", o.owner], ["Feature", o.feature || ""]], body: "**Measure:** _a number or a check, e.g. loads within 2 seconds._" },
   concept: { prefix: "CON", doc: "domain", file: "knowledge/03-domain/domain.md", fields: (o) => [["Owner", o.owner]], body: "_What this business word means._" },
   invariant: { prefix: "INV", doc: "domain", file: "knowledge/03-domain/domain.md", fields: (o) => [["Owner", o.owner], ["Constrained by", o.feature || ""]], body: "_The rule that must always hold, and what happens when something would break it._" },

@@ -150,7 +150,8 @@ function buildModel(start) {
       if (rec.kind === "feature") {
         const horizon = (r.fields.Horizon || "").trim().toLowerCase();
         if (horizon && !HORIZONS.includes(horizon)) issue("error", "invalid-horizon", `${rec.id} has horizon "${horizon}" (use now, next, later, backlog)`, `${rec.file}:${rec.line}`);
-        const feature = { id: rec.id, horizon: HORIZONS.includes(horizon) ? horizon : "backlog", horizonSet: Boolean(horizon), milestone: (relations.find((x) => x.type === "milestone") || {}).to || null, slices: [] };
+        // E1.4: `- **Foundation:** SLC-…` marks the slices that must be done before the feature's other slices open.
+        const feature = { id: rec.id, horizon: HORIZONS.includes(horizon) ? horizon : "backlog", horizonSet: Boolean(horizon), milestone: (relations.find((x) => x.type === "milestone") || {}).to || null, slices: [], foundation: findIds(r.fields.Foundation || "").filter((x) => /^SLC-/.test(x)) };
         model.features.set(rec.id, feature);
         const start = bodyStartLine(seg, rec.line);
         for (const table of readTables(seg.body || "")) {
@@ -232,6 +233,10 @@ function buildModel(start) {
   for (const slice of model.slices.values()) {
     const feature = slice.feature && model.features.get(slice.feature);
     if (feature && !feature.slices.includes(slice.id)) feature.slices.push(slice.id);
+    slice.foundation = Boolean(feature && feature.foundation.includes(slice.id));
+  }
+  for (const feature of model.features.values()) {
+    for (const sid of feature.foundation) if (!feature.slices.includes(sid)) issue("warning", "foundation-not-a-slice-of-feature", `${feature.id} marks ${sid} as foundation, but it is not one of its slices`, `${model.records.get(feature.id).file}:${model.records.get(feature.id).line}`);
   }
 
   // 3. Tasks belong to the change whose folder contains them.
@@ -266,7 +271,8 @@ function buildModel(start) {
     const result = resultText.startsWith("pass") ? "pass" : resultText.startsWith("fail") ? "fail" : resultText ? "other" : "missing";
     const proves = [...new Set(rec.relations.filter((x) => ["proves", "verifies", "satisfies"].includes(x.type)).map((x) => x.to))];
     const metrics = Object.fromEntries([...String(rec.fields.Metrics || "").matchAll(/([\w.-]+)=(-?\d+(?:\.\d+)?)/g)].map((m) => [m[1], Number(m[2])]));
-    model.evidence.set(rec.id, { id: rec.id, change: change ? change.id : null, result, proves, metrics, git: rec.fields["Git commit"] || null, file: rec.file, line: rec.line });
+    const fingerprint = (String(rec.fields.Fingerprint || "").match(/^[0-9a-f]{8,}/) || [null])[0];
+    model.evidence.set(rec.id, { id: rec.id, change: change ? change.id : null, kind: String(rec.fields.Kind || "check").trim().toLowerCase() || "check", result, proves, metrics, git: rec.fields["Git commit"] || null, fingerprint, file: rec.file, line: rec.line });
   }
 
   for (const change of model.changes.values()) {
@@ -333,6 +339,7 @@ function validate(model, issue) {
   }
   unmappedSource(model, issue);
   if (model.is14) requiredFields(model, issue);
+  if (model.is14) require("../acceptance.cjs").untypedIssues(model, issue);
   if (model.is14) componentHygiene(model, issue);
   for (const feature of model.features.values()) {
     const rec = known.get(feature.id);

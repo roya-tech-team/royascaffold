@@ -114,8 +114,17 @@ function newSlice(start, featureId, title, opts = {}) {
     bodyLines.splice(end, 0, "", ...SLICE_HEADER.split("\n"), row);
   }
   seg.body = bodyLines.join("\n");
+  if (opts.foundation) {
+    // E1.4: `- **Foundation:** SLC-…` on the feature marks slices that are done before its others open.
+    seg.fields = seg.fields || [];
+    const marked = seg.fields.find((x) => x.key === "Foundation");
+    if (marked) {
+      marked.value = `${marked.value}, ${id}`;
+      delete marked.raw;
+    } else seg.fields.push({ key: "Foundation", value: id });
+  }
   transactional(start, file, renderMarkdown(parsed));
-  return { id, feature: featureId, order, delivers, depends, planned_at: plannedAt, file: rec.file };
+  return { id, feature: featureId, order, delivers, depends, planned_at: plannedAt, file: rec.file, ...(opts.foundation ? { foundation: true } : {}) };
 }
 
 // new record <kind> "<title>" [--feature CAP-…] [--priority …] [--code globs] [--realizes …] [--verifies …] [--check …]

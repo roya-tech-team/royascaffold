@@ -1,0 +1,49 @@
+[
+  {
+    "scenario": "verify",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "verify",
+      "data": {
+        "id": "CHG-CAMP-002",
+        "mode": "verify",
+        "result": "pass",
+        "results": [
+          {
+            "app": "APP-CAMP-WEB",
+            "kind": "Test",
+            "command": "node -e 0",
+            "cwd": "apps/web",
+            "exit": 0,
+            "ms": "<varies>",
+            "pass": true,
+            "metrics": {},
+            "tail": ""
+          }
+        ],
+        "evidence": "EVD-CAMP-003",
+        "proves": [
+          "TEST-CAMP-001"
+        ],
+        "shots": [],
+        "placeholders": [],
+        "sourceReaders": [],
+        "fingerprint": "<fingerprint>",
+        "lines": [],
+        "pending": [],
+        "repair": {
+          "failures": 0,
+          "limit": 2,
+          "left": 2
+        }
+      },
+      "warnings": [],
+      "events": [
+        "EVT-CHG-CAMP-002-0011"
+      ]
+    }
+  }
+]

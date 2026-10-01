@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/verify.schema.json",
+  "title": "royascaff verify: data",
+  "description": "The `data` of the contract envelope for `verify`. The machine proof of a change: the checks that ran, the result for every typed acceptance line, the evidence record and its fingerprint. A failed verify is an envelope failure with code CHECK_FAILED; the same data is in error.details. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": ["id", "mode", "result", "fingerprint", "lines"],
+  "properties": {
+    "id": { "type": "string" },
+    "mode": { "type": "string", "enum": ["verify"] },
+    "result": { "type": "string", "enum": ["pass", "fail"] },
+    "evidence": { "type": ["string", "null"] },
+    "fingerprint": { "type": "string" },
+    "results": { "type": "array" },
+    "proves": { "type": "array", "items": { "type": "string" } },
+    "shots": { "type": "array", "items": { "type": "string" } },
+    "lines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["key", "req", "result"],
+        "properties": {
+          "key": { "type": "string" },
+          "req": { "type": "string" },
+          "type": { "type": ["string", "null"] },
+          "text": { "type": "string" },
+          "result": { "type": "string", "enum": ["pass", "fail", "pending"] },
+          "why": { "type": "string" }
+        }
+      }
+    },
+    "pending": { "type": "array", "items": { "type": "string" } },
+    "repair": {
+      "type": "object",
+      "properties": {
+        "failures": { "type": "integer" },
+        "limit": { "type": "integer" },
+        "left": { "type": "integer" },
+        "blocked": { "type": "boolean" }
+      }
+    },
+    "placeholders": { "type": "array" },
+    "sourceReaders": { "type": "array" }
+  }
+}

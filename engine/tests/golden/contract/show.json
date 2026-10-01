@@ -70,6 +70,7 @@
           "evidence": [
             "EVD-CAMP-001"
           ],
+          "staleEvidence": [],
           "missingEvidence": false,
           "openFixes": [
             "CHG-CAMP-003"

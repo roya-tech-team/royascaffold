@@ -51,7 +51,9 @@ function renderBoard(model, status, drift = null) {
     const d = status.features.get(f.id);
     const notes = [];
     if (d.openFixes.length) notes.push(`open fix: ${d.openFixes.join(", ")}`);
-    const missing = d.requirements.filter((r) => status.requirements.get(r).missingEvidence);
+    const staleReqs = d.requirements.filter((r) => status.requirements.get(r).state === "stale");
+    if (staleReqs.length) notes.push(`⚠ stale evidence (the code changed since it ran; run royascaff verify): ${staleReqs.join(", ")}`);
+    const missing = d.requirements.filter((r) => status.requirements.get(r).missingEvidence && !staleReqs.includes(r));
     if (missing.length) notes.push(`⚠ no passing evidence: ${missing.join(", ")}`);
     if (drift && drift.featureChanged.has(f.id)) notes.push(`⚠️ changed since verified: ${drift.featureChanged.get(f.id).join(", ")}`);
     if (d.unprovenNfrs && d.unprovenNfrs.length) notes.push(`prove ${d.unprovenNfrs.join(", ")}`);

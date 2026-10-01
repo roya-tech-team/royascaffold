@@ -28,6 +28,7 @@
           "index",
           "init",
           "install",
+          "judge",
           "log",
           "measure",
           "migrate",
@@ -47,6 +48,7 @@
           "unblock",
           "usage",
           "validate",
+          "verify",
           "where"
         ],
         "adapters": [
