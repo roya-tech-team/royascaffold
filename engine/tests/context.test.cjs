@@ -42,6 +42,17 @@ test("a pack holds the task, its rules, where it fits, the change design, inputs
   assert.equal(pack(root, "TASK-CAMP-004").text, p.text, "deterministic");
 });
 
+test("a single file (not a glob or folder) in the Allowed paths does not crash the pack", () => {
+  const root = copy();
+  fs.mkdirSync(path.join(root, "apps/web/src/calendar"), { recursive: true });
+  fs.writeFileSync(path.join(root, "apps/web/src/calendar/grid.ts"), "export {};\n");
+  const plan = path.join(root, "project/changes/CHG-CAMP-002/plan.md");
+  fs.writeFileSync(plan, fs.readFileSync(plan, "utf8").split("apps/web/src/calendar/**").join("apps/web/src/calendar/grid.ts"));
+  const p = pack(root, "TASK-CAMP-004");
+  assert.match(p.text, /Change only files matching: `apps\/web\/src\/calendar\/grid\.ts`/);
+  assert.match(p.text, /Existing files in the allowed paths \(1\): `apps\/web\/src\/calendar\/grid\.ts`/);
+});
+
 test("one hop: rules the code must obey in full, other scope as titles only, 1.3 status lines dropped", () => {
   const m = buildModel(path.join(FIX, "kuni-1.3"));
   const p = buildPack(m, deriveStatus(m), "TASK-KUNI-004");

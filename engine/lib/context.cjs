@@ -55,6 +55,8 @@ function listFiles(root, rel) {
   const walk = (dirRel) => {
     const abs = path.join(root, dirRel);
     if (!fs.existsSync(abs)) return;
+    // A single file in `Allowed paths` has the file itself as its base.
+    if (fs.statSync(abs).isFile()) { out.push(dirRel); return; }
     for (const e of fs.readdirSync(abs, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
       if (e.name.startsWith(".") || e.name === "node_modules" || e.name === "dist" || e.name === "build") continue;
       const r = dirRel ? `${dirRel}/${e.name}` : e.name;
