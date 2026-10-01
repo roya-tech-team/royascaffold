@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.1/history.schema.json",
+  "title": "royascaff history: data",
+  "description": "The `data` of the contract envelope for `history`. Every version of a record: version 1 is its creation (from git, when there is any), each later version is a delta of an evolve change (`before`, `after`, `why`, the change and who approved it). `baselines` says which releases hold the record and whether its wording changed between them; `events` are the logged events about it; `commits` are the git commits that introduced or removed its heading. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": ["id", "kind", "title", "version", "versions", "baselines", "events", "commits"],
+  "properties": {
+    "id": { "type": "string" },
+    "kind": { "type": "string" },
+    "title": { "type": "string" },
+    "version": { "type": "integer" },
+    "versions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["version", "event"],
+        "properties": {
+          "version": { "type": "integer" },
+          "event": { "type": "string" },
+          "change": { "type": ["string", "null"] },
+          "change_status": { "type": "string" },
+          "by": { "type": ["string", "null"] },
+          "when": { "type": ["string", "null"] },
+          "git": { "type": ["string", "null"] },
+          "before": { "type": "string" },
+          "after": { "type": "string" },
+          "why": { "type": "string" },
+          "breaking": { "type": "boolean" },
+          "counted": { "type": "boolean" }
+        }
+      }
+    },
+    "baselines": { "type": "array", "items": { "type": "object", "required": ["release", "present"], "properties": { "release": { "type": "string" }, "present": { "type": "boolean" }, "version": { "type": "integer" }, "hash": { "type": "string" }, "changed": { "type": "boolean" } } } },
+    "events": { "type": "array", "items": { "type": "object", "required": ["event", "by", "log"], "properties": { "id": { "type": ["string", "null"] }, "when": { "type": "string" }, "event": { "type": "string" }, "by": { "type": "string" }, "note": { "type": "string" }, "log": { "type": "string" } } } },
+    "commits": { "type": "array", "items": { "type": "object", "required": ["commit"], "properties": { "commit": { "type": "string" }, "by": { "type": "string" }, "when": { "type": "string" }, "subject": { "type": "string" } } } }
+  }
+}

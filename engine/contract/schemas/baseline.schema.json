@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.1/baseline.schema.json",
+  "title": "A RoyaScaff baseline file (project/baselines/<REL-ID>.json)",
+  "description": "A frozen snapshot of the knowledge at a release. It reuses the shapes of `export`: `links` and `evidence` are the export's, `status` keeps the derived state of requirements and features. Each record has the version it had (records that can change by a delta: requirements, workflows, contracts), a hash of its wording and the wording itself, so two baselines can be compared without git. Extra fields are allowed.",
+  "type": "object",
+  "required": ["format", "format_version", "release", "records", "links", "status", "evidence"],
+  "properties": {
+    "format": { "const": "royascaff-baseline" },
+    "format_version": { "type": "integer" },
+    "contract": { "type": "string" },
+    "engine": { "type": "string" },
+    "release": { "type": "string" },
+    "title": { "type": "string" },
+    "includes": { "type": "array", "items": { "type": "string" } },
+    "created": { "type": "string" },
+    "git": { "type": ["string", "null"] },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "title", "hash", "text"],
+        "properties": {
+          "id": { "type": "string" },
+          "kind": { "type": "string" },
+          "title": { "type": "string" },
+          "version": { "type": "integer" },
+          "hash": { "type": "string" },
+          "file": { "type": "string" },
+          "text": { "type": "string" }
+        }
+      }
+    },
+    "links": {
+      "type": "array",
+      "items": { "type": "object", "required": ["from", "type", "to", "resolved"], "properties": { "from": { "type": "string" }, "type": { "type": "string" }, "to": { "type": "string" }, "resolved": { "type": "boolean" } } }
+    },
+    "status": { "type": "object", "required": ["features", "requirements"], "properties": { "features": { "type": "object" }, "requirements": { "type": "object" } } },
+    "evidence": {
+      "type": "array",
+      "items": { "type": "object", "required": ["id", "result"], "properties": { "id": { "type": "string" }, "result": { "type": "string" }, "kind": { "type": "string" }, "fingerprint": { "type": ["string", "null"] }, "stale": { "type": "boolean" }, "proves": { "type": "array", "items": { "type": "string" } } } }
+    }
+  }
+}

@@ -55,8 +55,8 @@ try {
 // Every command the CLI dispatches (a test keeps this in step with bin/royascaff.cjs).
 const COMMANDS = [
   "adapter", "adopt", "advance", "approve", "backups", "block", "brief", "cache", "change", "check", "ci", "confirm", "context", "continue", "contract",
-  "events", "export", "feedback", "index", "init", "install", "inventory", "judge", "log", "measure", "migrate", "new", "next", "open", "record",
-  "refine", "render", "roundtrip", "scan", "show", "smoke", "status", "task", "tasks", "trace", "unblock", "usage", "validate", "verify", "where",
+  "diff", "events", "export", "feedback", "history", "index", "init", "install", "inventory", "judge", "log", "measure", "migrate", "new", "next", "open", "record",
+  "refine", "release", "render", "roundtrip", "scan", "show", "smoke", "status", "task", "tasks", "trace", "unblock", "usage", "validate", "verify", "where",
 ];
 
 // The schema file of a command's `data` is contract/schemas/<name>.schema.json. `adapter.schema.json` is the

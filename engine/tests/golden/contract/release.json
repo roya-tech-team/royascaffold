@@ -1,0 +1,58 @@
+[
+  {
+    "scenario": "release (writes the baseline)",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "release",
+      "data": {
+        "release": "REL-CAMP-001",
+        "title": "1.0.0",
+        "file": "baselines/REL-CAMP-001.json",
+        "records": 59,
+        "links": 44,
+        "evidence": 3,
+        "includes": [],
+        "git": null
+      },
+      "warnings": [],
+      "events": [
+        "EVT-PROJECT-0006"
+      ]
+    }
+  },
+  {
+    "scenario": "release (a baseline is frozen)",
+    "exit": 1,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": false,
+      "command": "release",
+      "error": {
+        "code": "ALREADY_EXISTS",
+        "message": "REL-CAMP-001 already has a baseline (project/baselines/REL-CAMP-001.json): a baseline is frozen and is never rewritten"
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "release (not a release)",
+    "exit": 2,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": false,
+      "command": "release",
+      "error": {
+        "code": "INVALID_INPUT",
+        "message": "REQ-CAMP-001 is a requirement: baselines belong to releases (REL-)"
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

@@ -28,6 +28,10 @@ const EVENT_TYPES = [
   "outcome.measured",
   "record.confirmed",
   "feature.approved",
+  "baseline.written",
+  "experiment.decided",
+  "record.deprecated",
+  "adoption.planned",
 ];
 
 const COLUMNS = ["When", "Event", "Target", "By", "Git", "Note"];

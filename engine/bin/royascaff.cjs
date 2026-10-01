@@ -120,6 +120,9 @@ Work done outside the engine (git):
   open <SLC-…> --confirm-refinement   Open a slice whose requirements changed since planning
   backups [path] · backups restore <ID> [path]   List or restore automatic backups
   --by NAME  who is acting (default: ROYASCAFF_USER or git user.name; AI agents use --by ai:<tool>)
+  release <REL-…> [--baseline] [path]   Freeze the knowledge as it is now: project/baselines/<REL-…>.json (never rewritten)
+  diff <REL-A> [<REL-B>|now] [path] [--json]   What was added, changed and removed between two baselines, and the changes that did it
+  history <ID> [path] [--json] Every version of a record: the delta that made it, who, in which change; baselines and git
   show <ID> [path] [--json]    Show one record: fields, links, slices, changes, backlinks
   new feature "<title>" [path] [--horizon now|next|later|backlog] [--outcome OUT-…] [--priority P]
                                Add a feature (CAP-) to the roadmap
@@ -155,7 +158,7 @@ Options:
   --help        Show this help
 `;
 
-const VALUE_FLAGS = new Set(["out", "path", "horizon", "outcome", "priority", "owner", "delivers", "depends", "order", "change", "feature", "since", "limit", "to", "reason", "by", "note", "kind", "affects", "risk", "result", "goal", "inputs", "paths", "checks", "done", "as", "slice", "files", "name", "code", "app", "skip-checks", "realizes", "verifies", "check", "from", "topic", "basis", "scope", "outside-ok", "adapter", "includes", "applies", "quote", "covered", "bar", "approval-token", "verdict-file", "verdict", "line", "source-file", "before", "after", "why", "title", "budget"]);
+const VALUE_FLAGS = new Set(["out", "path", "horizon", "outcome", "priority", "owner", "delivers", "depends", "order", "change", "feature", "since", "limit", "to", "reason", "by", "note", "kind", "affects", "risk", "result", "goal", "inputs", "paths", "checks", "done", "as", "slice", "files", "name", "code", "app", "skip-checks", "realizes", "verifies", "check", "from", "topic", "basis", "scope", "outside-ok", "adapter", "includes", "applies", "quote", "covered", "bar", "approval-token", "verdict-file", "verdict", "line", "source-file", "before", "after", "why", "title", "budget", "hides", "remove-by", "hypothesis", "variants", "metric"]);
 const SUBCOMMANDS = new Set(["new", "task", "backups"]);
 
 function parseArgs(argv) {
@@ -508,6 +511,28 @@ function main() {
       const { changeCommand } = require("../lib/commands/evolve.cjs");
       const r = changeCommand(flags.path || positional.slice(1).find((p) => !isId(p)) || ".", positional.slice(1).filter(isId), flags);
       return reply(r, `${r.opened ? "Opened" : "Joined"} ${r.id} (evolve, risk ${r.risk}, ${r.status}) in ${r.file}\n${r.deltas.map((d) => `  Delta ${d.id} v${d.from} → v${d.to}${d.breaking ? ` BREAKING (removes ${d.removes.join(", ") || "something"})` : ""}`).join("\n")}\n${r.affected.length ? `Affected by the delta (${r.affected.length}):\n${r.affected.map((a) => `  - ${a.item} (${a.kind}) ${a.why}${a.handling ? ` → ${a.handling}` : ""}`).join("\n")}\n` : "Nothing else depends on it.\n"}Next: ${r.next}\n`);
+    }
+    case "release": {
+      // release <REL-…> [--baseline]: a frozen snapshot of the knowledge at a release (E6.2).
+      const { releaseCommand } = require("../lib/commands/evolve.cjs");
+      const r = releaseCommand(flags.path || positional[2] || ".", target, flags);
+      return reply(r, `Baseline of ${r.release} written: ${r.file} (${r.records} records, ${r.links} links, ${r.evidence} evidence records). It is frozen: commit it with the release.\n`);
+    }
+    case "diff": {
+      // diff <REL-A> [<REL-B>|now]: what changed between two baselines (E6.2).
+      const { diffCommand } = require("../lib/commands/evolve.cjs");
+      const isRef = (p) => /^(REL-[A-Z0-9-]+|now)$/.test(p);
+      const refs = positional.slice(1).filter(isRef);
+      const r = diffCommand(flags.path || positional.slice(1).find((p) => !isRef(p)) || ".", refs[0], refs[1], flags);
+      const { text, ...data } = r;
+      return reply(data, `${text}\n`);
+    }
+    case "history": {
+      // history <ID>: every version of a record, who changed it, in which change (E6.2).
+      const { historyCommand } = require("../lib/commands/evolve.cjs");
+      const r = historyCommand(flags.path || positional[2] || ".", target);
+      const { text, ...data } = r;
+      return reply(data, `${text}\n`);
     }
     case "inventory": {
       const { inventoryCommand } = require("../lib/commands/inventory.cjs");

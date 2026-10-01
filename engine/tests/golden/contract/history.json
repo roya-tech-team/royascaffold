@@ -1,0 +1,74 @@
+[
+  {
+    "scenario": "history",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "history",
+      "data": {
+        "id": "REQ-CAMP-001",
+        "kind": "requirement",
+        "title": "Create a campaign",
+        "version": 1,
+        "versions": [
+          {
+            "version": 1,
+            "event": "created",
+            "change": null,
+            "by": null,
+            "when": null,
+            "git": null,
+            "wording": "A planner enters client, name, start and end dates, and channels, then saves."
+          }
+        ],
+        "baselines": [
+          {
+            "release": "REL-CAMP-001",
+            "present": true,
+            "version": 1,
+            "hash": "8dd0f2f9ec75",
+            "changed": false
+          },
+          {
+            "release": "REL-CAMP-002",
+            "present": true,
+            "version": 1,
+            "hash": "8dd0f2f9ec75",
+            "changed": false
+          }
+        ],
+        "events": [
+          {
+            "id": "EVT-PROJECT-0005",
+            "when": "<now>",
+            "event": "record.confirmed",
+            "by": "islam",
+            "note": "requirement: Create a campaign",
+            "log": "project"
+          }
+        ],
+        "commits": []
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "history (not a record)",
+    "exit": 1,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": false,
+      "command": "history",
+      "error": {
+        "code": "UNKNOWN_ID",
+        "message": "REQ-CAMP-404 is not a record in this project"
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

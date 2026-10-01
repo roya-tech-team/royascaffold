@@ -86,5 +86,42 @@
       "warnings": [],
       "events": []
     }
+  },
+  {
+    "scenario": "new record release",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "new",
+      "data": {
+        "id": "REL-CAMP-001",
+        "kind": "release",
+        "file": "releases/releases.md"
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "new record release with its includes (writes the baseline too)",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "new",
+      "data": {
+        "id": "REL-CAMP-002",
+        "kind": "release",
+        "file": "releases/releases.md",
+        "baseline": "baselines/REL-CAMP-002.json"
+      },
+      "warnings": [],
+      "events": [
+        "EVT-PROJECT-0007"
+      ]
+    }
   }
 ]

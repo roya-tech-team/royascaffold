@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.1/diff.schema.json",
+  "title": "royascaff diff: data",
+  "description": "The `data` of the contract envelope for `diff`. What was added, changed and removed between two baselines (or one baseline and `now`, the live knowledge), with the changes (CHG-) that touched each record (`causes`). A changed record shows its version before and after and its wording before and after. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": ["from", "to", "counts", "added", "changed", "removed", "evidence"],
+  "properties": {
+    "from": { "type": "string" },
+    "to": { "type": "string" },
+    "counts": { "type": "object", "required": ["added", "changed", "removed"], "properties": { "added": { "type": "integer" }, "changed": { "type": "integer" }, "removed": { "type": "integer" }, "evidence_added": { "type": "integer" } } },
+    "by_kind": { "type": "object" },
+    "added": { "type": "array", "items": { "$ref": "#/definitions/row" } },
+    "removed": { "type": "array", "items": { "$ref": "#/definitions/row" } },
+    "changed": { "type": "array", "items": { "$ref": "#/definitions/row" } },
+    "evidence": { "type": "object", "required": ["added", "removed", "newly_stale"], "properties": { "added": { "type": "array", "items": { "type": "string" } }, "removed": { "type": "array", "items": { "type": "string" } }, "newly_stale": { "type": "array", "items": { "type": "string" } } } }
+  },
+  "definitions": {
+    "row": {
+      "type": "object",
+      "required": ["id", "kind", "title", "causes"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "type": "string" },
+        "title": { "type": "string" },
+        "version": { "type": "integer" },
+        "from_version": { "type": "integer" },
+        "to_version": { "type": "integer" },
+        "before": { "type": "string" },
+        "after": { "type": "string" },
+        "causes": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

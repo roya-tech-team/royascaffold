@@ -29,7 +29,7 @@ const examples = (name) => {
 
 test("templates: only known placeholders, a title and a header card, examples never parsed as records", () => {
   const names = listTemplates();
-  assert.deepEqual(names, ["architecture", "brd", "change", "components", "contracts", "coverage", "data", "decisions", "discovery", "domain", "experience", "nfr", "operations", "plan", "profile", "quality", "questions", "releases", "request", "requirements", "roadmap", "rules", "security", "tests"]);
+  assert.deepEqual(names, ["architecture", "brd", "change", "components", "contracts", "coverage", "data", "decisions", "discovery", "domain", "experience", "experiments", "flags", "nfr", "operations", "plan", "profile", "quality", "questions", "releases", "request", "requirements", "roadmap", "rules", "security", "tests"]);
   for (const name of names) {
     const raw = fs.readFileSync(path.join(DIR, `${name}.md`), "utf8");
     const unknown = [...raw.matchAll(/\{\{([A-Z]+)\}\}/g)].map((m) => m[1]).filter((p) => !PLACEHOLDERS.includes(p));

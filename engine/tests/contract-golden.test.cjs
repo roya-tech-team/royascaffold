@@ -28,6 +28,8 @@ function normalizer(ctx) {
   };
   const walk = (v, key) => {
     if (typeof v === "string" && key === "fingerprint") return "<fingerprint>"; // it covers the engine version
+    // An event the scenario itself wrote (a few seconds old) carries the clock; the fixtures' events are old.
+    if (typeof v === "string" && key === "when" && /^\d{4}-\d\d-\d\dT[\d:]+Z$/.test(v) && Math.abs(Date.now() - Date.parse(v)) < 6 * 3600 * 1000) return "<now>";
     if (typeof v === "string") return text(v);
     if (typeof v === "number" && /^(hours|ms|avg_ms|median_hours|max_hours|approx_tokens)$/.test(key || "")) return "<varies>";
     if (Array.isArray(v)) return v.map((x) => walk(x, key));

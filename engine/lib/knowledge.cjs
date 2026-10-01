@@ -42,6 +42,8 @@ const DOCS = [
   { kind: "tests", file: "knowledge/05-implementation/tests.md", layer: "components", producer: "plan, build", consumer: "ready gate; proof", check: "runner tests per requirement" },
   { kind: "quality", newDoc: true, file: "knowledge/06-quality/quality.md", layer: "quality", producer: "design (new doc quality)", consumer: "record gate (standard profile); packs when Quality is changed", check: "strategy written; Record: Quality changed edits it", pack: ["Quality targets", "Checks and who runs them"] },
   { kind: "operations", newDoc: true, file: "knowledge/07-operations/operations.md", layer: "quality", producer: "design (new doc operations)", consumer: "packs when Quality & operations is changed", check: "Record: Quality & operations changed edits it", pack: ["Build and deploy", "Health and monitoring"] },
+  { kind: "flags", file: "knowledge/05-implementation/flags.md", layer: null, producer: "design, build (new record flag)", consumer: "the board (flags past their removal date); outcomes (a requirement behind an off flag is not delivered)", check: "Hides resolves; Remove by date or release; overdue flags are listed" },
+  { kind: "experiments", file: "knowledge/06-quality/experiments.md", layer: null, producer: "design (new record experiment)", consumer: "measure EXP-… (a person decides); the outcome it serves", check: "Metric has the NFR form; the decision is recorded by a person" },
   { kind: "releases", file: "releases/releases.md", layer: "quality", producer: "release (new record release)", consumer: "status 🚀 Released", check: "released changes are closed" },
 ];
 

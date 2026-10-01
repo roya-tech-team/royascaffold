@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.1/release.schema.json",
+  "title": "royascaff release: data",
+  "description": "The `data` of the contract envelope for `release`. A baseline was written for a release (REL-): `file` is project/baselines/<REL-ID>.json relative to the project folder. The file holds every record with its version and hash, the typed links, the derived status of requirements and features, and the evidence with its fingerprints (`contract/schemas/baseline.schema.json`). A baseline is frozen: a second call for the same release is ALREADY_EXISTS. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": ["release", "file", "records", "links", "evidence"],
+  "properties": {
+    "release": { "type": "string" },
+    "title": { "type": "string" },
+    "file": { "type": "string" },
+    "records": { "type": "integer" },
+    "links": { "type": "integer" },
+    "evidence": { "type": "integer" },
+    "includes": { "type": "array", "items": { "type": "string" } },
+    "git": { "type": ["string", "null"] }
+  }
+}

@@ -82,8 +82,8 @@ This is the rule for gates and checks: `advance` refused is `GATE_REFUSED`; `che
 ## 3. Commands
 
 `contract.commands` lists them. Today: adapter, adopt, advance, approve, backups, block, brief, cache, change, check, ci, confirm, context,
-continue, contract, events, export, feedback, index, init, install, inventory, judge, log, measure, migrate, new, next, open,
-record, refine, render, roundtrip, scan, show, smoke, status, task, tasks, trace, unblock, usage, validate, verify, where.
+continue, contract, diff, events, export, feedback, history, index, init, install, inventory, judge, log, measure, migrate, new, next, open,
+record, refine, release, render, roundtrip, scan, show, smoke, status, task, tasks, trace, unblock, usage, validate, verify, where.
 
 Each one has a schema for its `data`. (`adapter.schema.json` is the schema of an adapter manifest, so the data of the
 `adapter` command is described by `adapter-result.schema.json`; `contract.schemaName` gives the file for a command.) The schemas list the fields a program may rely on. They allow
@@ -239,3 +239,14 @@ keeps working if it ignores what it does not know.
   (status `approved` or later). `status` and `export` show `version` on a requirement only when it is above 1 (absent
   means 1). Evidence of the old version turns stale (section 9) when a delta is approved.
 - **Change kinds.** `change.kind` can now also be `evolve` and `rollback`.
+- **Baselines.** `release <REL-…>` writes `project/baselines/<REL-ID>.json`, a frozen snapshot of the knowledge at a release:
+  every record (kind, title, version, a hash and the text of its wording), the typed links, the derived status of
+  requirements and features, and the evidence with its fingerprints (the shapes `export` uses; the file has its own
+  schema, `contract/schemas/baseline.schema.json`). It is written once: a second call is `ALREADY_EXISTS`. A release created
+  with `new record release … --includes CHG-…` gets its baseline at once (`data.baseline`).
+- **`diff <REL-A> [<REL-B>|now]`** returns what was added, changed and removed between two baselines (or one and the live
+  knowledge), with the version before and after, the wording before and after, and the changes (`causes`) that did it.
+- **`history <ID>`** returns every version of a record: version 1 is its creation (from git), each later version is a delta
+  (`before`, `after`, `why`, the change, who approved it), the baselines that hold it, its logged events and the commits that
+  introduced it. Everything is rebuilt from the repository.
+- **Events** gain `baseline.written` (the project log).

@@ -176,7 +176,15 @@ function newRecord(start, kindArg, title, opts = {}) {
     extra.push(["Source file", srcRel]);
     if (kind !== "source" && opts.quote) extra.push(["Quote", opts.quote]);
   }
-  transactional(start, file, insertRecord(content, recordBlock(kind, id, title, { owner, priority: opts.priority, feature: opts.feature, code: opts.code, realizes: list(opts.realizes), verifies: list(opts.verifies), check: opts.check, topic: opts.topic, basis: kind === "assumption" ? opts.basis : undefined, scope: opts.scope, includes: list(opts.includes), applies: list(opts.applies), quote: opts.quote, covered: list(opts.covered), extra })));
+  transactional(start, file, insertRecord(content, recordBlock(kind, id, title, { owner, priority: opts.priority, feature: opts.feature, code: opts.code, realizes: list(opts.realizes), verifies: list(opts.verifies), check: opts.check, topic: opts.topic, basis: kind === "assumption" ? opts.basis : undefined, scope: opts.scope, includes: list(opts.includes), applies: list(opts.applies), quote: opts.quote, covered: list(opts.covered), hides: list(opts.hides), removeBy: opts["remove-by"], hypothesis: opts.hypothesis, variants: opts.variants, metric: opts.metric, outcome: opts.outcome, extra })));
+  // 1.6: a release that names what it includes gets its baseline at once (a frozen snapshot, `royascaff release` otherwise).
+  if (kind === "release" && list(opts.includes)) {
+    try {
+      return { id, kind, file: rel, baseline: require("./evolve.cjs").releaseCommand(start, id, opts).file };
+    } catch (error) {
+      return { id, kind, file: rel, baseline_error: error.message };
+    }
+  }
   return { id, kind, file: rel };
 }
 

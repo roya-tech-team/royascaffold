@@ -130,6 +130,19 @@ function renderBoard(model, status, drift = null) {
     .map(({ c, when }) => [title(model, c.id), c.slice || c.affects.join(", "), when ? when.slice(0, 10) : "—"]);
   out.push("## Recently closed", "", table(["Change", "Slice / affects", "Closed"], closed), "");
 
+  // E6.2: what changed since the last baseline (a release's frozen snapshot).
+  if (model.is14) {
+    const B = require("../baseline.cjs");
+    const baselines = B.listBaselines(model);
+    if (baselines.length) {
+      const lastBaseline = baselines[baselines.length - 1];
+      const d = B.diffBaselines(model, B.readBaseline(model, lastBaseline), B.liveBaseline(model, status));
+      out.push("## Releases", "", `Baselines: ${baselines.join(", ")}. Since ${lastBaseline}: ${d.counts.added} added · ${d.counts.changed} changed · ${d.counts.removed} removed${d.evidence.newly_stale.length ? ` · ⚠ ${d.evidence.newly_stale.length} evidence record(s) newly stale` : ""} (\`royascaff diff ${lastBaseline} now\`).`, "");
+      const shown = [...d.changed, ...d.added].filter((r) => ["requirement", "nfr", "feature", "component", "workflow", "contract"].includes(r.kind)).slice(0, 8);
+      if (shown.length) out.push(table(["Record", "What", "Version", "By"], shown.map((r) => [`${r.id} · ${r.title}`, d.added.includes(r) ? "added" : "changed", r.to_version ? `v${r.from_version} → v${r.to_version}` : "—", r.causes.join(", ")])), "");
+    }
+  }
+
   // Health
   const errors = model.issues.filter((i) => i.severity === "error");
   const warnings = model.issues.filter((i) => i.severity === "warning");

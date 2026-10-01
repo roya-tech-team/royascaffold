@@ -122,4 +122,56 @@ function changeCommand(start, ids, flags = {}) {
   };
 }
 
-module.exports = { changeCommand, setFront, frontList, replaceDelta };
+// release <REL-…> [--baseline]: freeze the knowledge as it is now into project/baselines/<REL-…>.json (E6.2).
+function releaseCommand(start, relId, flags = {}) {
+  if (!relId) throw fail("INVALID_INPUT", "Usage: royascaff release <REL-…> [--baseline] [path]: the REL- record comes from `royascaff new record release \"<version>\" --includes CHG-…`");
+  const { deriveStatus } = require("../derive/status.cjs");
+  const { writeBaseline } = require("../baseline.cjs");
+  const { appendEvent } = require("../events.cjs");
+  const { headShort } = require("../git.cjs");
+  const { who } = require("../identity.cjs");
+  const model = buildModel(start);
+  const { baseline, file } = writeBaseline(model, deriveStatus(model), relId);
+  appendEvent(model.root, "project", { event: "baseline.written", target: relId, by: who(flags, model.repo), git: headShort(model.repo) || "—", note: `${file}: ${baseline.records.length} record(s), ${baseline.evidence.length} evidence record(s)` });
+  work.refreshBoard(start);
+  return { release: relId, title: baseline.title, file, records: baseline.records.length, links: baseline.links.length, evidence: baseline.evidence.length, includes: baseline.includes, git: baseline.git };
+}
+
+function diffCommand(start, a, b, flags = {}) {
+  if (!a) throw fail("INVALID_INPUT", "Usage: royascaff diff <REL-A> [<REL-B> | now] [--json] [path]: both need a baseline (royascaff release <REL-…>)");
+  const { deriveStatus } = require("../derive/status.cjs");
+  const B = require("../baseline.cjs");
+  const model = buildModel(start);
+  const status = deriveStatus(model);
+  const pick = (id) => (id === "now" ? B.liveBaseline(model, status) : B.readBaseline(model, id));
+  let to = b;
+  if (!to) {
+    const all = B.listBaselines(model);
+    const later = all.filter((x) => x !== a);
+    to = later.length && all.indexOf(a) >= 0 && all.indexOf(a) < all.length - 1 ? all[all.indexOf(a) + 1] : "now";
+  }
+  const d = B.diffBaselines(model, pick(a), pick(to));
+  const lines = [`Changes from ${d.from} to ${d.to}: ${d.counts.added} added · ${d.counts.changed} changed · ${d.counts.removed} removed · ${d.evidence.added.length} new evidence record(s)${d.evidence.newly_stale.length ? ` · ${d.evidence.newly_stale.length} newly stale` : ""}`];
+  for (const [name, list] of [["Added", d.added], ["Changed", d.changed], ["Removed", d.removed]]) {
+    if (!list.length) continue;
+    lines.push("", `${name}:`);
+    for (const r of list) lines.push(`  ${r.id} (${r.kind}) ${r.title}${name === "Changed" && (r.from_version !== r.to_version) ? ` — v${r.from_version} → v${r.to_version}` : ""}${r.causes.length ? ` — by ${r.causes.join(", ")}` : ""}`);
+  }
+  return { ...d, text: lines.join("\n") };
+}
+
+function historyCommand(start, id) {
+  if (!id) throw fail("INVALID_INPUT", "Usage: royascaff history <ID> [--json] [path]");
+  const model = buildModel(start);
+  const h = require("../history.cjs").historyOf(model, id);
+  const lines = [`${h.id} (${h.kind}) ${h.title} — version ${h.version}`];
+  for (const v of h.versions) {
+    lines.push(`  v${v.version}  ${v.event}${v.change ? ` in ${v.change}${v.change_status ? ` (${v.change_status})` : ""}` : ""}${v.by ? ` · ${v.by}` : ""}${v.when ? ` · ${String(v.when).slice(0, 10)}` : ""}${v.git ? ` · ${v.git}` : ""}`);
+    if (v.before !== undefined) lines.push(`        before: ${v.before}`, `        after:  ${v.after}`, `        why:    ${v.why}${v.breaking ? "  (breaking)" : ""}`);
+  }
+  if (h.baselines.length) lines.push("  Baselines: " + h.baselines.map((b) => (b.present ? `${b.release} v${b.version}${b.changed ? " (changed)" : ""}` : `${b.release} (absent)`)).join(" · "));
+  if (h.events.length) lines.push("  Events:", ...h.events.map((e) => `    ${String(e.when).slice(0, 10)} ${e.event} by ${e.by}${e.note ? ` — ${e.note}` : ""} (${e.log})`));
+  return { ...h, text: lines.join("\n") };
+}
+
+module.exports = { changeCommand, releaseCommand, diffCommand, historyCommand, setFront, frontList, replaceDelta };

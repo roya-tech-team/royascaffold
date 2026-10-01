@@ -1,0 +1,106 @@
+[
+  {
+    "scenario": "diff two baselines",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "diff",
+      "data": {
+        "from": "REL-CAMP-001",
+        "to": "REL-CAMP-002",
+        "counts": {
+          "added": 1,
+          "changed": 0,
+          "removed": 0,
+          "evidence_added": 0
+        },
+        "by_kind": {
+          "release": {
+            "added": 1,
+            "changed": 0,
+            "removed": 0
+          }
+        },
+        "added": [
+          {
+            "id": "REL-CAMP-002",
+            "kind": "release",
+            "title": "1.1.0",
+            "causes": []
+          }
+        ],
+        "changed": [],
+        "removed": [],
+        "evidence": {
+          "added": [],
+          "removed": [],
+          "newly_stale": []
+        }
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "diff a baseline and now",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "diff",
+      "data": {
+        "from": "REL-CAMP-001",
+        "to": "now",
+        "counts": {
+          "added": 1,
+          "changed": 0,
+          "removed": 0,
+          "evidence_added": 0
+        },
+        "by_kind": {
+          "release": {
+            "added": 1,
+            "changed": 0,
+            "removed": 0
+          }
+        },
+        "added": [
+          {
+            "id": "REL-CAMP-002",
+            "kind": "release",
+            "title": "1.1.0",
+            "causes": []
+          }
+        ],
+        "changed": [],
+        "removed": [],
+        "evidence": {
+          "added": [],
+          "removed": [],
+          "newly_stale": []
+        }
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "diff (no baseline)",
+    "exit": 1,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": false,
+      "command": "diff",
+      "error": {
+        "code": "UNKNOWN_ID",
+        "message": "REL-CAMP-009 has no baseline: run royascaff release REL-CAMP-009"
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]
