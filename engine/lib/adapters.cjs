@@ -44,7 +44,10 @@ function readAdapter(name, projectDir = null) {
     const m = text.match(new RegExp(`^## ${title}\\s*\\n([\\s\\S]*?)(?=^## |(?![\\s\\S]))`, "m"));
     return m ? m[1].trim() : "";
   };
-  return { name, card: `adapters/${name}.md`, file, design: part("Design"), rules: part("Rules"), check: part("Check"), words: part("Words").split(",").map((w) => w.trim().toLowerCase()).filter(Boolean) };
+  // The words of the card, and the manifest's `words` (a list), together.
+  const fromManifest = (manifest(name, projectDir).words || []).map((w) => String(w).trim().toLowerCase());
+  const words = [...new Set([...part("Words").split(",").map((w) => w.trim().toLowerCase()).filter((w) => w && !/^[(_]/.test(w)), ...fromManifest].filter(Boolean))];
+  return { name, card: `adapters/${name}.md`, file, design: part("Design"), rules: part("Rules"), check: part("Check"), words };
 }
 
 // The manifest beside each card (`adapters/<name>.json`); `includes` pulls in other adapters.

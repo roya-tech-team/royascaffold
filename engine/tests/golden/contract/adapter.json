@@ -1,0 +1,142 @@
+[
+  {
+    "scenario": "adapter new",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "adapter",
+      "data": {
+        "name": "demo-stack",
+        "includes": [
+          "node"
+        ],
+        "files": [
+          "project/adapters/demo-stack.json",
+          "project/adapters/demo-stack.md"
+        ]
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "adapter test",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "adapter",
+      "data": {
+        "name": "demo-stack",
+        "ok": true,
+        "checks": [
+          {
+            "id": "schema",
+            "ok": true,
+            "message": "the manifest matches adapter.schema.json"
+          },
+          {
+            "id": "name",
+            "ok": true,
+            "message": "the manifest names itself demo-stack"
+          },
+          {
+            "id": "includes",
+            "ok": true,
+            "message": "includes resolve: node"
+          },
+          {
+            "id": "card",
+            "ok": true,
+            "message": "the card has Design, Rules and Check"
+          },
+          {
+            "id": "words",
+            "ok": true,
+            "message": "the card lists no technical words (business documents are not checked for them), which is allowed",
+            "warning": true
+          },
+          {
+            "id": "budget",
+            "ok": true,
+            "message": "the card is about 115 of 600 tokens"
+          },
+          {
+            "id": "declares-checks",
+            "ok": true,
+            "message": "no checks are declared (the apps' own commands run), which is allowed",
+            "warning": true
+          }
+        ],
+        "card": "project/adapters/demo-stack.md"
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "adapter test (a manifest that does not fit)",
+    "exit": 1,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": false,
+      "command": "adapter",
+      "error": {
+        "code": "CHECK_FAILED",
+        "message": "Adapter broken-stack failed its test",
+        "missing": [
+          "its program was not found: no-such-program-xyz"
+        ],
+        "details": {
+          "name": "broken-stack",
+          "ok": false,
+          "checks": [
+            {
+              "id": "schema",
+              "ok": true,
+              "message": "the manifest matches adapter.schema.json"
+            },
+            {
+              "id": "name",
+              "ok": true,
+              "message": "the manifest names itself broken-stack"
+            },
+            {
+              "id": "includes",
+              "ok": true,
+              "message": "no includes"
+            },
+            {
+              "id": "card",
+              "ok": true,
+              "message": "the card has Design, Rules and Check"
+            },
+            {
+              "id": "words",
+              "ok": true,
+              "message": "the card lists no technical words (business documents are not checked for them), which is allowed",
+              "warning": true
+            },
+            {
+              "id": "budget",
+              "ok": true,
+              "message": "the card is about 23 of 600 tokens"
+            },
+            {
+              "id": "check:unit",
+              "ok": false,
+              "message": "its program was not found: no-such-program-xyz"
+            }
+          ],
+          "card": "project/adapters/broken-stack.md"
+        }
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

@@ -88,6 +88,13 @@ function scenarios() {
   add("verify", "verify", (c) => ["verify", "CHG-CAMP-002", c.root, "--by", "ai:claude"], "ok", (c) => edit(c.root, "profile.md", (t) => ["Build", "Typecheck", "Lint"].reduce((s, k) => s.replace(new RegExp(`- \\*\\*${k}:\\*\\* .*`), `- **${k}:**`), t).replace(/- \*\*Test:\*\* .*/, "- **Test:** node -e 0")));
   add("judge", "judge (the pack)", (c) => ["judge", "CHG-CAMP-002", c.root]);
   add("judge", "judge (the builder may not)", (c) => ["judge", "CHG-CAMP-002", "--line", "REQ-CAMP-003#1", "--verdict", "met", "--reason", "looks right", "--by", "ai:claude", c.root], "GATE_REFUSED");
+  add("adapter", "adapter new", (c) => ["adapter", "new", "demo-stack", "--includes", "node", c.root]);
+  add("adapter", "adapter test", (c) => ["adapter", "test", "demo-stack", c.root]);
+  add("adapter", "adapter test (a manifest that does not fit)", (c) => ["adapter", "test", "broken-stack", c.root], "CHECK_FAILED", (c) => {
+    fs.mkdirSync(path.join(c.root, "project", "adapters"), { recursive: true });
+    fs.writeFileSync(path.join(c.root, "project", "adapters", "broken-stack.json"), JSON.stringify({ adapter: "broken-stack", checks: { unit: "no-such-program-xyz" } }));
+    fs.writeFileSync(path.join(c.root, "project", "adapters", "broken-stack.md"), "# Adapter · broken-stack\n\n## Design\n\n- A line.\n\n## Rules\n\n- A rule.\n\n## Check\n\n- A check.\n");
+  });
   add("continue", "continue", (c) => ["continue", c.root]);
   add("adopt", "adopt", (c) => ["adopt", c.root]);
   add("migrate", "migrate (dry run, 1.3)", (c) => ["migrate", c.old, "--from", "1.3", "--code", "KUNI"]);

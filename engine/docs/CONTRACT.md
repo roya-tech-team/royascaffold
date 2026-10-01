@@ -81,11 +81,12 @@ This is the rule for gates and checks: `advance` refused is `GATE_REFUSED`; `che
 
 ## 3. Commands
 
-`contract.commands` lists them. Today: adopt, advance, approve, backups, block, brief, cache, check, context,
+`contract.commands` lists them. Today: adapter, adopt, advance, approve, backups, block, brief, cache, check, context,
 continue, contract, events, export, feedback, index, init, install, judge, log, measure, migrate, new, next, open,
 record, refine, render, roundtrip, show, smoke, status, task, tasks, trace, unblock, usage, validate, verify, where.
 
-Each one has a schema for its `data`. The schemas list the fields a program may rely on. They allow
+Each one has a schema for its `data`. (`adapter.schema.json` is the schema of an adapter manifest, so the data of the
+`adapter` command is described by `adapter-result.schema.json`; `contract.schemaName` gives the file for a command.) The schemas list the fields a program may rely on. They allow
 extra fields, because adding a field is a minor change (section 6).
 
 Where a command used to print a bare list (`tasks`, `log`, `backups`), `data` is an object holding the list

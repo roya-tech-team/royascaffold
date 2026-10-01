@@ -11,6 +11,7 @@
         "contract": "1.0",
         "engine": "<engine-version>",
         "commands": [
+          "adapter",
           "adopt",
           "advance",
           "approve",
@@ -52,6 +53,8 @@
           "where"
         ],
         "adapters": [
+          "broken-stack",
+          "demo-stack",
           "generic",
           "node",
           "web-3d",

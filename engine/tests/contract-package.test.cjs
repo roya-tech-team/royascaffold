@@ -20,7 +20,8 @@ test("npm pack --dry-run includes contract/ (errors, the envelope schema and one
   const info = Array.isArray(parsed) ? parsed[0] : Object.values(parsed)[0];
   const files = info.files.map((f) => f.path.replace(/\\/g, "/"));
   for (const f of ["contract/errors.json", "contract/schemas/envelope.schema.json", "docs/CONTRACT.md", "bin/royascaff.cjs", "lib/contract.cjs"]) assert.ok(files.includes(f), `${f} is in the package`);
-  for (const c of contract.COMMANDS) assert.ok(files.includes(`contract/schemas/${c}.schema.json`), `contract/schemas/${c}.schema.json is in the package`);
+  for (const c of contract.COMMANDS) assert.ok(files.includes(`contract/schemas/${contract.schemaName(c)}.schema.json`), `contract/schemas/${contract.schemaName(c)}.schema.json is in the package`);
+  assert.ok(files.includes("contract/schemas/adapter.schema.json"), "the adapter manifest schema is in the package");
   assert.equal(files.some((f) => f.startsWith("tests/")), false, "tests are not published");
 });
 

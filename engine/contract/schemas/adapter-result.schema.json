@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/adapter-result.schema.json",
+  "title": "royascaff adapter: data",
+  "description": "The `data` of the contract envelope for `adapter`. `adapter new <name>` returns the files it made; `adapter test <name>` returns every check with its result (a failed test is an envelope failure with code CHECK_FAILED; the same data is in error.details). The manifest itself is described by adapter.schema.json. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": ["name"],
+  "properties": {
+    "name": { "type": "string" },
+    "includes": { "type": "array", "items": { "type": "string" } },
+    "files": { "type": "array", "items": { "type": "string" } },
+    "ok": { "type": "boolean" },
+    "card": { "type": ["string", "null"] },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "ok", "message"],
+        "properties": {
+          "id": { "type": "string" },
+          "ok": { "type": "boolean" },
+          "message": { "type": "string" },
+          "warning": { "type": "boolean" },
+          "skipped": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

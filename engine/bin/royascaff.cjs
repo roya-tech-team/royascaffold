@@ -125,6 +125,10 @@ Work done outside the engine (git):
   render FILE --out DIR        Render an exchange JSON file back to Markdown files
   roundtrip [path] [--json]    Check Markdown -> JSON -> Markdown is byte-identical
 
+Adapters (technology guidance and checks; see docs/ADAPTERS.md):
+  adapter new <name> [--includes web-ui] [path]   Start an adapter in project/adapters/ (a card and a manifest)
+  adapter test <name> [path]                       Check its schema, includes, card, token budget and declared checks
+
 Existing code:
   adopt [path] [--json]        Modules of each app and how much is owned by components (one module at a time)
 
@@ -361,6 +365,19 @@ function main() {
       USAGE.result = "refused";
       const failing = [...r.results.filter((x) => !x.pass).map((x) => `${x.app} ${x.kind}: ${x.command}`), ...r.lines.filter((l) => l.result === "fail").map((l) => `${l.key} [${l.type}] ${l.text}`)];
       return reply(r, `${lines.join("\n")}\n`, { refuse: { code: "CHECK_FAILED", message: `${r.id}: verify failed`, missing: failing } });
+    }
+    case "adapter": {
+      const kit = require("../lib/adapterkit.cjs");
+      if (target === "new") {
+        const r = kit.newAdapter(flags.path || positional[3] || ".", positional[2], flags);
+        return reply(r, `Created ${r.files.join(" and ")}${r.includes.length ? ` (builds on ${r.includes.join(", ")})` : ""}.\nFill in the card, declare its checks in the manifest, then: royascaff adapter test ${r.name}\nTo use it, add it to the adapters line of project/profile.md.\n`);
+      }
+      if (target === "test") {
+        const r = kit.testAdapter(flags.path || positional[3] || ".", positional[2]);
+        const text = `${r.checks.map((c) => `  ${c.ok ? (c.warning ? "·" : "✓") : "✗"} ${c.message}`).join("\n")}\nAdapter ${r.name}: ${r.ok ? "PASS" : "FAIL"}\n`;
+        return reply(r, text, r.ok ? {} : { refuse: { code: "CHECK_FAILED", message: `Adapter ${r.name} failed its test`, missing: r.checks.filter((c) => !c.ok).map((c) => c.message) } });
+      }
+      return fail("Usage: royascaff adapter new <name> [--includes web-ui] | royascaff adapter test <name>");
     }
     case "judge": {
       if (!target) fail("Usage: royascaff judge <CHG-…> [--verdict-file FILE | --line KEY --verdict met|not-met|unclear --reason \"…\"] [--by ai:<tool>:judge]");

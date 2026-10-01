@@ -20,9 +20,10 @@ const all = () => (ran = ran || runAll());
 
 test("every command has a schema file for its data", () => {
   for (const command of contract.COMMANDS) {
-    assert.ok(fs.existsSync(path.join(SCHEMAS, `${command}.schema.json`)), `contract/schemas/${command}.schema.json`);
-    const s = schemaOf(command);
-    assert.match(s.$id, new RegExp(`/${command}\\.schema\\.json$`));
+    const name = contract.schemaName(command);
+    assert.ok(fs.existsSync(path.join(SCHEMAS, `${name}.schema.json`)), `contract/schemas/${name}.schema.json`);
+    const s = schemaOf(name);
+    assert.match(s.$id, new RegExp(`/${name}\\.schema\\.json$`));
     assert.ok(s.anyOf || s.type, `${command}: the schema says what the data is`);
   }
 });
@@ -41,7 +42,7 @@ test("every command is exercised with --json, and its real output validates (env
     if (r.expect === "ok") {
       assert.equal(r.envelope.ok, true, `${r.name} should succeed\n${where}`);
       assert.equal(r.status, 0, `${r.name}: exit status`);
-      assert.deepEqual(validate(schemaOf(r.command), r.envelope.data), [], `${r.name}: data against ${r.command}.schema.json`);
+      assert.deepEqual(validate(schemaOf(contract.schemaName(r.command)), r.envelope.data), [], `${r.name}: data against ${contract.schemaName(r.command)}.schema.json`);
     } else {
       assert.equal(r.envelope.ok, false, `${r.name} should fail\n${where}`);
       assert.equal(r.envelope.error.code, r.expect, `${r.name}: error code`);

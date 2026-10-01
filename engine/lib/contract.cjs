@@ -54,10 +54,15 @@ try {
 
 // Every command the CLI dispatches (a test keeps this in step with bin/royascaff.cjs).
 const COMMANDS = [
-  "adopt", "advance", "approve", "backups", "block", "brief", "cache", "check", "context", "continue", "contract",
+  "adapter", "adopt", "advance", "approve", "backups", "block", "brief", "cache", "check", "context", "continue", "contract",
   "events", "export", "feedback", "index", "init", "install", "judge", "log", "measure", "migrate", "new", "next", "open", "record",
   "refine", "render", "roundtrip", "show", "smoke", "status", "task", "tasks", "trace", "unblock", "usage", "validate", "verify", "where",
 ];
+
+// The schema file of a command's `data` is contract/schemas/<name>.schema.json. `adapter.schema.json` is the
+// schema of an adapter manifest (plan file 01 §5), so the `adapter` command's data has its own file.
+const SCHEMA_NAMES = { adapter: "adapter-result" };
+const schemaName = (command) => SCHEMA_NAMES[command] || command;
 
 // The engine's messages are plain sentences. Until each throw site carries its own `code`, this
 // table gives them a stable one. First match wins, so the specific patterns come first. An error
@@ -111,4 +116,4 @@ function failure(command, err, extra = {}) {
   return { contract: CONTRACT_VERSION, engine: ENGINE_VERSION, ok: false, command, error, warnings: extra.warnings || [], events: extra.events || [] };
 }
 
-module.exports = { CONTRACT_VERSION, ENGINE_VERSION, ERRORS, COMMANDS, classify, exitFor, ok, failure, errorsFileText, writeErrorsFile };
+module.exports = { CONTRACT_VERSION, ENGINE_VERSION, ERRORS, COMMANDS, schemaName, classify, exitFor, ok, failure, errorsFileText, writeErrorsFile };

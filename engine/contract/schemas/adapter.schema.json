@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/adapter.schema.json",
+  "title": "RoyaScaff adapter manifest",
+  "description": "The manifest `<name>.json` that sits beside an adapter's card `<name>.md` (in the engine's adapters/ folder, or in a project's project/adapters/ folder). It declares what the core must run and ask for; the core knows no stack by name. `royascaff adapter test <name>` checks a manifest against this schema. Adding a field is a minor change.",
+  "type": "object",
+  "anyOf": [{ "required": ["adapter"] }, { "required": ["name"] }],
+  "additionalProperties": false,
+  "properties": {
+    "adapter": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$", "description": "The adapter's name (the same as the file name)." },
+    "name": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$", "description": "Another spelling of `adapter`." },
+    "description": { "type": "string" },
+    "includes": { "type": "array", "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" }, "description": "Adapters this one builds on; their manifests apply first." },
+    "legacyAppTypes": { "type": "array", "items": { "type": "string" } },
+    "requiresDocs": { "type": "array", "items": { "type": "string" }, "description": "Layer documents a project of this kind needs (for example experience)." },
+    "visualBar": { "type": "boolean", "description": "Older spelling of personCheck for a person's look at a screen." },
+    "personLook": {
+      "type": "object",
+      "required": ["kinds", "minRisk"],
+      "additionalProperties": false,
+      "properties": {
+        "kinds": { "type": "array", "items": { "type": "string" } },
+        "minRisk": { "type": "string", "enum": ["low", "medium", "high", "critical"] }
+      },
+      "description": "Which changes (kind, lowest risk) a person looks at before they are verified."
+    },
+    "personCheck": {
+      "type": "object",
+      "required": ["kind", "bar"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "type": "string", "pattern": "^[a-z][a-z-]*$", "description": "What the person does: visual, transcript, demo, playtest, or your own word." },
+        "bar": { "type": "string", "minLength": 1, "description": "The name of the bar the person scores against, as it is written in discovery topic 8 (for example \"Usage bar\")." },
+        "minLines": { "type": "integer", "minimum": 1, "description": "The fewest lines the bar needs before the project is approved." },
+        "prompt": { "type": "string", "description": "What the person is asked to do." },
+        "record": { "type": "string", "description": "The APP- field whose command records what the person reads (for example a transcript)." }
+      },
+      "description": "The person's check with a bar. The core knows only this shape; the kind, the bar and the prompt come from here."
+    },
+    "layers": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": { "requires": { "type": "array", "items": { "type": "string" }, "description": "Knowledge layers every module of this stack should be described in." } }
+    },
+    "checks": {
+      "type": "object",
+      "description": "Check type -> command (unit, e2e, metric, smoke, or your own). `verify` runs the ones an app does not declare itself. An object may add a `dry` command that `adapter test` runs instead of resolving the program.",
+      "additionalProperties": { "oneOf": [{ "type": "string" }, { "type": "object", "required": ["run"], "additionalProperties": false, "properties": { "run": { "type": "string" }, "dry": { "type": "string" } } }] }
+    },
+    "lockfiles": { "type": "array", "items": { "type": "string" }, "description": "Files that pin the dependencies; they are part of an evidence fingerprint." },
+    "words": { "type": "array", "items": { "type": "string" }, "description": "Technical words that must not appear in business documents (added to the card's Words)." },
+    "smoke": { "type": "object", "description": "A smoke check script that `royascaff smoke init` installs, with its command and the change kinds that need it." },
+    "tests": { "type": "object", "description": "How to recognise test files (`files`) and tests that read source instead of running it (`readsSource`)." },
+    "deps": { "type": "object", "description": "How to find declared dependencies and the imports that use them." },
+    "tradeoffs": { "type": "object", "description": "Patterns that show a change lowers quality; the change must say so." },
+    "scan": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "extensions": { "type": "array", "items": { "type": "string" }, "description": "File extensions the scan reads (with the dot)." },
+        "patterns": {
+          "type": "object",
+          "description": "Fact name -> list of regular expressions (imports, exports, routes, …). The first capture group is the fact.",
+          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+        },
+        "schemaFiles": { "type": "array", "items": { "type": "string" }, "description": "Regular expressions for schema and migration files." },
+        "configFiles": { "type": "array", "items": { "type": "string" }, "description": "Regular expressions for configuration files." },
+        "testFiles": { "type": "array", "items": { "type": "string" }, "description": "Regular expressions for test files." }
+      },
+      "description": "What `royascaff scan` extracts from a module of this stack."
+    }
+  }
+}
