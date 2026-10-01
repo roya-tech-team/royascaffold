@@ -1,0 +1,59 @@
+[
+  {
+    "scenario": "scan",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "scan",
+      "data": {
+        "adapters": [
+          "generic"
+        ],
+        "patterns": [],
+        "cache": {
+          "hits": 0,
+          "misses": 1
+        },
+        "modules": [
+          {
+            "module": "apps/web (root files)",
+            "app": "APP-CAMP-WEB",
+            "files": 1,
+            "lines": 1,
+            "facts": {},
+            "schema_files": [],
+            "config_files": [],
+            "test_files": [],
+            "largest": [
+              {
+                "path": "apps/web/README.md",
+                "lines": 1
+              }
+            ],
+            "details": []
+          }
+        ]
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "scan (a module that does not exist)",
+    "exit": 1,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": false,
+      "command": "scan",
+      "error": {
+        "code": "UNKNOWN_ID",
+        "message": "nope is not a module here (modules: apps/web (root files))"
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

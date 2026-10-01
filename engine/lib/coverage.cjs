@@ -32,6 +32,22 @@ function quoteFound(request, quote) {
   return true;
 }
 
+// A quote of an existing document (E3.3) is stricter than a quote of the request: word for word, case counts;
+// only the amount of white space may differ, and parts split by … or ... must come in order.
+function fileQuoteFound(fileText, quote) {
+  const collapse = (t) => String(t || "").replace(/\s+/g, " ").trim();
+  const text = collapse(fileText);
+  const parts = String(quote || "").split(/…|\.\.\./).map(collapse).filter(Boolean);
+  if (!parts.length) return false;
+  let from = 0;
+  for (const p of parts) {
+    const i = text.indexOf(p, from);
+    if (i < 0) return false;
+    from = i + p.length;
+  }
+  return true;
+}
+
 // List items of the request (bullets and numbered lines), for the "possibly not covered" list.
 function listItems(request) {
   return request.split("\n").map((l) => l.match(/^\s*(?:[-*+•]|\d+[.)])\s+(.{3,})$/)).filter(Boolean).map((m) => m[1].trim());
@@ -41,7 +57,9 @@ function coverageOf(model, files) {
   const { renderMarkdown } = require("./parse/markdown.cjs");
   const f = files.find((x) => x.path === REQUEST_FILE);
   const request = f ? requestText(renderMarkdown(f)) : "";
-  const sources = [...model.records.values()].filter((r) => r.kind === "source").map((r) => {
+  // Demands that quote an existing document (`Source file:`, E3.3) are history the AI adopted, not demands of the
+  // request: the engine checks their quote against their file (validate), and they never block the brief.
+  const sources = [...model.records.values()].filter((r) => r.kind === "source" && !String(r.fields["Source file"] || "").trim()).map((r) => {
     const quote = String(r.fields.Quote || "").trim();
     const covered = r.relations.filter((x) => x.type === "covered_by").map((x) => x.to);
     const outOfScope = String(r.fields["Out of scope"] || "").trim();
@@ -66,4 +84,4 @@ function coverageOf(model, files) {
   };
 }
 
-module.exports = { coverageOf, quoteFound, requestText, listItems, REQUEST_FILE, COVERAGE_FILE };
+module.exports = { coverageOf, quoteFound, fileQuoteFound, requestText, listItems, REQUEST_FILE, COVERAGE_FILE };

@@ -154,6 +154,17 @@ function renderBoard(model, status, drift = null) {
   }
   out.push(`- Records: ${model.records.size} · features ${model.features.size} · slices ${model.slices.size} · changes ${model.changes.size} · tasks ${model.tasks.size}`);
   out.push("");
+  if (model.is14) {
+    // E4.1: a short inventory: what the knowledge holds, and what waits for attention (royascaff inventory has the detail).
+    const inv = require("../commands/inventory.cjs").inventoryOf(model, status);
+    out.push("## Inventory", "");
+    out.push(`- Records per layer: ${inv.layers.filter((l) => l.records).map((l) => `${l.label} ${l.records}`).join(" · ") || "none"}`);
+    out.push(`- Stale evidence: ${inv.stale_evidence.length ? `⚠ ${inv.stale_evidence.length} (${inv.stale_evidence.slice(0, 4).map((e) => e.id).join(", ")}${inv.stale_evidence.length > 4 ? ", …" : ""}): run royascaff verify` : "none"}`);
+    out.push(`- Unconfirmed inferred records: ${inv.unconfirmed.length ? `⏳ ${inv.unconfirmed.length} (${inv.unconfirmed.slice(0, 4).map((u) => u.id).join(", ")}${inv.unconfirmed.length > 4 ? ", …" : ""}): a person runs royascaff confirm` : "none"}`);
+    out.push(`- Unowned code: ${inv.unowned_code.files ? `${inv.unowned_code.files} file(s) in ${inv.unowned_code.modules.length} module(s) (royascaff adopt)` : "none"}`);
+    out.push(`- Open repairs: ${inv.open_repairs.length ? inv.open_repairs.map((r) => `${r.change} ${r.blocked ? "blocked, a person decides" : `attempt ${r.attempt} of ${r.limit}`}`).join(" · ") : "none"}`);
+    out.push("");
+  }
   const fs = require("fs");
   const path = require("path");
   const links = ["PLAYBOOK.md", "GLOSSARY.md"].filter((d) => fs.existsSync(path.join(model.root, d)));

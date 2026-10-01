@@ -340,10 +340,35 @@ function validate(model, issue) {
   unmappedSource(model, issue);
   if (model.is14) requiredFields(model, issue);
   if (model.is14) require("../acceptance.cjs").untypedIssues(model, issue);
+  if (model.is14) require("../inferred.cjs").issues(model, issue);
+  if (model.is14) sourceFileIssues(model, issue);
   if (model.is14) componentHygiene(model, issue);
   for (const feature of model.features.values()) {
     const rec = known.get(feature.id);
     if (model.is14 && !feature.horizonSet) issue("warning", "feature-without-horizon", `${feature.id} has no Horizon (defaults to backlog)`, where(rec));
+  }
+}
+
+// E3.3: a record made from an existing document names it (`Source file:`) and quotes it (`Quote:`). The file must
+// be there and hold the quote word for word, so knowledge adopted from documents can be checked against them.
+function sourceFileIssues(model, issue) {
+  const fs = require("fs");
+  const { fileQuoteFound } = require("../coverage.cjs");
+  for (const rec of model.records.values()) {
+    if (rec.origin !== "record") continue;
+    const rel = String(rec.fields["Source file"] || "").trim().replace(/`/g, "");
+    if (!rel) continue;
+    const at = `${rec.file}:${rec.line}`;
+    const abs = path.resolve(model.repo, rel);
+    if (rel.startsWith("..") || path.relative(model.repo, abs).startsWith("..")) {
+      issue("error", "source-file-outside", `${rec.id} names ${rel} as its source, which is outside the repository`, at);
+    } else if (!fs.existsSync(abs) || !fs.statSync(abs).isFile()) {
+      issue("error", "source-file-missing", `${rec.id} names ${rel} as its source, which is not a file (moved or deleted?)`, at);
+    } else {
+      const quote = String(rec.fields.Quote || "").trim();
+      if (!quote) issue("warning", "source-file-without-quote", `${rec.id} names ${rel} as its source but quotes nothing: add - **Quote:** "<exact words>"`, at);
+      else if (!fileQuoteFound(fs.readFileSync(abs, "utf8"), quote)) issue("error", "source-quote-not-found-in-file", `${rec.id} quotes words that are not in ${rel}: quote the file exactly, or update the record`, at);
+    }
   }
 }
 

@@ -20,6 +20,47 @@
     "yarn.lock",
     "pnpm-lock.yaml"
   ],
+  "scan": {
+    "extensions": [
+      ".js",
+      ".cjs",
+      ".mjs",
+      ".jsx",
+      ".ts",
+      ".tsx",
+      ".vue",
+      ".svelte"
+    ],
+    "patterns": {
+      "imports": [
+        "\\bfrom\\s*['\"]([^'\"]+)['\"]",
+        "\\bimport\\s*['\"]([^'\"]+)['\"]",
+        "\\brequire\\s*\\(\\s*['\"]([^'\"]+)['\"]\\s*\\)"
+      ],
+      "exports": [
+        "^\\s*export\\s+(?:default\\s+)?(?:async\\s+)?(?:function\\*?|class|const|let|var)\\s+(\\w+)",
+        "^\\s*exports\\.(\\w+)\\s*=",
+        "^\\s*module\\.exports\\.(\\w+)\\s*=",
+        {
+          "pattern": "^\\s*module\\.exports\\s*=\\s*\\{([^}]*)\\}",
+          "split": ","
+        }
+      ],
+      "routes": [
+        "\\b(?:app|router|server)\\.(?:get|post|put|patch|delete|all|use)\\(\\s*['\"`](/[^'\"`]*)['\"`]"
+      ]
+    },
+    "schemaFiles": [
+      "(^|/)(migrations?|schema)/",
+      "\\.sql$",
+      "(^|/)schema\\.[a-z]+$"
+    ],
+    "configFiles": [
+      "(^|/)tsconfig[^/]*\\.json$",
+      "(^|/)[^/]*\\.config\\.[cm]?[jt]s$",
+      "(^|/)\\.eslintrc[^/]*$"
+    ]
+  },
   "tests": {
     "files": [
       "(\\.test\\.|\\.spec\\.)[cm]?[jt]sx?$",

@@ -241,13 +241,18 @@ function nextActions(model, status, drift = null) {
     const dl = deliveryOf(model, status);
     if (nowDone && dl && dl.undelivered.length) actions.push({ kind: "undelivered-demands", demands: dl.undelivered.map((s) => s.id), text: `The Now features are done; ${dl.undelivered.length} demand(s) of the request are covered but not delivered yet: ${dl.undelivered.slice(0, 6).map((s) => `${s.id} · ${s.title} (${s.covered.join(", ")})`).join("; ")}${dl.undelivered.length > 6 ? "; …" : ""}`, say: "royascaff continue" });
   }
-  if (!actions.filter((a) => a.kind !== "uncommitted" && a.kind !== "undelivered-demands").length && model.is14) {
+  if (model.is14) {
+    // E3.1: records the AI inferred from existing code wait for a person to confirm them.
+    const waiting = require("../inferred.cjs").unconfirmed(model);
+    if (waiting.length) actions.push({ kind: "confirm-inferred", human: true, records: waiting.map((w) => w.id), text: `Confirm ${waiting.length} inferred record(s) (the AI guessed them from the code): ${waiting.slice(0, 6).map((w) => `${w.id} · ${w.title}`).join("; ")}${waiting.length > 6 ? "; …" : ""}. A person reads them, corrects what is wrong, then runs royascaff confirm`, say: `royascaff confirm ${waiting.slice(0, 6).map((w) => w.id).join(" ")}` });
+  }
+  if (!actions.filter((a) => !["uncommitted", "undelivered-demands", "confirm-inferred"].includes(a.kind)).length && model.is14) {
     // C5: existing code that no component owns yet is adopted one module at a time.
     const { adoption } = require("../commands/adopt.cjs");
     const unowned = adoption(model).modules.find((m) => m.percent < 100);
     if (unowned) actions.push({ kind: "adopt", card: "adopt.md", module: unowned.module, text: `Adopt ${unowned.module}: ${unowned.files - unowned.owned} source file(s) belong to no component (${unowned.percent}% owned). Run royascaff adopt to see every module`, say: "royascaff continue" });
   }
-  if (!actions.filter((a) => a.kind !== "uncommitted" && a.kind !== "undelivered-demands").length) {
+  if (!actions.filter((a) => !["uncommitted", "undelivered-demands", "confirm-inferred"].includes(a.kind)).length) {
     const later = allSlices.find((s) => s.ready);
     actions.push(later
       ? { kind: "promote", slice: later.slice, text: `Nothing in Now/Next. The next ready slice is ${later.slice} (${later.horizon}): move its feature to Now, or plan a new feature`, say: "royascaff plan feature" }

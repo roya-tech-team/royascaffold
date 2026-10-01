@@ -59,3 +59,11 @@ _Say "royascaff continue" to start the first item._
 - Docs vs code: 654 doc lines / 0 app lines
 - Largest open context pack: TASK-CAMP-004 ~996 of 12,000 tokens
 - Records: 60 · features 5 · slices 4 · changes 3 · tasks 5
+
+## Inventory
+
+- Records per layer: Business 2 · Requirements 6 · Domain 2 · Architecture 2 · Components & tests 7
+- Stale evidence: none
+- Unconfirmed inferred records: none
+- Unowned code: none
+- Open repairs: none

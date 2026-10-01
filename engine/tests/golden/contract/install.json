@@ -28,6 +28,7 @@
           ".claude/skills/royascaff/SKILL.md",
           ".claude/skills/royascaff/adapters/generic.md",
           ".claude/skills/royascaff/adapters/node.md",
+          ".claude/skills/royascaff/adapters/python.md",
           ".claude/skills/royascaff/adapters/web-3d.md",
           ".claude/skills/royascaff/adapters/web-api.md",
           ".claude/skills/royascaff/adapters/web-ui.md"

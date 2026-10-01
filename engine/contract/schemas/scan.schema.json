@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/scan.schema.json",
+  "title": "royascaff scan: data",
+  "description": "The `data` of the contract envelope for `scan`. Facts per module, from the patterns the adapters declare: `facts` maps a fact name (imports, exports, routes, …) to its values; `details` holds the facts per file; `cache` says how many files were read (misses) and how many came from the cache (hits). Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": ["modules", "cache"],
+  "properties": {
+    "adapters": { "type": "array", "items": { "type": "string" } },
+    "patterns": { "type": "array", "items": { "type": "string" } },
+    "cache": { "type": "object", "required": ["hits", "misses"], "properties": { "hits": { "type": "integer" }, "misses": { "type": "integer" } } },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["module", "files", "lines", "facts"],
+        "properties": {
+          "module": { "type": "string" },
+          "app": { "type": "string" },
+          "files": { "type": "integer" },
+          "lines": { "type": "integer" },
+          "facts": { "type": "object", "additionalProperties": { "type": "array", "items": { "type": "string" } } },
+          "schema_files": { "type": "array", "items": { "type": "string" } },
+          "config_files": { "type": "array", "items": { "type": "string" } },
+          "test_files": { "type": "array", "items": { "type": "string" } },
+          "largest": { "type": "array", "items": { "type": "object", "required": ["path", "lines"], "properties": { "path": { "type": "string" }, "lines": { "type": "integer" } } } },
+          "details": { "type": "array", "items": { "type": "object", "required": ["path", "lines", "facts"], "properties": { "path": { "type": "string" }, "lines": { "type": "integer" }, "facts": { "type": "object" } } } }
+        }
+      }
+    }
+  }
+}

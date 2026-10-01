@@ -26,6 +26,7 @@ const EVENT_TYPES = [
   "project.approved",
   "project.updated",
   "outcome.measured",
+  "record.confirmed",
   "feature.approved",
 ];
 

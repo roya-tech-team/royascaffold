@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/ci.schema.json",
+  "title": "royascaff ci: data",
+  "description": "The `data` of the contract envelope for `ci`: validate, the freshness of the evidence and the dependency rules. A failing gate is an envelope failure with code CHECK_FAILED (exit 1); the same data is in error.details. Stale evidence of a change that is verified, reconciled or closed is an error. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": ["ok", "checks", "errors", "counts"],
+  "properties": {
+    "ok": { "type": "boolean" },
+    "errors": { "type": "integer" },
+    "counts": { "type": "object", "properties": { "errors": { "type": "integer" }, "warnings": { "type": "integer" }, "stale": { "type": "integer" } } },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "ok", "message", "items"],
+        "properties": {
+          "id": { "type": "string", "enum": ["validate", "freshness", "rules"] },
+          "ok": { "type": "boolean" },
+          "message": { "type": "string" },
+          "items": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

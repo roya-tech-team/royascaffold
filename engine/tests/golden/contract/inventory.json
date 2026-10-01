@@ -1,0 +1,165 @@
+[
+  {
+    "scenario": "inventory",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "inventory",
+      "data": {
+        "records": {
+          "total": 68,
+          "by_kind": {
+            "app": 1,
+            "assumption": 1,
+            "change": 5,
+            "component": 2,
+            "concept": 1,
+            "decision": 1,
+            "document": 15,
+            "evidence": 3,
+            "feature": 6,
+            "invariant": 1,
+            "outcome": 2,
+            "question": 2,
+            "requirement": 6,
+            "rule": 1,
+            "slice": 5,
+            "source": 5,
+            "task": 6,
+            "test": 5
+          }
+        },
+        "layers": [
+          {
+            "layer": "business",
+            "label": "Business",
+            "records": 2,
+            "pages": [
+              {
+                "file": "knowledge/01-business/brd.md",
+                "records": 3
+              }
+            ]
+          },
+          {
+            "layer": "requirements",
+            "label": "Requirements",
+            "records": 6,
+            "pages": [
+              {
+                "file": "knowledge/02-requirements/requirements.md",
+                "records": 12
+              }
+            ]
+          },
+          {
+            "layer": "domain",
+            "label": "Domain",
+            "records": 2,
+            "pages": [
+              {
+                "file": "knowledge/03-domain/domain.md",
+                "records": 3
+              }
+            ]
+          },
+          {
+            "layer": "architecture",
+            "label": "Architecture",
+            "records": 2,
+            "pages": [
+              {
+                "file": "knowledge/04-design/architecture.md",
+                "records": 1
+              },
+              {
+                "file": "knowledge/04-design/decisions.md",
+                "records": 2
+              },
+              {
+                "file": "knowledge/04-design/rules.md",
+                "records": 2
+              }
+            ]
+          },
+          {
+            "layer": "data",
+            "label": "Data",
+            "records": 0,
+            "pages": [
+              {
+                "file": "knowledge/04-design/data.md",
+                "records": 1
+              }
+            ]
+          },
+          {
+            "layer": "contracts",
+            "label": "Contracts",
+            "records": 0,
+            "pages": []
+          },
+          {
+            "layer": "experience",
+            "label": "Experience",
+            "records": 0,
+            "pages": []
+          },
+          {
+            "layer": "security",
+            "label": "Security",
+            "records": 0,
+            "pages": [
+              {
+                "file": "knowledge/04-design/security.md",
+                "records": 1
+              }
+            ]
+          },
+          {
+            "layer": "components",
+            "label": "Components & tests",
+            "records": 7,
+            "pages": []
+          },
+          {
+            "layer": "quality",
+            "label": "Quality & operations",
+            "records": 0,
+            "pages": [
+              {
+                "file": "knowledge/06-quality/quality.md",
+                "records": 1
+              }
+            ]
+          }
+        ],
+        "changes": {
+          "open": 4,
+          "blocked": 1,
+          "closed": 1
+        },
+        "stale_evidence": [],
+        "unconfirmed": [],
+        "unowned_code": {
+          "files": 0,
+          "modules": []
+        },
+        "open_repairs": [],
+        "person_check": null,
+        "adapters": [
+          {
+            "name": "generic",
+            "checks": [],
+            "person_check": null,
+            "layers": []
+          }
+        ]
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

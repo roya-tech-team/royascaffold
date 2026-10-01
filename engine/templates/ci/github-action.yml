@@ -1,0 +1,27 @@
+# RoyaScaff check for pull requests. Copy this file to .github/workflows/royascaff.yml.
+#
+# It runs `royascaff ci`: the project validates, the evidence of finished changes is still fresh (nothing it covered
+# changed since), and the code keeps the dependency rules. The job fails when a gate has errors.
+#
+# Use the pinned tool, not the engine's own working copy: add the alias to the project once,
+#   npm i -D royascaff-tool@npm:royascaff@1.5.0
+# npm then links node_modules/.bin/royascaff to that version, and `npx royascaff` below runs it.
+# (royascaff-tool is only a local name for the royascaff package; nothing else is installed.)
+
+name: RoyaScaff
+
+on:
+  pull_request:
+
+jobs:
+  royascaff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npx royascaff ci

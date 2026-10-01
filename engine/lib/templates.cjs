@@ -63,7 +63,9 @@ const KIND_ALIASES = { src: "source", qst: "question", asm: "assumption", req: "
 
 function recordBlock(kind, id, title, opts) {
   const spec = RECORD_KINDS[kind];
-  const fields = spec.fields(opts).map(([k, v]) => (v ? `- **${k}:** ${v}` : `- **${k}:**`)).join("\n");
+  // `opts.extra`: more [key, value] fields after the kind's own (an inferred basis, a source file and its quote).
+  const own = spec.fields(opts);
+  const fields = [...own, ...(opts.extra || [])].map(([k, v]) => (v ? `- **${k}:** ${v}` : `- **${k}:**`)).join("\n");
   return `### ${id} · ${title}\n\n${fields}\n${spec.body ? `\n${spec.body}\n` : ""}`;
 }
 

@@ -2,27 +2,93 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://royascaff.dev/contract/1.0/adopt.schema.json",
   "title": "royascaff adopt: data",
-  "description": "The `data` of the contract envelope for `adopt`. Extra fields are allowed: adding a field is a minor change.",
+  "description": "The `data` of the contract envelope for `adopt`. Without a folder: the modules of each app, how much of each a component owns, and which knowledge layers describe each (layers, layer_gaps). With `adopt docs <folder>`: the documents of the folder, the records that quote them and whether every quote is in its file. Extra fields are allowed: adding a field is a minor change.",
   "type": "object",
-  "required": [
-    "modules",
-    "files",
-    "owned",
-    "percent"
-  ],
-  "properties": {
-    "modules": {
-      "type": "array"
+  "anyOf": [
+    {
+      "required": ["modules", "files", "owned", "percent"],
+      "properties": {
+        "modules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["module", "files", "owned"],
+            "properties": {
+              "module": { "type": "string" },
+              "app": { "type": "string" },
+              "files": { "type": "integer" },
+              "owned": { "type": "integer" },
+              "percent": { "type": "integer" },
+              "unowned": { "type": "array", "items": { "type": "string" } },
+              "components": { "type": "array", "items": { "type": "string" } },
+              "layer_gaps": { "type": "array", "items": { "type": "string" } },
+              "layers": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["layer", "covered"],
+                  "properties": {
+                    "layer": { "type": "string" },
+                    "label": { "type": "string" },
+                    "covered": { "type": "boolean" },
+                    "by": { "type": "array", "items": { "type": "string" } }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "files": { "type": "integer" },
+        "owned": { "type": "integer" },
+        "percent": { "type": "integer" },
+        "required_layers": { "type": "array", "items": { "type": "string" } },
+        "layer_gap_modules": { "type": "integer" },
+        "next": {}
+      }
     },
-    "files": {
-      "type": "integer"
-    },
-    "owned": {
-      "type": "integer"
-    },
-    "percent": {
-      "type": "integer"
-    },
-    "next": {}
-  }
+    {
+      "required": ["folder", "documents", "records", "counts"],
+      "properties": {
+        "folder": { "type": "string" },
+        "documents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "sha", "covered"],
+            "properties": {
+              "path": { "type": "string" },
+              "bytes": { "type": "integer" },
+              "lines": { "type": "integer" },
+              "sha": { "type": "string" },
+              "headings": { "type": "array" },
+              "records": { "type": "array", "items": { "type": "string" } },
+              "covered": { "type": "boolean" }
+            }
+          }
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "source_file", "quote_ok"],
+            "properties": {
+              "id": { "type": "string" },
+              "kind": { "type": "string" },
+              "title": { "type": "string" },
+              "source_file": { "type": "string" },
+              "quote": { "type": "string" },
+              "quote_ok": { "type": "boolean" }
+            }
+          }
+        },
+        "uncovered": { "type": "array", "items": { "type": "string" } },
+        "counts": {
+          "type": "object",
+          "required": ["documents", "covered", "records", "problems"],
+          "properties": { "documents": { "type": "integer" }, "covered": { "type": "integer" }, "records": { "type": "integer" }, "problems": { "type": "integer" } }
+        },
+        "problems": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  ]
 }

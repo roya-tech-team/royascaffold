@@ -130,7 +130,15 @@ Adapters (technology guidance and checks; see docs/ADAPTERS.md):
   adapter test <name> [path]                       Check its schema, includes, card, token budget and declared checks
 
 Existing code:
-  adopt [path] [--json]        Modules of each app and how much is owned by components (one module at a time)
+  adopt [path] [--json]        Modules of each app, how much is owned by components, and which knowledge layers
+                               describe each (one module at a time)
+  adopt docs <folder> [path]   Existing documents: which are covered by demands and decisions that quote them (SRC-, ADR-
+                               with --source-file and --quote); every quote must be in its file word for word
+  scan [module] [path] [--json]   Facts per module for the AI to start from: imports, exports, routes, schema, config and
+                               test files, the largest files (patterns come from the adapters; cached per file)
+  confirm <ID…> [path]         A person confirms records the AI inferred from the code (Basis: inferred)
+  inventory [path] [--json]    What the project holds: records per layer, stale evidence, unconfirmed records, unowned code
+  ci [path] [--json]           validate + freshness of evidence + dependency rules; exit 1 when a gate has errors
 
 Migrate a project from engine 1.3 or 1.2 (nothing is deleted):
   migrate [path] [--from 1.3|1.2] [--code CODE]   Dry run: shows what would move and validates the result
@@ -143,7 +151,7 @@ Options:
   --help        Show this help
 `;
 
-const VALUE_FLAGS = new Set(["out", "path", "horizon", "outcome", "priority", "owner", "delivers", "depends", "order", "change", "feature", "since", "limit", "to", "reason", "by", "note", "kind", "affects", "risk", "result", "goal", "inputs", "paths", "checks", "done", "as", "slice", "files", "name", "code", "app", "skip-checks", "realizes", "verifies", "check", "from", "topic", "basis", "scope", "outside-ok", "adapter", "includes", "applies", "quote", "covered", "bar", "approval-token", "verdict-file", "verdict", "line"]);
+const VALUE_FLAGS = new Set(["out", "path", "horizon", "outcome", "priority", "owner", "delivers", "depends", "order", "change", "feature", "since", "limit", "to", "reason", "by", "note", "kind", "affects", "risk", "result", "goal", "inputs", "paths", "checks", "done", "as", "slice", "files", "name", "code", "app", "skip-checks", "realizes", "verifies", "check", "from", "topic", "basis", "scope", "outside-ok", "adapter", "includes", "applies", "quote", "covered", "bar", "approval-token", "verdict-file", "verdict", "line", "source-file"]);
 const SUBCOMMANDS = new Set(["new", "task", "backups"]);
 
 function parseArgs(argv) {
@@ -451,9 +459,44 @@ function main() {
       return reply(r, `"royascaff continue" is a sentence for your AI chat (Cursor or Claude Code), not a terminal command.\nWhat the AI will do next:\n▶ ${r.text}${r.card ? `\n  card: ${r.card}` : ""}\n`);
     }
     case "adopt": {
+      if (target === "docs" && positional[2]) {
+        // adopt docs <folder> [path]: existing documents become demands and decisions that quote them (E3.3).
+        const { adoptDocs } = require("../lib/commands/adopt.cjs");
+        const r = adoptDocs(flags.path || positional[3] || ".", positional[2]);
+        const { text, ...data } = r;
+        return reply(data, `${text}\n`, r.counts.problems ? { refuse: { code: "CHECK_FAILED", message: `${r.counts.problems} quote(s) are not in their files`, missing: r.problems } } : {});
+      }
       const r = adoptCommand(flags.path || target || ".");
       const { text, ...data } = r;
       return reply(data, `${text}\n`);
+    }
+    case "confirm": {
+      // confirm <ID…> [path]: a person confirms records the AI inferred from existing code (E3.1).
+      const { confirmCommand } = require("../lib/commands/confirm.cjs");
+      const isId = (p) => /^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$/.test(p);
+      const r = confirmCommand(flags.path || positional.slice(1).find((p) => !isId(p)) || ".", positional.slice(1).filter(isId), flags);
+      return reply(r, `Confirmed ${r.confirmed.join(", ")} (by ${r.by}). They count again.\n`);
+    }
+    case "scan": {
+      // scan [module] [path]: facts per module for the AI to start from (E3.2).
+      const { scanCommand } = require("../lib/scan.cjs");
+      const first = positional[1];
+      const firstIsPath = Boolean(first) && !positional[2] && fs.existsSync(first) && fs.statSync(first).isDirectory();
+      const r = scanCommand(flags.path || (firstIsPath ? first : positional[2]) || ".", firstIsPath ? null : first, flags);
+      const { text, ...data } = r;
+      return reply(data, `${text}\n`);
+    }
+    case "inventory": {
+      const { inventoryCommand } = require("../lib/commands/inventory.cjs");
+      const r = inventoryCommand(flags.path || target || ".");
+      const { text, ...data } = r;
+      return reply(data, `${text}\n`);
+    }
+    case "ci": {
+      const { ciCommand } = require("../lib/commands/ci.cjs");
+      const r = ciCommand(flags.path || target || ".");
+      const text = `${r.checks.map((c) => `${c.ok ? "✓" : "✗"} ${c.id} — ${c.message}${c.items.length ? `\n${c.items.slice(0, 20).map((i) => `    - ${i}`).join("\n")}${c.items.length > 20 ? `\n    - … and ${c.items.length - 20} more` : ""}` : ""}`).join("\n")}\nRoyaScaff ci: ${r.ok ? "PASS" : "FAIL"}\n`;
+      return reply(r, text, r.ok ? {} : { refuse: { code: "CHECK_FAILED", message: `ci failed: ${r.checks.filter((c) => !c.ok).map((c) => c.id).join(", ")}`, missing: r.checks.filter((c) => !c.ok).flatMap((c) => c.items.length ? c.items : [c.message]) } });
     }
     case "migrate": {
       const r = migrateCommand(flags.path || target || ".", flags);

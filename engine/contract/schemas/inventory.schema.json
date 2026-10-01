@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/inventory.schema.json",
+  "title": "royascaff inventory: data",
+  "description": "The `data` of the contract envelope for `inventory`: what the project holds (records per knowledge layer and kind), and what needs attention (stale evidence, inferred records waiting for a person, code no component owns, changes in the repair loop), with the adapters and their check kinds. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": ["records", "layers", "stale_evidence", "unconfirmed", "unowned_code", "open_repairs", "adapters"],
+  "properties": {
+    "records": { "type": "object", "required": ["total", "by_kind"], "properties": { "total": { "type": "integer" }, "by_kind": { "type": "object", "additionalProperties": { "type": "integer" } } } },
+    "layers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["layer", "label", "records", "pages"],
+        "properties": {
+          "layer": { "type": "string" },
+          "label": { "type": "string" },
+          "records": { "type": "integer" },
+          "pages": { "type": "array", "items": { "type": "object", "required": ["file", "records"], "properties": { "file": { "type": "string" }, "records": { "type": "integer" } } } }
+        }
+      }
+    },
+    "changes": { "type": "object", "properties": { "open": { "type": "integer" }, "blocked": { "type": "integer" }, "closed": { "type": "integer" } } },
+    "stale_evidence": { "type": "array", "items": { "type": "object", "required": ["id"], "properties": { "id": { "type": "string" }, "change": { "type": ["string", "null"] } } } },
+    "unconfirmed": { "type": "array", "items": { "type": "object", "required": ["id", "kind"], "properties": { "id": { "type": "string" }, "kind": { "type": "string" }, "title": { "type": "string" }, "inferred_on": { "type": ["string", "null"] }, "age_days": { "type": ["integer", "null"] } } } },
+    "unowned_code": { "type": "object", "required": ["files", "modules"], "properties": { "files": { "type": "integer" }, "modules": { "type": "array", "items": { "type": "object", "required": ["module", "unowned"], "properties": { "module": { "type": "string" }, "unowned": { "type": "integer" } } } } } },
+    "open_repairs": { "type": "array", "items": { "type": "object", "required": ["change"], "properties": { "change": { "type": "string" }, "attempt": { "type": "integer" }, "limit": { "type": "integer" }, "failing": { "type": "array", "items": { "type": "string" } }, "blocked": { "type": "boolean" } } } },
+    "person_check": { "type": ["object", "null"], "properties": { "kind": { "type": "string" }, "bar": { "type": "string" } } },
+    "adapters": { "type": "array", "items": { "type": "object", "required": ["name", "checks"], "properties": { "name": { "type": "string" }, "checks": { "type": "array", "items": { "type": "string" } }, "person_check": { "type": ["string", "null"] }, "layers": { "type": "array", "items": { "type": "string" } } } } }
+  }
+}

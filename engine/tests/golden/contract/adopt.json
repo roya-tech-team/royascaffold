@@ -1,5 +1,48 @@
 [
   {
+    "scenario": "adopt docs",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "adopt",
+      "data": {
+        "folder": "apps/web",
+        "documents": [
+          {
+            "path": "apps/web/README.md",
+            "bytes": 56,
+            "lines": 1,
+            "sha": "ca3b3b49593d7fa77585519d2fbcecd740849840",
+            "headings": [
+              {
+                "line": 1,
+                "level": 1,
+                "text": "Web app (code lives here; never scanned as knowledge)"
+              }
+            ],
+            "records": [],
+            "covered": false
+          }
+        ],
+        "records": [],
+        "uncovered": [
+          "apps/web/README.md"
+        ],
+        "counts": {
+          "documents": 1,
+          "covered": 0,
+          "records": 0,
+          "problems": 0
+        },
+        "problems": []
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
     "scenario": "adopt",
     "exit": 0,
     "envelope": {
@@ -12,6 +55,10 @@
         "files": 0,
         "owned": 0,
         "percent": 100,
+        "required_layers": [
+          "architecture"
+        ],
+        "layer_gap_modules": 0,
         "next": null
       },
       "warnings": [],

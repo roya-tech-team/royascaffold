@@ -115,4 +115,15 @@ function staleEvidence(model) {
   return stale;
 }
 
-module.exports = { fingerprintOf, coverage, staleEvidence, hashFile, touchedComponents };
+// Stale evidence nothing has replaced: when a change has fresh evidence of the same kind (it was verified again),
+// its older stale records are history, not a problem.
+function outstandingStale(model, stale) {
+  const fresh = new Set();
+  for (const e of model.evidence.values()) if (e.fingerprint && e.change && !stale.has(e.id)) fresh.add(`${e.change}|${e.kind}`);
+  return [...stale].filter((id) => {
+    const e = model.evidence.get(id);
+    return e && !fresh.has(`${e.change}|${e.kind}`);
+  });
+}
+
+module.exports = { fingerprintOf, coverage, staleEvidence, outstandingStale, hashFile, touchedComponents };

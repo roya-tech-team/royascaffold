@@ -16,6 +16,7 @@ const LABELS = {
   released: "🚀 Released",
   "partly-done": "⚠️ Partly done",
   stale: "⚠️ Stale",
+  unconfirmed: "⏳ Unconfirmed",
   blocked: "⛔ Blocked",
 };
 
@@ -161,6 +162,8 @@ function deriveStatus(model) {
       else if (perSlice.includes("done")) state = "partly-done";
       else state = "planned";
     }
+    // E3.1: a requirement the AI inferred from existing code never counts as done until a person confirms it.
+    if ((state === "done" || state === "released") && require("../inferred.cjs").isUnconfirmed(rec)) state = "unconfirmed";
     requirements.set(rec.id, { id: rec.id, state, measure: measureOf(rec), slices: delivering.map((s) => s.id), baseline: baseline.map((c) => c.id), evidence: proof, staleEvidence: staleProof, missingEvidence: (delivering.some((s) => s.state === "done") || baseline.length > 0) && !proof.length });
   }
 
@@ -192,6 +195,7 @@ function deriveStatus(model) {
     if (!sl.length && !rq.length) state = "idea";
     else if (sl.some((s) => s.state === "blocked")) state = "blocked";
     else if (rq.some((r) => r.state === "stale")) state = "stale";
+    else if (rq.some((r) => r.state === "unconfirmed")) state = "unconfirmed";
     else if (all.every((s) => s === "done" || s === "released")) state = all.every((s) => s === "released") ? "released" : "done";
     else if (unprovenNfrs.length && rq.every((r) => r.state === "done" || r.state === "released" || unprovenNfrs.includes(r))) state = "checking";
     else if (all.some((s) => s === "done" || s === "released" || s === "partly-done")) state = "partly-done";

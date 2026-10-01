@@ -81,9 +81,9 @@ This is the rule for gates and checks: `advance` refused is `GATE_REFUSED`; `che
 
 ## 3. Commands
 
-`contract.commands` lists them. Today: adapter, adopt, advance, approve, backups, block, brief, cache, check, context,
-continue, contract, events, export, feedback, index, init, install, judge, log, measure, migrate, new, next, open,
-record, refine, render, roundtrip, show, smoke, status, task, tasks, trace, unblock, usage, validate, verify, where.
+`contract.commands` lists them. Today: adapter, adopt, advance, approve, backups, block, brief, cache, check, ci, confirm, context,
+continue, contract, events, export, feedback, index, init, install, inventory, judge, log, measure, migrate, new, next, open,
+record, refine, render, roundtrip, scan, show, smoke, status, task, tasks, trace, unblock, usage, validate, verify, where.
 
 Each one has a schema for its `data`. (`adapter.schema.json` is the schema of an adapter manifest, so the data of the
 `adapter` command is described by `adapter-result.schema.json`; `contract.schemaName` gives the file for a command.) The schemas list the fields a program may rely on. They allow
@@ -202,3 +202,26 @@ One token approves one feature or the whole roadmap, not a list.
 
 **The terminal path stays.** Without a token, a person approves at a terminal as before. In non-interactive mode
 (section 6) only a token can prove a person did it.
+
+## 9. Evidence, the judge and freshness (added in 1.5, minor changes of contract 1.0)
+
+These are additions only. A program that ignores them keeps working.
+
+- **`verify <CHG>`** runs every check and answers each typed acceptance line. `data.lines` has one entry per line
+  (`key` like `REQ-CAMP-003#2`, `type`, `result` of `pass`, `fail` or `pending`). `data.fingerprint` is the hash the
+  evidence was written under. A failed verify is `CHECK_FAILED`; `data.repair` says how many repair attempts are left.
+- **Evidence** (`export.evidence[]`, the `EVD-` records) gains `kind` (`check`, `verify` or `judge`), `fingerprint`
+  and `stale`. Stale evidence proves nothing: the requirement and its feature show the state `stale`, never `done`.
+- **`judge <CHG>`** returns the judge pack (`mode: pack`) or records verdicts (`mode: verdicts`). A builder identity
+  is refused with `GATE_REFUSED`; an AI turning an `unclear` line into `met` is refused with `HUMAN_REQUIRED`.
+- **States.** `status` and `export` can now report the requirement and feature states `stale` and `unconfirmed`
+  (an inferred record no person confirmed yet) next to the older ones.
+- **`next`** can return the kinds `repair`, `repair-blocked`, `judge`, `judge-unclear` and `confirm-inferred`;
+  `human: true` says a person must act. Treat an unknown kind as "read `text`".
+- **Events** gain `judge.recorded` (a change log) and `record.confirmed` (the project log).
+- **`ci`** is the one call a pull request check needs: validate, the freshness of evidence and the dependency
+  rules. It fails with `CHECK_FAILED` and `error.details.checks` says which gate.
+- **`scan`**, **`inventory`**, **`confirm`**, **`adapter`** and `adopt docs <folder>` are new commands (or modes);
+  their `data` schemas are in `contract/schemas/`.
+- **Warnings.** When the engine that answers is the engine being changed (its folder is inside the repository it
+  works on, outside `node_modules`), every envelope carries one warning saying so. Run the pinned copy instead.

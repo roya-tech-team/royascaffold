@@ -25,7 +25,7 @@ const webUi = (root) => edit(root, "profile.md", (t) => t.replace("project_name:
 
 test("five adapter cards, each with Design, Rules, Check and Words, within 600 tokens", () => {
   const names = fs.readdirSync(DIR).filter((f) => f.endsWith(".md")).map((f) => f.replace(/\.md$/, "")).sort();
-  assert.deepEqual(names, ["generic", "node", "web-3d", "web-api", "web-ui"]); // web-3d: 12c WP-C6; node: beta.4 WP-D4
+  assert.deepEqual(names, ["generic", "node", "python", "web-3d", "web-api", "web-ui"]); // web-3d: 12c WP-C6; node: beta.4 WP-D4; python: E3.2
   for (const n of names) {
     const a = readAdapter(n);
     assert.ok(a.design && a.rules && a.check && a.words.length, n);

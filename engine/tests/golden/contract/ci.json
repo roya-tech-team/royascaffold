@@ -1,0 +1,93 @@
+[
+  {
+    "scenario": "ci",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "ci",
+      "data": {
+        "ok": true,
+        "checks": [
+          {
+            "id": "validate",
+            "ok": true,
+            "message": "the project validates (0 warning(s))",
+            "items": []
+          },
+          {
+            "id": "freshness",
+            "ok": true,
+            "message": "all evidence is fresh",
+            "items": []
+          },
+          {
+            "id": "rules",
+            "ok": true,
+            "message": "no path rules to check (or the adapters declare no import patterns)",
+            "items": []
+          }
+        ],
+        "errors": 0,
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "stale": 0
+        }
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "ci (a gate fails)",
+    "exit": 1,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": false,
+      "command": "ci",
+      "error": {
+        "code": "CHECK_FAILED",
+        "message": "ci failed: validate",
+        "missing": [
+          "REQ-CAMP-001 → Verified by: TEST-CAMP-999 does not exist (knowledge/02-requirements/requirements.md:31)"
+        ],
+        "details": {
+          "ok": false,
+          "checks": [
+            {
+              "id": "validate",
+              "ok": false,
+              "message": "1 validation error(s), 0 warning(s)",
+              "items": [
+                "REQ-CAMP-001 → Verified by: TEST-CAMP-999 does not exist (knowledge/02-requirements/requirements.md:31)"
+              ]
+            },
+            {
+              "id": "freshness",
+              "ok": true,
+              "message": "all evidence is fresh",
+              "items": []
+            },
+            {
+              "id": "rules",
+              "ok": true,
+              "message": "no path rules to check (or the adapters declare no import patterns)",
+              "items": []
+            }
+          ],
+          "errors": 1,
+          "counts": {
+            "errors": 1,
+            "warnings": 0,
+            "stale": 0
+          }
+        }
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

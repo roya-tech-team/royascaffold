@@ -1,0 +1,43 @@
+[
+  {
+    "scenario": "confirm (an AI may not)",
+    "exit": 1,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": false,
+      "command": "confirm",
+      "error": {
+        "code": "HUMAN_REQUIRED",
+        "message": "A confirmation must come from a person, not \"ai:claude\". Run it yourself, or pass --by <your name>.",
+        "missing": [
+          "a person: run it yourself in a terminal",
+          "a signed approval token from an issuer the project trusts (--approval-token or ROYASCAFF_APPROVAL_TOKEN), or a person running this in a terminal"
+        ]
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "confirm",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "confirm",
+      "data": {
+        "confirmed": [
+          "REQ-CAMP-001"
+        ],
+        "by": "islam",
+        "date": "2026-10-01"
+      },
+      "warnings": [],
+      "events": [
+        "EVT-PROJECT-0005"
+      ]
+    }
+  }
+]

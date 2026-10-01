@@ -1,4 +1,14 @@
-# RoyaScaff Engine 1.4 — beta.4 (`1.4.0-beta.4`, not published)
+# RoyaScaff Engine 1.5
+
+> **1.5 in one paragraph.** Every command speaks JSON in a published contract (`docs/CONTRACT.md`, `contract/`). Done is
+> proven by machines (`verify`: typed acceptance lines, evidence with a fingerprint) and stays true while the code
+> changes (stale evidence shows ⚠️ Stale, not ✅ Done). A separate judge reads the pack (`judge`); a failed verify has a
+> bounded repair loop. Adapters declare what to run and what a person checks (`docs/ADAPTERS.md`, `adapter new`,
+> `adapter test`). Existing code is adopted with facts (`scan`, `adopt`, `adopt docs`, `confirm`). `inventory` and
+> `ci` give a project and its pull requests one view. Signed approvals let a browser collect a person's approval.
+> The engine develops itself with itself (`../docs/DOGFOOD.md`). Progress per work package: `../docs/PROGRESS.md`.
+
+## History (1.4 beta.4 and earlier)
 
 > Copy of `engine-1.4-beta.3/` made 2026-09-30 to build beta.4 (plan file 17): every knowledge file in the flow, a generic core.
 > `engine-1.4/`, `engine-1.4-beta.2/` and `engine-1.4-beta.3/` stay frozen.
@@ -21,7 +31,7 @@ npm run deploy                     # the same, then npm publish under the versio
 npm run deploy -- --otp=123456     # when your account asks for a two-factor code
 ```
 
-A pre-release version (`1.4.0-beta.4`) is published under its tag (`beta`), so `npm install royascaff` keeps giving the stable version and `npm install royascaff@beta` gives this one. The script stops if the version is already on npm: raise `version` in `package.json` first. `npm publish` on its own also runs the tests (`prepublishOnly`).
+A pre-release version (`1.5.0-beta.1`) is published under its tag (`beta`), so `npm install royascaff` keeps giving the stable version and `npm install royascaff@beta` gives that one. A stable version (`1.5.0`) goes to `latest`: the script takes the tag from the version and passes it to `npm publish --tag`. The script stops if the version is already on npm: raise `version` in `package.json` first. `npm publish` on its own also runs the tests (`prepublishOnly`).
 
 ## Build status
 

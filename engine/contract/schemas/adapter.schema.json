@@ -60,8 +60,16 @@
         "extensions": { "type": "array", "items": { "type": "string" }, "description": "File extensions the scan reads (with the dot)." },
         "patterns": {
           "type": "object",
-          "description": "Fact name -> list of regular expressions (imports, exports, routes, …). The first capture group is the fact.",
-          "additionalProperties": { "type": "array", "items": { "type": "string" } }
+          "description": "Fact name -> list of regular expressions (imports, exports, routes, …). The first capture group is the fact. An item can also be { \"pattern\": \"…\", \"split\": \",\" } when one match holds a list of facts.",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                { "type": "string" },
+                { "type": "object", "required": ["pattern"], "additionalProperties": false, "properties": { "pattern": { "type": "string" }, "split": { "type": "string" } } }
+              ]
+            }
+          }
         },
         "schemaFiles": { "type": "array", "items": { "type": "string" }, "description": "Regular expressions for schema and migration files." },
         "configFiles": { "type": "array", "items": { "type": "string" }, "description": "Regular expressions for configuration files." },

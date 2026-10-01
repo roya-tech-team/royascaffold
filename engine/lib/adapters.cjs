@@ -101,7 +101,7 @@ function policyOf(names, projectDir = null) {
       else if (p.smoke) p.smoke.env = { ...p.smoke.env, ...(m.smoke.env || {}) };
     }
     if (m.tests && !p.tests) p.tests = m.tests;
-    else if (m.tests) p.tests = { files: uniq([...p.tests.files, ...m.tests.files]), readsSource: [...p.tests.readsSource, ...(m.tests.readsSource || [])] };
+    else if (m.tests) p.tests = { files: uniq([...p.tests.files, ...m.tests.files]), readsSource: [...(p.tests.readsSource || []), ...(m.tests.readsSource || [])] };
     if (m.deps && !p.deps) p.deps = m.deps;
     if (m.tradeoffs) p.tradeoffs = [...(p.tradeoffs || []), { ...m.tradeoffs, adapter: n }];
     for (const t of m.legacyAppTypes || []) p.legacyAppTypes[t] = n;

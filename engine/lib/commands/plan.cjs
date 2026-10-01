@@ -127,6 +127,17 @@ function newSlice(start, featureId, title, opts = {}) {
   return { id, feature: featureId, order, delivers, depends, planned_at: plannedAt, file: rec.file, ...(opts.foundation ? { foundation: true } : {}) };
 }
 
+// The existing document a record quotes (`--source-file`): inside the repository, there, and holding the quote word for word.
+function checkSourceFile(repo, given, quote) {
+  const rel = String(given).replace(/\\/g, "/").replace(/^\.\//, "");
+  const abs = path.resolve(repo, rel);
+  if (rel.startsWith("..") || path.isAbsolute(rel) || path.relative(repo, abs).startsWith("..")) throw Object.assign(new Error(`--source-file must be a file inside the repository (got ${given})`), { code: "INVALID_INPUT" });
+  if (!fs.existsSync(abs) || !fs.statSync(abs).isFile()) throw Object.assign(new Error(`${rel} is not a file in this repository`), { code: "UNKNOWN_ID" });
+  if (!quote) throw Object.assign(new Error(`Quote the document: add --quote "<exact words from ${rel}>"`), { code: "INVALID_INPUT" });
+  if (!require("../coverage.cjs").fileQuoteFound(fs.readFileSync(abs, "utf8"), quote)) throw Object.assign(new Error(`The quote is not in ${rel}: copy the words exactly as they are in the file (… may join parts)`), { code: "INVALID_INPUT" });
+  return rel;
+}
+
 // new record <kind> "<title>" [--feature CAP-…] [--priority …] [--code globs] [--realizes …] [--verifies …] [--check …]
 function newRecord(start, kindArg, title, opts = {}) {
   const kind = KIND_ALIASES[String(kindArg || "").toLowerCase()] || String(kindArg || "").toLowerCase();
@@ -142,7 +153,7 @@ function newRecord(start, kindArg, title, opts = {}) {
   const file = path.join(project.projectDir, rel);
   const content = fs.existsSync(file) ? fs.readFileSync(file, "utf8") : docText(doc, { CODE: model.code, OWNER: owner, NAME: model.profile.project_name || model.code });
   const list = (v) => (v ? String(v).split(",").map((x) => x.trim()).filter(Boolean).join(", ") : "");
-  if (kind === "source") {
+  if (kind === "source" && !opts["source-file"]) {
     // D7: demands are one table row each when the file has a demand table (outside examples).
     const lines = content.split("\n");
     let fenced = false;
@@ -155,7 +166,17 @@ function newRecord(start, kindArg, title, opts = {}) {
       return { id, kind, file: rel };
     }
   }
-  transactional(start, file, insertRecord(content, recordBlock(kind, id, title, { owner, priority: opts.priority, feature: opts.feature, code: opts.code, realizes: list(opts.realizes), verifies: list(opts.verifies), check: opts.check, topic: opts.topic, basis: opts.basis, scope: opts.scope, includes: list(opts.includes), applies: list(opts.applies), quote: opts.quote, covered: list(opts.covered) })));
+  // E3.1: `--basis inferred …` marks a record the AI guessed from existing code; it carries its date, so the
+  // 14-day check can run. (An assumption's Basis is its reason, and is confirmed by the project approval.)
+  const extra = [];
+  if (kind !== "assumption" && /^inferred\b/i.test(String(opts.basis || ""))) extra.push(["Basis", opts.basis], ["Inferred on", new Date().toISOString().slice(0, 10)]);
+  // E3.3: `--source-file <path>` says which existing document the record comes from; its quote must be in it.
+  if (opts["source-file"] && opts["source-file"] !== true) {
+    const srcRel = checkSourceFile(project.repo, opts["source-file"], opts.quote);
+    extra.push(["Source file", srcRel]);
+    if (kind !== "source" && opts.quote) extra.push(["Quote", opts.quote]);
+  }
+  transactional(start, file, insertRecord(content, recordBlock(kind, id, title, { owner, priority: opts.priority, feature: opts.feature, code: opts.code, realizes: list(opts.realizes), verifies: list(opts.verifies), check: opts.check, topic: opts.topic, basis: kind === "assumption" ? opts.basis : undefined, scope: opts.scope, includes: list(opts.includes), applies: list(opts.applies), quote: opts.quote, covered: list(opts.covered), extra })));
   return { id, kind, file: rel };
 }
 

@@ -1,0 +1,73 @@
+{
+  "adapter": "python",
+  "description": "Python services, scripts and libraries",
+  "lockfiles": [
+    "poetry.lock",
+    "Pipfile.lock",
+    "uv.lock",
+    "requirements.txt"
+  ],
+  "personCheck": {
+    "kind": "transcript",
+    "bar": "Usage bar",
+    "minLines": 3,
+    "prompt": "read the recorded run of the commands and their output, and score it against the usage bar",
+    "record": "Transcript"
+  },
+  "personLook": {
+    "kinds": [
+      "feature"
+    ],
+    "minRisk": "high"
+  },
+  "scan": {
+    "extensions": [
+      ".py"
+    ],
+    "patterns": {
+      "imports": [
+        "^\\s*from\\s+([\\w.]+)\\s+import",
+        {
+          "pattern": "^\\s*import\\s+([\\w.]+(?:\\s*,\\s*[\\w.]+)*)",
+          "split": ","
+        }
+      ],
+      "exports": [
+        "^(?:async\\s+)?def\\s+([A-Za-z]\\w*)",
+        "^class\\s+(\\w+)"
+      ],
+      "routes": [
+        "@\\w+\\.(?:get|post|put|patch|delete|route)\\(\\s*['\"]([^'\"]+)['\"]"
+      ]
+    },
+    "schemaFiles": [
+      "(^|/)migrations?/",
+      "\\.sql$"
+    ],
+    "configFiles": [
+      "(^|/)(pyproject\\.toml|setup\\.cfg|setup\\.py|tox\\.ini|pytest\\.ini)$"
+    ],
+    "testFiles": [
+      "(^|/)tests?/.+\\.py$",
+      "(^|/)test_[^/]+\\.py$",
+      "(^|/)[^/]+_test\\.py$"
+    ]
+  },
+  "tests": {
+    "files": [
+      "(^|/)tests?/.+\\.py$",
+      "(^|/)test_[^/]+\\.py$",
+      "(^|/)[^/]+_test\\.py$"
+    ],
+    "readsSource": [
+      {
+        "call": "\\b(open|read_text|read_bytes)\\s*\\(([^)]{0,200})\\)",
+        "args": [
+          "['\"][^'\"]*(?:^|[\\/.])src\\/",
+          "['\"][^'\"]*\\.py['\"]"
+        ],
+        "why": "reads application source as text ($1)"
+      }
+    ]
+  }
+}
