@@ -16,3 +16,5 @@
 | 2026-10-01T02:26:48Z | task.done | TASK-ENG-002 | ai:claude | 7da2d25 | package.json is 1.5.0; contract-package accepts 1.5.0 and its pre-releases; the full suite runs in verify |
 | 2026-10-01T02:27:37Z | backup.saved | TASK-ENG-002 | ai:claude | 7b9ee5a | 1 uncommitted developer file(s) saved to .backups/TASK-ENG-002-20261001T022736Z and git stash f257d4703b: engine/skill/royascaff/cards/adopt.md |
 | 2026-10-01T02:27:37Z | task.started | TASK-ENG-002 | ai:claude | 7b9ee5a | reopened: the adopt card teaches scan, inferred records and adopt docs |
+| 2026-10-01T02:27:44Z | task.done | TASK-ENG-002 | ai:claude | c38128e | the adopt card is updated; budgets hold |
+| 2026-10-01T02:33:44Z | check.run | CHG-ENG-001 | ai:claude | c38128e | pass: APP-ENG-ENGINE — test ✓ · rules ✓ (EVD-ENG-001) |
