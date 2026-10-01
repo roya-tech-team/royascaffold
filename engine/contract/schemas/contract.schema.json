@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/contract.schema.json",
+  "title": "royascaff contract: data",
+  "description": "The `data` of the contract envelope for `contract`. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": [
+    "contract",
+    "engine",
+    "commands",
+    "adapters",
+    "error_codes"
+  ],
+  "properties": {
+    "contract": {
+      "type": "string"
+    },
+    "engine": {
+      "type": "string"
+    },
+    "commands": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "adapters": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "error_codes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

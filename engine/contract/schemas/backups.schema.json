@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/backups.schema.json",
+  "title": "royascaff backups: data",
+  "description": "The `data` of the contract envelope for `backups`. Either the list of backups, or the result of a restore. Extra fields are allowed: adding a field is a minor change.",
+  "anyOf": [
+    {
+      "type": "object",
+      "required": [
+        "backups"
+      ],
+      "properties": {
+        "backups": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "files": {
+                "type": "array"
+              },
+              "reason": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "object",
+      "required": [
+        "id",
+        "restored"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "restored": {
+          "type": "array"
+        },
+        "safety": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -8,6 +8,7 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const { spawnSync } = require("child_process");
+const { unwrap } = require("./envelope.cjs");
 const { buildModel } = require("../lib/model/graph.cjs");
 const { stageDurations, readUsage } = require("../lib/usage.cjs");
 
@@ -62,7 +63,7 @@ test("feedback writes a report to review; usage shows what is counted; nothing i
   assert.equal(bad.status, 1);
   const r = run(root, ["feedback", "The approval step confused my team", "--kind", "confusing", "--json"]);
   assert.equal(r.status, 0);
-  const { file } = JSON.parse(r.stdout);
+  const { file } = unwrap(r.stdout);
   assert.match(file, /^project\/\.usage\/feedback-\d{8}T\d{6}Z-confusing\.md$/);
   const text = fs.readFileSync(path.join(root, file), "utf8");
   assert.match(text, /^# RoyaScaff feedback · confusing/);
@@ -72,7 +73,7 @@ test("feedback writes a report to review; usage shows what is counted; nothing i
   assert.match(text, /- advance: 1 runs, 1 refused/);
   assert.match(text, /- checks: 1\n- evidence: 1/);
   assert.match(text, /### Brief · Campaign Planner/);
-  const u = JSON.parse(run(root, ["usage", "--json"]).stdout);
+  const u = unwrap(run(root, ["usage", "--json"]).stdout);
   assert.equal(u.enabled, true);
   assert.equal(u.usage.runs, 2, "status and advance; feedback and usage are never counted");
 });

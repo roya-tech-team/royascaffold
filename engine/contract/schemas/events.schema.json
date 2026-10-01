@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/events.schema.json",
+  "title": "royascaff events: data",
+  "description": "The `data` of the contract envelope for `events`. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": [
+    "events",
+    "count",
+    "last"
+  ],
+  "properties": {
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "change",
+          "when",
+          "event",
+          "target",
+          "by",
+          "git",
+          "note"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^EVT-"
+          },
+          "change": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "when": {
+            "type": "string"
+          },
+          "event": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string"
+          },
+          "by": {
+            "type": "string"
+          },
+          "git": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "count": {
+      "type": "integer"
+    },
+    "last": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

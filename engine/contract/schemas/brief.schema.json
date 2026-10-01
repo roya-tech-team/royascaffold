@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/brief.schema.json",
+  "title": "royascaff brief: data",
+  "description": "The `data` of the contract envelope for `brief`. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": [
+    "text"
+  ],
+  "properties": {
+    "text": {
+      "type": "string"
+    },
+    "change": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "approx_tokens": {
+      "type": "integer"
+    }
+  }
+}

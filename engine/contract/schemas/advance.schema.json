@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/advance.schema.json",
+  "title": "royascaff advance: data",
+  "description": "The `data` of the contract envelope for `advance`. A refused step is an envelope failure with code GATE_REFUSED; the same data is in error.details. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": [
+    "id",
+    "from",
+    "reached",
+    "steps"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "from": {
+      "type": "string"
+    },
+    "reached": {
+      "type": "string"
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "to",
+          "ok"
+        ],
+        "properties": {
+          "to": {
+            "type": "string"
+          },
+          "ok": {
+            "type": "boolean"
+          },
+          "checks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "ok",
+                "message"
+              ],
+              "properties": {
+                "ok": {
+                  "type": "boolean"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "message": {
+      "type": "string"
+    }
+  }
+}

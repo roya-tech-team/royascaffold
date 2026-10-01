@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/install.schema.json",
+  "title": "royascaff install: data",
+  "description": "The `data` of the contract envelope for `install`. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": [
+    "tools",
+    "cli",
+    "skill_files",
+    "docs_created"
+  ],
+  "properties": {
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "cli": {
+      "type": "string"
+    },
+    "skill_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "docs_created": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

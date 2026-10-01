@@ -185,7 +185,7 @@ function stateOf(event, hash) {
 // Computed once per model (1.4 projects only).
 function computeApprovals(model, files) {
   const logText = fileText(files, PROJECT_LOG);
-  const { events, problems } = logText ? parseLog(logText) : { events: [], problems: [] };
+  const { events, problems } = logText ? parseLog(logText, "project") : { events: [], problems: [] };
   const discovery = discoveryState(model, files);
   const architecture = architectureState(files);
   const hash = projectHash(model, files);

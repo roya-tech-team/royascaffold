@@ -49,7 +49,7 @@ try {
 // Every command the CLI dispatches (a test keeps this in step with bin/royascaff.cjs).
 const COMMANDS = [
   "adopt", "advance", "approve", "backups", "block", "brief", "cache", "check", "context", "continue", "contract",
-  "export", "feedback", "index", "init", "install", "log", "measure", "migrate", "new", "next", "open", "record",
+  "events", "export", "feedback", "index", "init", "install", "log", "measure", "migrate", "new", "next", "open", "record",
   "refine", "render", "roundtrip", "show", "smoke", "status", "task", "tasks", "trace", "unblock", "usage", "validate", "where",
 ];
 
@@ -100,7 +100,9 @@ function ok(command, data, extra = {}) {
 }
 
 function failure(command, err, extra = {}) {
-  return { contract: CONTRACT_VERSION, engine: ENGINE_VERSION, ok: false, command, error: classify(err), warnings: extra.warnings || [], events: extra.events || [] };
+  const error = classify(err);
+  if (extra.details !== undefined) error.details = extra.details; // the full result of a call that failed or was refused
+  return { contract: CONTRACT_VERSION, engine: ENGINE_VERSION, ok: false, command, error, warnings: extra.warnings || [], events: extra.events || [] };
 }
 
 module.exports = { CONTRACT_VERSION, ENGINE_VERSION, ERRORS, COMMANDS, classify, exitFor, ok, failure, errorsFileText, writeErrorsFile };

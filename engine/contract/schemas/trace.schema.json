@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/trace.schema.json",
+  "title": "royascaff trace: data",
+  "description": "The `data` of the contract envelope for `trace`. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": [
+    "id",
+    "text"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "text": {
+      "type": "string"
+    }
+  }
+}

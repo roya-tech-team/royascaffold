@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/init.schema.json",
+  "title": "royascaff init: data",
+  "description": "The `data` of the contract envelope for `init`. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": [
+    "project",
+    "code",
+    "apps",
+    "created"
+  ],
+  "properties": {
+    "project": {
+      "type": "string"
+    },
+    "code": {
+      "type": "string"
+    },
+    "apps": {
+      "type": "array"
+    },
+    "created": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

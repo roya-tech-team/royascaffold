@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/continue.schema.json",
+  "title": "royascaff continue: data",
+  "description": "The `data` of the contract envelope for `continue`. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": [
+    "kind",
+    "text",
+    "initialized"
+  ],
+  "properties": {
+    "kind": {
+      "type": "string"
+    },
+    "text": {
+      "type": "string"
+    },
+    "initialized": {
+      "type": "boolean"
+    },
+    "change": {
+      "type": "string"
+    },
+    "task": {
+      "type": "string"
+    },
+    "stage": {
+      "type": "string"
+    },
+    "card": {
+      "type": "string"
+    },
+    "say": {
+      "type": "string"
+    },
+    "others": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "adapter_cards": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "gate": {
+      "type": "object"
+    }
+  }
+}

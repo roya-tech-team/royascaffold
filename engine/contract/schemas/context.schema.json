@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/context.schema.json",
+  "title": "royascaff context: data",
+  "description": "The `data` of the contract envelope for `context`. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": [
+    "task",
+    "text",
+    "tokens",
+    "budget",
+    "written"
+  ],
+  "properties": {
+    "task": {
+      "type": "string"
+    },
+    "change": {
+      "type": "string"
+    },
+    "text": {
+      "type": "string"
+    },
+    "tokens": {
+      "type": "integer"
+    },
+    "budget": {
+      "type": "integer"
+    },
+    "within": {
+      "type": "boolean"
+    },
+    "sections": {
+      "type": "array"
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "design": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "dropped": {
+      "type": "array"
+    },
+    "written": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

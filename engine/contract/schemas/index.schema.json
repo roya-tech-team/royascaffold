@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/index.schema.json",
+  "title": "royascaff index: data",
+  "description": "The `data` of the contract envelope for `index`. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": [
+    "status_file",
+    "board_changed",
+    "root_pointer",
+    "summaries_updated"
+  ],
+  "properties": {
+    "status_file": {
+      "type": "string"
+    },
+    "board_changed": {
+      "type": "boolean"
+    },
+    "root_pointer": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "summaries_updated": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

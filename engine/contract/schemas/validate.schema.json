@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/validate.schema.json",
+  "title": "royascaff validate: data",
+  "description": "The `data` of the contract envelope for `validate`. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": [
+    "ok",
+    "counts",
+    "issues"
+  ],
+  "properties": {
+    "ok": {
+      "type": "boolean"
+    },
+    "counts": {
+      "type": "object",
+      "required": [
+        "records",
+        "features",
+        "slices",
+        "changes",
+        "tasks",
+        "errors",
+        "warnings"
+      ],
+      "properties": {
+        "records": {
+          "type": "integer"
+        },
+        "features": {
+          "type": "integer"
+        },
+        "slices": {
+          "type": "integer"
+        },
+        "changes": {
+          "type": "integer"
+        },
+        "tasks": {
+          "type": "integer"
+        },
+        "errors": {
+          "type": "integer"
+        },
+        "warnings": {
+          "type": "integer"
+        }
+      }
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "severity",
+          "message"
+        ],
+        "properties": {
+          "severity": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

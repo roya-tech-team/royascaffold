@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/measure.schema.json",
+  "title": "royascaff measure: data",
+  "description": "The `data` of the contract envelope for `measure`. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": [
+    "id",
+    "by",
+    "result"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "by": {
+      "type": "string"
+    },
+    "result": {
+      "type": "string",
+      "enum": [
+        "met",
+        "not-met"
+      ]
+    }
+  }
+}

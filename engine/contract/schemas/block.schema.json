@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/block.schema.json",
+  "title": "royascaff block: data",
+  "description": "The `data` of the contract envelope for `block`. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": [
+    "id",
+    "blocked"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "blocked": {
+      "type": "boolean"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/open.schema.json",
+  "title": "royascaff open: data",
+  "description": "The `data` of the contract envelope for `open`. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": [
+    "id",
+    "dir",
+    "risk"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "dir": {
+      "type": "string"
+    },
+    "risk": {
+      "type": "string"
+    }
+  }
+}

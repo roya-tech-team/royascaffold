@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/new.schema.json",
+  "title": "royascaff new: data",
+  "description": "The `data` of the contract envelope for `new`. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": [
+    "file"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "file": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string"
+    },
+    "change": {
+      "type": "string"
+    },
+    "horizon": {
+      "type": "string"
+    },
+    "feature": {
+      "type": "string"
+    },
+    "order": {
+      "type": "integer"
+    },
+    "delivers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "depends": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "planned_at": {
+      "type": "string"
+    }
+  }
+}

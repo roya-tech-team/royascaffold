@@ -1,0 +1,187 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/export.schema.json",
+  "title": "royascaff export: data",
+  "description": "The `data` of the contract envelope for `export`. Either the full export document, or, with --out, a summary of the file that was written. Extra fields are allowed: adding a field is a minor change.",
+  "anyOf": [
+    {
+      "type": "object",
+      "required": [
+        "format",
+        "format_version",
+        "layout",
+        "project_dir",
+        "engine",
+        "files",
+        "records",
+        "links",
+        "status",
+        "evidence",
+        "issues",
+        "board"
+      ],
+      "properties": {
+        "format": {
+          "const": "royascaff-exchange"
+        },
+        "format_version": {
+          "type": "integer"
+        },
+        "layout": {
+          "type": "string"
+        },
+        "project_dir": {
+          "type": "string"
+        },
+        "engine": {
+          "type": "string"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "path"
+            ],
+            "properties": {
+              "path": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "from",
+              "type",
+              "to",
+              "resolved"
+            ],
+            "properties": {
+              "from": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              },
+              "resolved": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "status": {
+          "type": "object",
+          "required": [
+            "features",
+            "requirements",
+            "slices",
+            "changes",
+            "tasks"
+          ],
+          "properties": {
+            "features": {
+              "type": "object"
+            },
+            "requirements": {
+              "type": "object"
+            },
+            "slices": {
+              "type": "object"
+            },
+            "changes": {
+              "type": "object"
+            },
+            "tasks": {
+              "type": "object"
+            }
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "result"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "result": {
+                "type": "string"
+              },
+              "proves": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "severity",
+              "message"
+            ],
+            "properties": {
+              "severity": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "board": {
+          "type": "string"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "required": [
+        "out",
+        "files",
+        "records"
+      ],
+      "properties": {
+        "out": {
+          "type": "string"
+        },
+        "files": {
+          "type": "integer"
+        },
+        "records": {
+          "type": "integer"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/roundtrip.schema.json",
+  "title": "royascaff roundtrip: data",
+  "description": "The `data` of the contract envelope for `roundtrip`. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": [
+    "ok",
+    "mismatches",
+    "stats",
+    "layout",
+    "project_dir"
+  ],
+  "properties": {
+    "ok": {
+      "type": "boolean"
+    },
+    "mismatches": {
+      "type": "array"
+    },
+    "stats": {
+      "type": "object"
+    },
+    "layout": {
+      "type": "string"
+    },
+    "project_dir": {
+      "type": "string"
+    }
+  }
+}

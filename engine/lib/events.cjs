@@ -35,15 +35,25 @@ function logTemplate(changeId) {
   return `# Log · ${changeId}\n\n> Written by \`royascaff\`. Do not edit by hand.\n\n${HEADER}\n`;
 }
 
-// Parses log.md text into events. Returns { events, problems }.
-function parseLog(text) {
+// A stable ID for each event: the log it sits in and its row number (logs are append-only, so the
+// number never changes). "project" is the project log: EVT-PROJECT-0001; a change: EVT-CHG-X-001-0003.
+function eventId(scope, n) {
+  return `EVT-${scope === "project" ? "PROJECT" : scope}-${String(n).padStart(4, "0")}`;
+}
+
+// Events written by this process, so a command can report them in its contract envelope.
+const EMITTED = [];
+
+// Parses log.md text into events. Returns { events, problems }. With a scope (a change ID or "project")
+// each event also carries its `id`.
+function parseLog(text, scope) {
   const problems = [];
   const table = readTables(text).find((t) => t.header.map((h) => h.toLowerCase()).join("|") === COLUMNS.map((c) => c.toLowerCase()).join("|"));
   if (!table) return { events: [], problems: text.trim() ? ["no event table with columns When | Event | Target | By | Git | Note"] : [] };
   const events = table.rows.map((row, index) => {
     const [when, event, target, by, git, note] = row.cells;
     const clean = (v) => (v === undefined || v === "—" || v === "-" ? "" : v.replace(/`/g, ""));
-    return { index, when: clean(when), event: clean(event), target: clean(target), by: clean(by), git: clean(git), note: note === undefined || note === "—" ? "" : note, line: row.lineOffset + 1 };
+    return { ...(scope ? { id: eventId(scope, index + 1) } : {}), index, when: clean(when), event: clean(event), target: clean(target), by: clean(by), git: clean(git), note: note === undefined || note === "—" ? "" : note, line: row.lineOffset + 1 };
   });
   for (const e of events) {
     if (!EVENT_TYPES.includes(e.event)) problems.push(`line ${e.line}: unknown event "${e.event}"`);
@@ -69,7 +79,10 @@ function appendEvent(changeDirAbs, changeId, e) {
   text += `| ${row.join(" | ")} |\n`;
   fs.mkdirSync(changeDirAbs, { recursive: true });
   fs.writeFileSync(file, text);
-  return { ...e, when: row[0], file };
+  const log = parseLog(text, changeId);
+  const id = log.events.length ? log.events[log.events.length - 1].id : eventId(changeId, 1);
+  EMITTED.push(id);
+  return { ...e, id, when: row[0], file };
 }
 
 // Last task event decides the task state (§3.5).
@@ -81,4 +94,4 @@ function taskStateFrom(events, taskId) {
   return { state, last };
 }
 
-module.exports = { EVENT_TYPES, parseLog, appendEvent, taskStateFrom, logTemplate, nowIso, HEADER };
+module.exports = { EVENT_TYPES, EMITTED, eventId, parseLog, appendEvent, taskStateFrom, logTemplate, nowIso, HEADER };

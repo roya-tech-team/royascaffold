@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/adopt.schema.json",
+  "title": "royascaff adopt: data",
+  "description": "The `data` of the contract envelope for `adopt`. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": [
+    "modules",
+    "files",
+    "owned",
+    "percent"
+  ],
+  "properties": {
+    "modules": {
+      "type": "array"
+    },
+    "files": {
+      "type": "integer"
+    },
+    "owned": {
+      "type": "integer"
+    },
+    "percent": {
+      "type": "integer"
+    },
+    "next": {}
+  }
+}

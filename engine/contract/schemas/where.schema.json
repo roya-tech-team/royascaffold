@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/where.schema.json",
+  "title": "royascaff where: data",
+  "description": "The `data` of the contract envelope for `where`. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": [
+    "repo",
+    "project_dir",
+    "layout",
+    "markdown_files",
+    "files"
+  ],
+  "properties": {
+    "repo": {
+      "type": "string"
+    },
+    "project_dir": {
+      "type": "string"
+    },
+    "layout": {
+      "type": "string"
+    },
+    "markdown_files": {
+      "type": "integer"
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

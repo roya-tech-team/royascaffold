@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/smoke.schema.json",
+  "title": "royascaff smoke: data",
+  "description": "The `data` of the contract envelope for `smoke`. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": [
+    "app",
+    "file",
+    "kept",
+    "command"
+  ],
+  "properties": {
+    "app": {
+      "type": "string"
+    },
+    "file": {
+      "type": "string"
+    },
+    "kept": {
+      "type": "boolean"
+    },
+    "command": {
+      "type": "string"
+    },
+    "installed": {
+      "type": "boolean"
+    },
+    "install": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

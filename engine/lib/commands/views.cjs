@@ -175,4 +175,29 @@ function logCommand(start, opts = {}) {
   return { events: limited.map(({ index, line, ...e }) => e), text };
 }
 
-module.exports = { indexCommand, statusCommand, tasksCommand, traceCommand, logCommand, POINTER_MARK };
+// The whole event log in time order (oldest first), as plain rows. `--since` takes an event ID
+// (everything after it), a date, or a span like 7d (everything from then on). Studio's indexer reads it.
+function eventsCommand(start, opts = {}) {
+  const { model } = load(start);
+  const all = [];
+  for (const e of model.approvals ? model.approvals.events : []) all.push({ change: null, scope: "project", ...e });
+  for (const c of model.changes.values()) for (const e of c.events || []) all.push({ change: c.id, scope: c.id, ...e });
+  const key = (e) => [Date.parse(e.when) || 0, e.scope, e.index];
+  const order = (a, b) => { const x = key(a); const y = key(b); return x[0] - y[0] || (x[1] < y[1] ? -1 : x[1] > y[1] ? 1 : 0) || x[2] - y[2]; };
+  all.sort(order);
+  let list = all;
+  if (opts.since && /^EVT-/.test(String(opts.since))) {
+    const at = all.find((e) => e.id === opts.since);
+    if (!at) throw Object.assign(new Error(`${opts.since} is not an event in this project`), { code: "UNKNOWN_ID" });
+    list = all.filter((e) => order(at, e) < 0);
+  } else if (opts.since) {
+    const since = parseSince(opts.since);
+    list = all.filter((e) => (Date.parse(e.when) || 0) >= since);
+  }
+  if (opts.change) list = list.filter((e) => e.change === opts.change);
+  if (opts.limit) list = list.slice(0, Number(opts.limit));
+  const events = list.map((e) => ({ id: e.id, change: e.change, when: e.when, event: e.event, target: e.target, by: e.by, git: e.git, note: e.note }));
+  return { events, count: events.length, last: events.length ? events[events.length - 1].id : null };
+}
+
+module.exports = { indexCommand, statusCommand, tasksCommand, traceCommand, logCommand, eventsCommand, POINTER_MARK };

@@ -45,7 +45,8 @@
           "enum": ["NOT_A_PROJECT", "UNKNOWN_ID", "GATE_REFUSED", "HUMAN_REQUIRED", "STALE_APPROVAL", "OUTSIDE_PATHS", "CHECK_FAILED", "VERSION_MISMATCH", "ALREADY_EXISTS", "INVALID_INPUT", "UNKNOWN_COMMAND", "INTERNAL"]
         },
         "message": { "type": "string" },
-        "missing": { "type": "array", "items": { "type": "string" } }
+        "missing": { "type": "array", "items": { "type": "string" } },
+        "details": {}
       }
     }
   }

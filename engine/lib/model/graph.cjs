@@ -250,7 +250,7 @@ function buildModel(start) {
     const logFile = filesByPath.get(`${change.dir}/log.md`);
     change.events = [];
     if (logFile) {
-      const { events, problems } = parseLog(renderMarkdown(logFile));
+      const { events, problems } = parseLog(renderMarkdown(logFile), change.id);
       change.events = events;
       for (const p of problems) issue("warning", "log-problem", `${change.id} log ${p}`, logFile.path);
       for (const e of events) {

@@ -1,0 +1,126 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/approve.schema.json",
+  "title": "royascaff approve: data",
+  "description": "The `data` of the contract envelope for `approve`. One of three shapes: a change design approval, a project approval, or feature (roadmap) approvals. Extra fields are allowed: adding a field is a minor change.",
+  "anyOf": [
+    {
+      "type": "object",
+      "required": [
+        "id",
+        "by",
+        "design",
+        "at"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "by": {
+          "type": "string"
+        },
+        "design": {
+          "type": "string"
+        },
+        "at": {
+          "type": "string"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "required": [
+        "target",
+        "by",
+        "hash",
+        "questions",
+        "assumptions",
+        "decisions",
+        "demands",
+        "unquoted"
+      ],
+      "properties": {
+        "target": {
+          "type": "string"
+        },
+        "by": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string"
+        },
+        "questions": {
+          "type": "integer"
+        },
+        "assumptions": {
+          "type": "array"
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "demands": {
+          "type": "integer"
+        },
+        "unquoted": {
+          "type": "array"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "required": [
+        "by",
+        "approved",
+        "outOfScope"
+      ],
+      "properties": {
+        "by": {
+          "type": "string"
+        },
+        "approved": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "horizon",
+              "requirements",
+              "slices",
+              "hash"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "horizon": {
+                "type": "string"
+              },
+              "requirements": {
+                "type": "integer"
+              },
+              "slices": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "hash": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "outOfScope": {
+          "type": "array"
+        }
+      }
+    }
+  ]
+}

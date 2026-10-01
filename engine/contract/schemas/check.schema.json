@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/check.schema.json",
+  "title": "royascaff check: data",
+  "description": "The `data` of the contract envelope for `check`. A check run, a red run, or a result recorded by hand. A failed check is an envelope failure with code CHECK_FAILED; the same data is in error.details. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": [
+    "id",
+    "result"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "result": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "fail",
+        "red"
+      ]
+    },
+    "manual": {
+      "type": "boolean"
+    },
+    "note": {
+      "type": "string"
+    },
+    "mode": {
+      "type": "string"
+    },
+    "results": {
+      "type": "array"
+    },
+    "evidence": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "proves": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "shots": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "placeholders": {
+      "type": "array"
+    },
+    "sourceReaders": {
+      "type": "array"
+    }
+  }
+}

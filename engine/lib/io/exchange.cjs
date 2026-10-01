@@ -29,6 +29,30 @@ function exportProject(start) {
   };
 }
 
+// The complete export for other programs (Studio's indexer): the exchange document plus the typed
+// links, the derived status, the evidence and the board, all rebuilt from the repo.
+function exportFull(start) {
+  const base = exportProject(start);
+  const { buildModel } = require("../model/graph.cjs");
+  const { deriveStatus } = require("../derive/status.cjs");
+  const { computeDrift } = require("../derive/drift.cjs");
+  const { renderBoard } = require("../views/board.cjs");
+  const model = buildModel(start);
+  const status = deriveStatus(model);
+  const links = [];
+  for (const rec of model.records.values()) for (const rel of rec.relations) links.push({ from: rec.id, type: rel.type, to: rel.to, resolved: model.records.has(rel.to) });
+  const plain = (map) => Object.fromEntries([...map.entries()].map(([k, v]) => [k, JSON.parse(JSON.stringify(v))]));
+  return {
+    ...base,
+    engine: require("../contract.cjs").ENGINE_VERSION,
+    links,
+    status: { features: plain(status.features), requirements: plain(status.requirements), slices: plain(status.slices), changes: plain(status.changes), tasks: plain(status.tasks) },
+    evidence: [...model.evidence.values()],
+    issues: model.issues,
+    board: renderBoard(model, status, computeDrift(model, status)),
+  };
+}
+
 function renderExport(data, outDir) {
   if (data.format !== FORMAT) throw new Error("Not a RoyaScaff exchange file");
   const written = [];
@@ -76,4 +100,4 @@ function roundTrip(start) {
   return { ok: mismatches.length === 0, mismatches, stats: stats(exported.files), layout: exported.layout, project_dir: exported.project_dir };
 }
 
-module.exports = { exportProject, renderExport, roundTrip, FORMAT, FORMAT_VERSION };
+module.exports = { exportProject, exportFull, renderExport, roundTrip, FORMAT, FORMAT_VERSION };
