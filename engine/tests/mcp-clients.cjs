@@ -98,9 +98,9 @@ class HttpClient extends BaseClient {
     this.session = null;
   }
 
-  static async start(root, { token, tokenFile } = {}) {
+  static async start(root, { token, tokenFile, logFile } = {}) {
     const args = [BIN, "mcp", root, "--http", "127.0.0.1:0", ...(tokenFile ? ["--token-file", tokenFile] : [])];
-    const child = spawn(process.execPath, args, { env: { ...env, ...(token ? { ROYASCAFF_MCP_TOKEN: token } : {}) } });
+    const child = spawn(process.execPath, args, { env: { ...env, ...(token ? { ROYASCAFF_MCP_TOKEN: token } : {}), ...(logFile ? { ROYASCAFF_MCP_LOG: logFile } : {}) } });
     let stderr = "";
     const port = await new Promise((resolve, reject) => {
       child.stderr.on("data", (d) => {

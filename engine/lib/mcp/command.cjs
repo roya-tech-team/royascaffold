@@ -22,7 +22,11 @@ function describe(root) {
 
 // Returns data for --describe; otherwise starts serving and returns null (the process stays alive until the client leaves).
 function runMcp(root, flags = {}) {
-  const server = createServer({ root });
+  // ROYASCAFF_MCP_LOG=FILE: one JSON line per tool call, resource read and notification, for audits and the acceptance tests
+  // (it is how "no repository scanning" is measured: an agent that only uses these calls reads nothing else through the server).
+  const logFile = process.env.ROYASCAFF_MCP_LOG;
+  const log = logFile ? (entry) => { try { require("fs").appendFileSync(logFile, `${JSON.stringify({ at: new Date().toISOString(), ...entry })}\n`); } catch { /* a log must never stop the server */ } } : undefined;
+  const server = createServer({ root, log });
   if (flags.describe) {
     server.stop();
     return describe(server.root);

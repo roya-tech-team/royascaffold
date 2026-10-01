@@ -1,5 +1,12 @@
-# RoyaScaff Engine 1.6
+# RoyaScaff Engine 1.7
 
+> **1.7 in one paragraph.** Any AI tool can drive a project through typed tools instead of reading the repository:
+> `royascaff mcp` serves it over the Model Context Protocol (stdio, or HTTP with a bearer token; `docs/MCP.md`). The tools
+> return the same JSON envelopes as the CLI. Several agents work at once: `claim` gives a task and its paths a lease
+> (`CLAIM_CONFLICT`, `NOT_CLAIM_HOLDER`), `events --follow` streams every new event. Agents ask people with
+> `request-approval` and never approve. `docs/RUNNER-PROTOCOL.md` defines how a machine takes jobs from a queue and runs an
+> agent on them (reference runner in `runner-reference/`, not published). Contract `1.2` (additions only).
+>
 > **1.6 in one paragraph.** Changing a product that exists is as safe and traceable as building it. `change` opens a delta
 > (Before / After / Why) on a requirement, workflow or contract and lists every test, evidence, slice and component that
 > depended on the old wording; evidence of the old version turns stale. `release` freezes a baseline, `diff` compares two,

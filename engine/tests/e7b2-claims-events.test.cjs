@@ -63,15 +63,24 @@ test("C2: the second agent claiming overlapping paths gets CLAIM_CONFLICT with t
 
 test("C2: a lease expires: after it ends the paths are free for another agent", async () => {
   const root = copyFixture("greenfield");
-  assert.equal(call(["claim", "TASK-CAMP-004", "--agent", "ai:alpha", "--lease", "0.04", root]).envelope.ok, true);
-  assert.equal(call(["claim", "TASK-CAMP-004", "--agent", "ai:beta", root]).envelope.error.code, "CLAIM_CONFLICT", "live for 2.4 seconds");
-  await sleep(3000);
-  assert.deepEqual(call(["claim", "--list", root]).envelope.data.claims, [], "an expired lease is not live");
-  const b = call(["claim", "TASK-CAMP-004", "--agent", "ai:beta", root]);
+  const mine = call(["claim", "TASK-CAMP-004", "--agent", "ai:alpha", "--lease", "10", root]);
+  assert.equal(mine.envelope.ok, true);
+  const until = Date.parse(mine.envelope.data.lease_until);
+  assert.ok(Math.abs(until - Date.now() - 10 * 60000) < 60000, "lease_until is about ten minutes away");
+  // The clock is moved with ROYASCAFF_NOW, so nothing has to wait.
+  const at = (ms) => ({ ROYASCAFF_NOW: new Date(until + ms).toISOString() });
+  assert.equal(call(["claim", "TASK-CAMP-004", "--agent", "ai:beta", root], at(-60000)).envelope.error.code, "CLAIM_CONFLICT", "one minute before the end: still live");
+  assert.equal(call(["claim", "--list", root], at(-60000)).envelope.data.claims.length, 1);
+  assert.deepEqual(call(["claim", "--list", root], at(1000)).envelope.data.claims, [], "after the end: not live");
+  const b = call(["claim", "TASK-CAMP-004", "--agent", "ai:beta", root], at(1000));
   assert.equal(b.envelope.ok, true, b.stdout);
   assert.equal(call(["claim", "TASK-CAMP-004", "--lease", "0", root]).envelope.error.code, "INVALID_INPUT");
+  // And with the real clock: a lease of 0.6 seconds is over a moment later.
+  const root2 = copyFixture("greenfield");
+  assert.equal(call(["claim", "TASK-CAMP-004", "--agent", "ai:alpha", "--lease", "0.01", root2]).envelope.ok, true);
+  await sleep(2500);
+  assert.deepEqual(call(["claim", "--list", root2]).envelope.data.claims, []);
 });
-
 test("the holder is checked on task start and done (NOT_CLAIM_HOLDER); a task nobody claimed is open to everyone", () => {
   const root = copyFixture("greenfield");
   call(["claim", "TASK-CAMP-004", "--agent", "ai:alpha", root]);

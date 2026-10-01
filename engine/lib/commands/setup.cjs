@@ -95,7 +95,7 @@ function mcpEntry() {
     return { command, args: [...args, "mcp"] };
   }
   if (ENGINE.split(path.sep).includes("node_modules")) return { command: "npx", args: ["royascaff", "mcp"] };
-  return { command: "node", args: [path.join(ENGINE, "bin", "royascaff.cjs"), "mcp"] };
+  return { command: path.basename(process.execPath, path.extname(process.execPath)), args: [path.join(ENGINE, "bin", "royascaff.cjs"), "mcp"] }; // the runtime that runs this CLI
 }
 
 const MCP_FILES = { claude: ".mcp.json", cursor: path.join(".cursor", "mcp.json") };

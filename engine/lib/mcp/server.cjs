@@ -178,6 +178,7 @@ function createServer(opts) {
       log({ kind: "notification", method: msg.method });
       return undefined; // notifications/initialized, notifications/cancelled, …
     }
+    log({ kind: "request", method: msg.method, session: session.id });
     try {
       return rpcResult(msg.id, await dispatch(session, msg.method, msg.params));
     } catch (err) {

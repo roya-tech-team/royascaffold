@@ -16,6 +16,12 @@ const { patternList } = require("./glob.cjs");
 const DEFAULT_LEASE_MINUTES = 30;
 const MAX_LEASE_MINUTES = 24 * 60;
 
+// The clock. ROYASCAFF_NOW (an ISO time) moves it, so tests of leases need no waiting; nothing else uses it.
+const nowMs = () => {
+  const t = process.env.ROYASCAFF_NOW ? Date.parse(process.env.ROYASCAFF_NOW) : NaN;
+  return Number.isNaN(t) ? Date.now() : t;
+};
+
 const fail = (code, message, extra = {}) => Object.assign(new Error(message), { code, ...extra });
 
 // The static part of a glob: the folders before the first wildcard ("apps/web/**" -> "apps/web").
@@ -55,7 +61,7 @@ function parseNote(note) {
 }
 
 // Every live claim in the project at `now` (ms), newest information wins.
-function liveClaims(model, now = Date.now()) {
+function liveClaims(model, now = nowMs()) {
   const byTask = new Map();
   for (const change of model.changes.values()) {
     for (const e of change.events || []) {
@@ -101,7 +107,7 @@ function claimTask(start, taskId, flags = {}) {
   if (state === "done") throw fail("GATE_REFUSED", `${taskId} is done: nothing to claim`);
   const paths = flags.paths ? patternList(flags.paths) : patternList(model.records.get(taskId).fields["Allowed paths"]);
   if (!paths.length) throw fail("INVALID_INPUT", `${taskId} lists no allowed paths: give them with --paths "a/**,b/**" (a claim covers file paths)`);
-  const now = Date.now();
+  const now = nowMs();
   const live = liveClaims(model, now);
   const conflicts = [];
   for (const c of live) {
@@ -125,7 +131,7 @@ function releaseTask(start, taskId, flags = {}) {
   const model = buildModel(start);
   const { change } = taskOf(model, taskId);
   const agent = String(flags.agent || who(flags, model.repo));
-  const mine = liveClaims(model).find((c) => c.task === taskId);
+  const mine = liveClaims(model).find((c) => c.task === taskId); // (the clock: nowMs)
   if (!mine) return { released: false, task: taskId, change: change.id, agent, reason: "no live claim" };
   if (mine.agent !== agent) throw fail("NOT_CLAIM_HOLDER", `${taskId} is claimed by ${mine.agent} until ${mine.lease_until}, not by ${agent}`, { missing: [`ask ${mine.agent} to release it, or wait for the lease to end`] });
   write(model, change, { event: "claim.released", target: taskId, note: JSON.stringify({ agent }) }, agent);

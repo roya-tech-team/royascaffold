@@ -20,6 +20,7 @@ owners: [roya-team]
 | CMP-ENG-003 | Adapters | component | — | — | — |
 | CMP-ENG-004 | Tests | component | — | — | — |
 | CMP-ENG-005 | Release scripts | component | — | — | — |
+| CMP-ENG-006 | Reference runner | component | — | — | — |
 <!-- royascaff:summary:end -->
 
 Every source file of an app should belong to a component (`royascaff validate` reports the ones that do not).
@@ -52,6 +53,12 @@ Every source file of an app should belong to a component (`royascaff validate` r
 
 - **Owner:** roya-team
 - **Code:** engine/scripts/**
+- **Realizes:**
+
+### CMP-ENG-006 · Reference runner
+
+- **Owner:** roya-team
+- **Code:** engine/runner-reference/**
 - **Realizes:**
 
 ## Record format (example)

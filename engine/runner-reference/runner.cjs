@@ -61,13 +61,21 @@ function queueClient(cfg) {
       return res.ok; // 409: another runner took it
     },
     async events(jobId, events) {
-      const res = await fetch(url(`/jobs/${encodeURIComponent(jobId)}/events`), { method: "POST", headers, body: JSON.stringify({ events }) });
-      if (!res.ok) return { cancel: false };
-      try {
-        return await res.json();
-      } catch {
-        return { cancel: false };
+      // A lost event is worse than a slow one: try again a few times before giving up.
+      for (let attempt = 1; attempt <= 4; attempt += 1) {
+        try {
+          const res = await fetch(url(`/jobs/${encodeURIComponent(jobId)}/events`), { method: "POST", headers, body: JSON.stringify({ events }) });
+          if (!res.ok) throw new Error(`the queue answered ${res.status}`);
+          try {
+            return await res.json();
+          } catch {
+            return { cancel: false };
+          }
+        } catch {
+          await new Promise((r) => setTimeout(r, 200 * attempt));
+        }
       }
+      return { cancel: false };
     },
     async result(jobId, result) {
       await fetch(url(`/jobs/${encodeURIComponent(jobId)}/result`), { method: "POST", headers, body: JSON.stringify(result) });

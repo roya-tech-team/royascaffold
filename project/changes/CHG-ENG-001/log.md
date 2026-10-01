@@ -22,3 +22,5 @@
 | 2026-10-01T02:34:07Z | change.advanced | CHG-ENG-001 | ai:claude | 2d1e47e | verified → reconciled |
 | 2026-10-01T02:34:14Z | change.advanced | CHG-ENG-001 | ai:claude | 4dcd059 | reconciled → closed |
 | 2026-10-01T04:46:02Z | check.run | CHG-ENG-001 | ai:claude-code | 39d4b1f | pass: APP-ENG-ENGINE — test ✓ · rules ✓ (EVD-ENG-002) |
+| 2026-10-01T05:46:38Z | check.run | CHG-ENG-001 | ai:claude | 5a17d13 | fail: APP-ENG-ENGINE — test ✗ · rules ✓ (EVD-ENG-003) · failing lines: REQ-ENG-001#1, REQ-ENG-001#3 |
+| 2026-10-01T05:56:44Z | check.run | CHG-ENG-001 | ai:claude | 5a17d13 | pass: APP-ENG-ENGINE — test ✓ · rules ✓ (EVD-ENG-004) |
