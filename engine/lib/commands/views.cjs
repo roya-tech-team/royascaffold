@@ -10,7 +10,7 @@ const { deriveStatus, LABELS, STAGE_LABELS } = require("../derive/status.cjs");
 const { renderBoard } = require("../views/board.cjs");
 const { refreshSummaries } = require("../views/summary.cjs");
 const { nextActions } = require("../next/actions.cjs");
-const { findProject, listMarkdown } = require("../project.cjs");
+const { findProject, listMarkdown, slash } = require("../project.cjs");
 const { computeDrift } = require("../derive/drift.cjs");
 
 const POINTER_MARK = "<!-- royascaff:pointer -->";
@@ -44,7 +44,7 @@ function indexCommand(start) {
       pointer = "STATUS.md";
     }
   }
-  return { status_file: path.relative(project.repo, statusFile), board_changed: boardChanged, root_pointer: pointer, summaries_updated: summaries, board };
+  return { status_file: slash(path.relative(project.repo, statusFile)), board_changed: boardChanged, root_pointer: pointer, summaries_updated: summaries, board };
 }
 
 function statusCommand(start) {

@@ -63,4 +63,6 @@ function listMarkdown(project) {
   return files.map((full) => ({ full, rel: slash(path.relative(project.projectDir, full)) }));
 }
 
-module.exports = { findProject, listMarkdown, isEngineCopy, slash };
+const toPosix = slash;
+
+module.exports = { findProject, listMarkdown, isEngineCopy, slash, toPosix };

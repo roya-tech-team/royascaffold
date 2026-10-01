@@ -4,6 +4,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { slash } = require("../project.cjs");
 const { git } = require("../git.cjs");
 
 const ENGINE = path.join(__dirname, "..", "..");
@@ -59,7 +60,7 @@ function initProject(start, flags = {}) {
   for (const d of ["PLAYBOOK.md", "GLOSSARY.md"]) writeNew(path.join(projectDir, d), fs.readFileSync(path.join(ENGINE, "docs", d), "utf8"), created);
   for (const a of apps) fs.mkdirSync(path.join(repo, a.dir), { recursive: true });
   require("./views.cjs").indexCommand(repo);
-  return { project: projectDir, code, apps, created: created.map((f) => path.relative(repo, f)) };
+  return { project: projectDir, code, apps, created: created.map((f) => slash(path.relative(repo, f))) };
 }
 
 function cliCommand() {
@@ -111,7 +112,7 @@ function install(start, flags = {}) {
   const created = [];
   const projectDir = path.join(repo, "project");
   if (fs.existsSync(projectDir)) for (const d of ["PLAYBOOK.md", "GLOSSARY.md"]) writeNew(path.join(projectDir, d), fs.readFileSync(path.join(ENGINE, "docs", d), "utf8"), created);
-  return { tools, cli, skill_files: written.map((f) => path.relative(repo, f)), docs_created: created.map((f) => path.relative(repo, f)) };
+  return { tools, cli, skill_files: written.map((f) => slash(path.relative(repo, f))), docs_created: created.map((f) => slash(path.relative(repo, f))) };
 }
 
 module.exports = { initProject, install, cliCommand };

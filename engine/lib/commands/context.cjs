@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { slash } = require("../project.cjs");
 const { buildModel } = require("../model/graph.cjs");
 const { deriveStatus } = require("../derive/status.cjs");
 const { buildPack } = require("../context.cjs");
@@ -30,7 +31,7 @@ function contextCommand(start, taskId, flags = {}) {
   const written = [];
   const cached = path.join(cacheDir(model, "contexts"), `${taskId}.md`);
   fs.writeFileSync(cached, pack.text);
-  written.push(path.relative(model.repo, cached));
+  written.push(slash(path.relative(model.repo, cached)));
   if (flags.save) {
     // R4: a saved pack is a committed copy of knowledge. Only a person keeps one, with a reason.
     const by = require("../identity.cjs").who(flags, model.repo);
@@ -40,7 +41,7 @@ function contextCommand(start, taskId, flags = {}) {
     const dir = path.join(model.root, model.changes.get(pack.change).dir, "contexts");
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(path.join(dir, `${taskId}.md`), pack.text);
-    written.push(path.relative(model.repo, path.join(dir, `${taskId}.md`)));
+    written.push(slash(path.relative(model.repo, path.join(dir, `${taskId}.md`))));
   }
   if (flags.out) {
     fs.writeFileSync(path.resolve(flags.out), pack.text);

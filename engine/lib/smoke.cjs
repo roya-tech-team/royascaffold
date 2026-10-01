@@ -5,6 +5,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { slash } = require("./project.cjs");
 
 const IMAGE = /\.(png|jpe?g|webp)$/i;
 
@@ -63,7 +64,7 @@ function smokeInit(start, flags = {}) {
       installed = true;
     }
   } catch {}
-  return { app: app.id, file: path.relative(model.repo, file), kept: existed && !flags.force, command: sp.command, installed, install: installed ? null : sp.install || null };
+  return { app: app.id, file: slash(path.relative(model.repo, file)), kept: existed && !flags.force, command: sp.command, installed, install: installed ? null : sp.install || null };
 }
 
 // Screenshots written for an evidence record (paths relative to the evidence folder).

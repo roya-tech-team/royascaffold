@@ -12,7 +12,14 @@ const { spawnSync, execFileSync } = require("child_process");
 
 const BIN = path.join(__dirname, "..", "bin", "royascaff.cjs");
 
-test("walkthrough in git: init → discover → approve project → plan → approve roadmap → five stages → a person looks → ✅ Done", () => {
+// A person's look needs a real terminal; the test borrows one with `script` through `sh`. Where
+// those two programs are missing (plain Windows) the walkthrough stops at the look and reports a skip.
+const hasPty = (() => {
+  const probe = spawnSync("sh", ["-c", "command -v script"], { encoding: "utf8" });
+  return probe.status === 0 && probe.stdout.trim() !== "";
+})();
+
+test("walkthrough in git: init → discover → approve project → plan → approve roadmap → five stages → a person looks → ✅ Done", (t) => {
   const repo = fs.mkdtempSync(path.join(os.tmpdir(), "rs-walk-"));
   const env = { ...process.env, ROYASCAFF_NO_TTY: "1", ROYASCAFF_USER: "islam", ROYASCAFF_USAGE: "off", GIT_AUTHOR_NAME: "Islam", GIT_AUTHOR_EMAIL: "i@example.com", GIT_COMMITTER_NAME: "Islam", GIT_COMMITTER_EMAIL: "i@example.com" };
   delete env.NODE_TEST_CONTEXT; // the project's own `node --test` must report its real exit code
@@ -145,6 +152,7 @@ status=$?; cat "$out"; exit $status`;
   const noBar = refused("check", "CHG-KUNI-001", "--result", "pass", "--note", "looked at it on a 27-inch screen");
   assert.match(noBar, /--bar all[\s\S]*5\. Nothing looks like a flat default diagram[\s\S]*Latest screenshots:\n  project\/changes\/CHG-KUNI-001\/evidence\/shots\/EVD-KUNI-\d+\/view-1440x900\.png/);
   assert.match(refused("check", "CHG-KUNI-001", "--result", "pass", "--note", "looked at it", "--bar", "all"), /confirmed in a terminal/, "without a terminal (as in an AI tool) the look is refused");
+  if (!hasPty) return t.skip("no `sh` + `script` here, so a person's look cannot be driven through a terminal");
   assert.match(look("check", "CHG-KUNI-001", "--result", "pass", "--note", "looked at it on a 27-inch screen", "--bar", "1,2,3,4"), /pass with gaps 5: looked at it on a 27-inch screen · bar: 4 of 5/);
   run("advance", "CHG-KUNI-001", "--to", "verified", ...AI);
   run("new", "doc", "quality");

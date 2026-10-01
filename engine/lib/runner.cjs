@@ -9,6 +9,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { slash } = require("./project.cjs");
 const { spawnSync } = require("child_process");
 const { patternList } = require("./glob.cjs");
 const { globBase } = require("./context.cjs");
@@ -49,7 +50,7 @@ function runOne(repo, app, kind, command, timeoutMs, extraEnv = {}) {
   // D6: any command may report measurements as lines `ROYASCAFF_METRIC <name>=<number>`.
   const metrics = {};
   for (const m of output.matchAll(/^ROYASCAFF_METRIC\s+([\w.-]+)=(-?\d+(?:\.\d+)?)\s*$/gm)) metrics[m[1]] = Number(m[2]);
-  return { app: app.id, kind, command, cwd: path.relative(repo, cwd) || ".", exit, ms, pass: !timedOut && r.status === 0, timedOut, metrics, tail: timedOut ? `timed out after ${Math.round(timeoutMs / 1000)}s\n${tail(output)}` : tail(output) };
+  return { app: app.id, kind, command, cwd: slash(path.relative(repo, cwd)) || ".", exit, ms, pass: !timedOut && r.status === 0, timedOut, metrics, tail: timedOut ? `timed out after ${Math.round(timeoutMs / 1000)}s\n${tail(output)}` : tail(output) };
 }
 
 // The smoke script learns where to save screenshots, the env its adapters declare, and the

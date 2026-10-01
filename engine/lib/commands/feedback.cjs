@@ -6,6 +6,7 @@
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
+const { slash } = require("../project.cjs");
 const { buildModel } = require("../model/graph.cjs");
 const { readUsage, summarizeUsage, stageDurations, usageDir, enabled } = require("../usage.cjs");
 const { briefCommand } = require("./navigate.cjs");
@@ -20,7 +21,7 @@ function version() {
 
 function usageCommand(start) {
   const model = buildModel(start);
-  return { enabled: enabled(model.profile), file: path.relative(model.repo, path.join(model.root, ".usage", "usage.jsonl")), usage: summarizeUsage(readUsage(model.root)), stages: stageDurations(model) };
+  return { enabled: enabled(model.profile), file: slash(path.relative(model.repo, path.join(model.root, ".usage", "usage.jsonl"))), usage: summarizeUsage(readUsage(model.root)), stages: stageDurations(model) };
 }
 
 const KINDS = ["bug", "confusing", "idea", "praise", "other"];
@@ -72,7 +73,7 @@ function feedbackCommand(start, note, flags = {}) {
   ];
   const file = path.join(usageDir(model.root), `feedback-${stamp}-${kind}.md`);
   fs.writeFileSync(file, `${lines.join("\n")}\n`);
-  return { file: path.relative(model.repo, file), kind };
+  return { file: slash(path.relative(model.repo, file)), kind };
 }
 
 module.exports = { usageCommand, feedbackCommand, KINDS };
