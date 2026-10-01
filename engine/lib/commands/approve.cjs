@@ -11,10 +11,21 @@ const { appendEvent } = require("../events.cjs");
 const { headShort } = require("../git.cjs");
 const { who } = require("../identity.cjs");
 const { projectBlockers } = require("../approvals.cjs");
-const { humanOnly } = require("../authority.cjs");
+const { begin, finish, refuse } = require("../authority.cjs");
+const crypto = require("crypto");
+const fs = require("fs");
+const { recordText } = require("../parse/markdown.cjs");
 
-function person(model, flags) {
-  return humanOnly(model, flags);
+// What a signed token for the whole roadmap covers: the fingerprints of the features it approves.
+function roadmapHash(pairs) {
+  return crypto.createHash("sha256").update([...pairs].map(([id, hash]) => `${id}:${hash}`).sort().join("\n")).digest("hex").slice(0, 10);
+}
+
+// What a signed token for a measure covers: the outcome record as it stands now.
+function outcomeHash(model, outcomeId) {
+  const rec = model.records.get(outcomeId);
+  const text = rec ? recordText(fs.readFileSync(path.join(model.root, rec.file), "utf8"), outcomeId) || "" : "";
+  return crypto.createHash("sha256").update(text).digest("hex").slice(0, 10);
 }
 
 function load(start) {
@@ -29,12 +40,15 @@ function write(model, flags, event) {
 
 function approveProject(start, flags = {}) {
   const model = load(start);
-  const by = person(model, flags);
+  const started = begin(model, flags);
   const a = model.approvals;
   const blockers = projectBlockers(a);
   if (blockers.length) throw new Error(`The project is not ready for approval:\n${blockers.map((b) => `  - ${b}`).join("\n")}`);
   const asm = a.discovery.assumptions;
-  write(model, flags, { event: "project.approved", target: "project", by, note: `hash ${a.project.hash} · base ${a.project.base} · ${a.discovery.questions} question(s) answered · ${asm.length} assumption(s) confirmed${flags.note ? ` — ${flags.note}` : ""}` });
+  const sig = finish(model, started, { act: "approve-project", target: "project", hash: a.project.hash });
+  const by = sig.by;
+  const said = flags.note || sig.personNote;
+  write(model, flags, { event: "project.approved", target: "project", by, note: `hash ${a.project.hash} · base ${a.project.base} · ${a.discovery.questions} question(s) answered · ${asm.length} assumption(s) confirmed${said ? ` — ${said}` : ""}${sig.note}` });
   require("./views.cjs").indexCommand(start);
   return { target: "project", by, hash: a.project.hash, questions: a.discovery.questions, assumptions: asm, decisions: a.decisions, demands: a.coverage.sources.length, unquoted: a.coverage.unquoted };
 }
@@ -42,7 +56,7 @@ function approveProject(start, flags = {}) {
 // targets: ["roadmap"] or a list of CAP- IDs.
 function approveFeatures(start, targets, flags = {}) {
   const model = load(start);
-  const by = person(model, flags);
+  const started = begin(model, flags);
   const a = model.approvals;
   if (a.project.state !== "approved") throw new Error("Approve the project first (discovery, brief, architecture, stack): royascaff approve project");
   const status = deriveStatus(model);
@@ -72,11 +86,21 @@ function approveFeatures(start, targets, flags = {}) {
     }
   }
   if (problems.length) throw new Error(`Not approved:\n${problems.map((p) => `  - ${p}`).join("\n")}`);
+  let expect = null;
+  if (started.token) {
+    // One token covers one feature, or the whole roadmap.
+    const whole = targets.length === 1 && targets[0] === "roadmap";
+    if (!whole && ids.length !== 1) throw refuse("WRONG_TARGET", "A signed token approves one feature (CAP-…) or the whole roadmap, not a list.", ["one token per feature, or a token for target roadmap"]);
+    expect = whole ? { act: "approve-roadmap", target: "roadmap", hash: roadmapHash(ids.map((id) => [id, a.features.get(id).hash])) } : { act: "approve-roadmap", target: ids[0], hash: a.features.get(ids[0]).hash };
+  }
+  const sig = finish(model, started, expect);
+  const by = sig.by;
+  const said = flags.note || sig.personNote;
   const approved = [];
   for (const id of ids) {
     const ap = a.features.get(id);
     const d = status.features.get(id);
-    write(model, flags, { event: "feature.approved", target: id, by, note: `hash ${ap.hash} · ${d.requirementsTotal} requirement(s) · ${d.slicesTotal} slice(s)${flags.note ? ` — ${flags.note}` : ""}` });
+    write(model, flags, { event: "feature.approved", target: id, by, note: `hash ${ap.hash} · ${d.requirementsTotal} requirement(s) · ${d.slicesTotal} slice(s)${said ? ` — ${said}` : ""}${sig.note}` });
     approved.push({ id, title: model.records.get(id).title, horizon: model.features.get(id).horizon, requirements: d.requirementsTotal, slices: model.features.get(id).slices, hash: ap.hash });
   }
   require("./views.cjs").indexCommand(start);
@@ -86,15 +110,18 @@ function approveFeatures(start, targets, flags = {}) {
 // measure OUT-… --result met|not-met --note "…" (D7): a person records whether an outcome was reached.
 function measureOutcome(start, outcomeId, flags = {}) {
   const model = load(start);
-  const by = person(model, flags);
+  const started = begin(model, flags, "A measure");
   const rec = model.records.get(outcomeId);
   if (!rec || rec.kind !== "outcome") throw new Error(`${outcomeId} is not an outcome (OUT-)`);
   const result = String(flags.result || "").toLowerCase().replace(/\s+/g, "-");
   if (!["met", "not-met"].includes(result)) throw new Error('Usage: royascaff measure OUT-… --result met|not-met --note "what was measured, and the number"');
-  if (!flags.note) throw new Error("Say what was measured and the result: --note \"…\"");
-  write(model, flags, { event: "outcome.measured", target: outcomeId, by, note: `${result === "met" ? "met" : "not met"}: ${flags.note}` });
+  const sig = finish(model, started, { act: "measure", target: outcomeId, hash: outcomeHash(model, outcomeId) });
+  const by = sig.by;
+  const said = flags.note || sig.personNote;
+  if (!said) throw new Error("Say what was measured and the result: --note \"…\"");
+  write(model, flags, { event: "outcome.measured", target: outcomeId, by, note: `${result === "met" ? "met" : "not met"}: ${said}${sig.note}` });
   require("./views.cjs").indexCommand(start);
   return { id: outcomeId, by, result };
 }
 
-module.exports = { approveProject, approveFeatures, measureOutcome };
+module.exports = { approveProject, approveFeatures, measureOutcome, roadmapHash, outcomeHash };

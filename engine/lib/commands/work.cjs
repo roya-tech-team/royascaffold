@@ -20,7 +20,7 @@ const { resolve: resolveCommit, git } = require("../git.cjs");
 const { parseMarkdown, renderMarkdown } = require("../parse/markdown.cjs");
 const { readTables } = require("../model/tables.cjs");
 const runner = require("../runner.cjs");
-const { humanOnly, nonInteractive, refuse, NEED_TOKEN } = require("../authority.cjs");
+const { begin, finish, tokenOf, nonInteractive, refuse, NEED_TOKEN } = require("../authority.cjs");
 
 function load(start) {
   const model = buildModel(start);
@@ -250,12 +250,14 @@ function ttyConfirm(prompt) {
 function approve(start, changeId, flags = {}) {
   const { model } = load(start);
   const change = changeOf(model, changeId);
-  const by = humanOnly(model, flags);
+  const started = begin(model, flags);
   if (!["analyzed", "verified"].includes(change.status)) throw new Error(`${changeId} is ${change.status}: approvals are given at Design (analyzed) or before Record (verified)`);
   const hash = designHash(model.root, change);
-  record(model, change, { event: "change.approved", target: changeId, by, note: `design ${hash}${flags.note ? ` — ${flags.note}` : ""}` }, flags);
+  const sig = finish(model, started, { act: "approve-change", target: changeId, hash });
+  const said = flags.note || sig.personNote;
+  record(model, change, { event: "change.approved", target: changeId, by: sig.by, note: `design ${hash}${said ? ` — ${said}` : ""}${sig.note}` }, flags);
   refreshBoard(start);
-  return { id: changeId, by, design: hash, at: change.status };
+  return { id: changeId, by: sig.by, design: hash, at: change.status, ...(sig.signed ? { signed: true, jti: sig.jti, issuer: sig.iss } : {}) };
 }
 
 function setBlocked(start, changeId, blocked, flags = {}) {
@@ -383,11 +385,16 @@ function recordCheck(start, changeId, flags = {}) {
     const result = String(flags.result).toLowerCase();
     if (!["pass", "fail"].includes(result)) throw new Error("--result must be pass or fail");
     let note = `${result}: ${flags.note || "manual check"}`;
+    let by;
     const smoke = require("../smoke.cjs");
     const bar = model.approvals ? model.approvals.discovery.visualBar : [];
-    if (result === "pass" && model.is14 && bar.length && smoke.visualBarRequired(model) && isHuman(who(flags, model.repo))) {
+    // A look comes from a person at a terminal, or with a signed token (--approval-token, or the
+    // environment variable together with --bar). An AI's own pass is a check, not a look.
+    const token = flags["approval-token"] !== undefined || (flags.bar !== undefined && process.env.ROYASCAFF_APPROVAL_TOKEN) ? tokenOf(flags) : null;
+    if (result === "pass" && model.is14 && bar.length && smoke.visualBarRequired(model) && (token || isHuman(who(flags, model.repo)))) {
       // WP-C5 (P7): a person's look is scored against the visual bar.
-      const scored = smoke.parseBar(flags.bar, bar.length);
+      const claimedBar = token && flags.bar === undefined ? require("../signed.cjs").parseToken(token).claims.bar : undefined;
+      const scored = smoke.parseBar(flags.bar !== undefined ? flags.bar : claimedBar, bar.length);
       if (!scored) {
         const shots = smoke.latestShots(model, change);
         const ev = [...model.evidence.values()].filter((e) => e.change === change.id).sort((a, b) => b.id.localeCompare(a.id))[0];
@@ -397,16 +404,24 @@ function recordCheck(start, changeId, flags = {}) {
       note = scored.gaps.length
         ? `pass with gaps ${scored.gaps.join(", ")}: ${flags.note || "looked at the app"} · bar: ${scored.passed.length} of ${bar.length}`
         : `pass: ${flags.note || "looked at the app"} · bar: all ${bar.length}`;
+      if (token) {
+        const sig = finish(model, { token }, { act: "person-check", target: changeId, hash: designHash(model.root, change), bar: String(flags.bar !== undefined ? flags.bar : claimedBar) });
+        by = sig.by;
+        if (flags.note === undefined && sig.personNote) note = note.replace(": looked at the app", `: ${sig.personNote}`);
+        note += ` · look:signed${sig.note}`;
+      }
       // D9 (owner decision Q2-A): the look is confirmed in a terminal. An AI tool's shell has no
       // terminal to answer from, so it cannot record a person's look.
-      const shots = smoke.latestShots(model, change);
-      const prompt = `\n${change.id} · your look against the visual bar:\n${bar.map((l, i) => `  ${scored.passed.includes(i + 1) ? "✓" : "✗"} ${i + 1}. ${l}`).join("\n")}\n${shots.length ? `Screenshots:\n${shots.map((s) => `  ${s}`).join("\n")}\n` : ""}Record this look as ${who(flags, model.repo)}? Type yes: `;
-      const answer = (typeof flags.confirm === "function" ? flags.confirm : ttyConfirm)(prompt);
-      if (answer === null) throw refuse("HUMAN_REQUIRED", "A person's look is confirmed in a terminal: run this command yourself in a terminal and answer the prompt (an AI tool cannot)", [NEED_TOKEN]);
-      if (!/^\s*y(es)?\s*$/i.test(answer)) throw new Error(`Look not recorded (answer: "${String(answer).trim()}")`);
-      note += " · look:tty";
+      if (!token) {
+        const shots = smoke.latestShots(model, change);
+        const prompt = `\n${change.id} · your look against the visual bar:\n${bar.map((l, i) => `  ${scored.passed.includes(i + 1) ? "✓" : "✗"} ${i + 1}. ${l}`).join("\n")}\n${shots.length ? `Screenshots:\n${shots.map((s) => `  ${s}`).join("\n")}\n` : ""}Record this look as ${who(flags, model.repo)}? Type yes: `;
+        const answer = (typeof flags.confirm === "function" ? flags.confirm : ttyConfirm)(prompt);
+        if (answer === null) throw refuse("HUMAN_REQUIRED", "A person's look is confirmed in a terminal: run this command yourself in a terminal and answer the prompt (an AI tool cannot)", [NEED_TOKEN]);
+        if (!/^\s*y(es)?\s*$/i.test(answer)) throw new Error(`Look not recorded (answer: "${String(answer).trim()}")`);
+        note += " · look:tty";
+      }
     }
-    record(model, change, { event: "check.run", target: changeId, note }, flags);
+    record(model, change, { event: "check.run", target: changeId, note, ...(by ? { by } : {}) }, flags);
     refreshBoard(start);
     return { id: changeId, result, manual: true, note };
   }

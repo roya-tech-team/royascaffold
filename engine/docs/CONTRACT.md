@@ -14,7 +14,7 @@ nothing else on stdout. (Human-readable text goes to stdout only when you do not
 Success:
 
 ```json
-{ "contract": "1.0", "engine": "1.5.0-alpha.1", "ok": true, "command": "open",
+{ "contract": "1.0", "engine": "1.5.0-alpha.2", "ok": true, "command": "open",
   "data": { "id": "CHG-CAMP-004", "dir": "changes/CHG-CAMP-004", "risk": "low" },
   "warnings": [], "events": ["EVT-CHG-CAMP-004-0001"] }
 ```
@@ -22,7 +22,7 @@ Success:
 Failure:
 
 ```json
-{ "contract": "1.0", "engine": "1.5.0-alpha.1", "ok": false, "command": "advance",
+{ "contract": "1.0", "engine": "1.5.0-alpha.2", "ok": false, "command": "advance",
   "error": { "code": "GATE_REFUSED", "message": "CHG-CAMP-004 cannot move to analyzed: stopped at draft",
              "missing": ["the Impact table has unclassified layers"], "details": { "…": "…" } },
   "warnings": [], "events": [] }
@@ -61,6 +61,12 @@ The codes are listed, with their exit status and a description, in `contract/err
 | `OUTSIDE_PATHS` | 1 | Files changed outside the paths the task allows. |
 | `CHECK_FAILED` | 1 | A check the step depends on ran and failed. A failed `validate`, `roundtrip` or `migrate` dry run also uses this code. |
 | `VERSION_MISMATCH` | 1 | The project, the engine or the requested version do not fit each other. |
+| `ISSUER_LIST_CHANGED` | 1 | `approval_issuers` in the working tree differs from the list committed on the default branch, so no signed token is accepted (section 8). |
+| `TOKEN_EXPIRED` | 1 | The signed approval token has expired. Tokens live at most 10 minutes. |
+| `TOKEN_REUSED` | 1 | The signed approval token was already used. A token works once. |
+| `TOKEN_INVALID` | 1 | The token is malformed, its signature or issuer is not trusted, or its claims are not valid. |
+| `WRONG_TARGET` | 1 | The token is for another target, another act or another bar than this call. |
+| `HASH_MISMATCH` | 1 | What the token approved has changed since the person saw it. |
 | `ALREADY_EXISTS` | 1 | What the call would create, or the state it would set, is already there. |
 | `INVALID_INPUT` | 2 | The call is malformed: a missing argument, a bad option value or wrong usage. |
 | `UNKNOWN_COMMAND` | 2 | The command does not exist in this engine version. |
@@ -140,5 +146,58 @@ Studio runs the same contract tests for every engine version it supports.
 
 ## 8. Signed approvals
 
-A person can approve through a browser instead of a terminal. A trusted issuer (Studio) signs a short token and
-the engine checks it. This section is filled in with the signed approvals work package.
+A person can approve through a browser instead of a terminal. A trusted issuer (Studio) signs a short token, and
+the engine checks it. The token proves that a person did the step; an AI can carry a token, but cannot make one.
+
+**Who is trusted.** The project profile lists issuers and their public keys:
+
+```yaml
+approval_issuers:
+  - id: studio.example.com
+    key: ed25519:MCowBQYDK2VwAyEA…
+```
+
+The key is the Ed25519 public key (the base64 of its DER form, or the bare 32 bytes in base64). The engine reads this
+list **only from the profile as committed on the default branch** (`git show <default>:project/profile.md`), never
+from the working tree, because an agent can write to the working tree. The default branch is
+`ROYASCAFF_DEFAULT_BRANCH` if set, else the remote's HEAD, else `main` or `master`. If the working tree's list is
+different, every token is refused with `ISSUER_LIST_CHANGED`. Changing the list is a change a person makes and
+merges. A project that is not in git, or whose default branch has no list, trusts nobody (`TOKEN_INVALID`).
+
+**The token.** A compact JWS with the header `{"alg": "EdDSA"}` and these claims:
+
+| Claim | Meaning |
+|---|---|
+| `iss` | The issuer's ID, as listed in `approval_issuers`. |
+| `sub` | The person's stable ID. |
+| `name` | The person's display name. |
+| `act` | `approve-project`, `approve-roadmap`, `approve-change`, `person-check` or `measure`. |
+| `target` | The ID approved: `project`, `roadmap` or a `CAP-…`, a `CHG-…`, an `OUT-…`. |
+| `hash` | The fingerprint of what the person saw (see below). |
+| `bar` | For `person-check`: the bar lines that pass (`all`, `1,2,4`, `none`). |
+| `note` | The person's note (optional). |
+| `iat`, `exp` | Issued and expiry times in seconds. `exp - iat` is at most 10 minutes. |
+| `jti` | A unique ID. A token works once. |
+
+**Using it.** `--approval-token <jws>` (or `ROYASCAFF_APPROVAL_TOKEN`) on `approve`, on `check … --result pass --bar …`
+and on `measure`. The engine checks, in this order: the issuer list (`ISSUER_LIST_CHANGED`); the token form,
+the issuer and the signature (`TOKEN_INVALID`); the lifetime (`TOKEN_INVALID`) and the expiry (`TOKEN_EXPIRED`);
+the act and target (`WRONG_TARGET`); that the `hash` still equals the fingerprint on disk now (`HASH_MISMATCH`);
+the bar (`WRONG_TARGET`); and that the `jti` was not used before (`TOKEN_REUSED`). Then it records the step as
+`by: <sub> via <iss>`, with the person's name and the `jti` in the event note. The `jti` store is the logs
+themselves: a `jti` that appears in any event note was used.
+
+**The hash** is the same fingerprint the engine already uses for staleness:
+
+| Act | `hash` is |
+|---|---|
+| `approve-change`, `person-check` | The design hash of the change (the `design <hash>` in the event note of a normal approval). |
+| `approve-project` | The project approval hash (discovery, brief, architecture, request and project decisions). |
+| `approve-roadmap`, target a feature | The feature's plan hash. |
+| `approve-roadmap`, target `roadmap` | The first 10 hex characters of the SHA-256 of the sorted lines `CAP-…:<plan hash>` of the features approved. |
+| `measure` | The first 10 hex characters of the SHA-256 of the outcome's record text. |
+
+One token approves one feature or the whole roadmap, not a list.
+
+**The terminal path stays.** Without a token, a person approves at a terminal as before. In non-interactive mode
+(section 6) only a token can prove a person did it.

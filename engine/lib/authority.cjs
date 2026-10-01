@@ -8,6 +8,7 @@
 
 const { who } = require("./identity.cjs");
 const { isHuman } = require("./approvals.cjs");
+const signed = require("./signed.cjs");
 
 const nonInteractive = () => process.env.ROYASCAFF_NONINTERACTIVE === "1";
 
@@ -25,4 +26,26 @@ function humanOnly(model, flags, what = "An approval") {
   return by;
 }
 
-module.exports = { nonInteractive, humanOnly, refuse, NEED_TOKEN };
+const tokenOf = (flags) => {
+  const given = flags["approval-token"] !== undefined ? flags["approval-token"] : process.env.ROYASCAFF_APPROVAL_TOKEN;
+  if (given === true) throw refuse("INVALID_INPUT", "--approval-token needs the token: --approval-token <jws> (or set ROYASCAFF_APPROVAL_TOKEN).");
+  return given ? String(given) : null;
+};
+
+// A step only a person can do, in two parts so the readiness checks of a command can sit between them.
+//   begin  - without a token, the person must be a person right away (as before); with a token nothing is decided yet.
+//   finish - with a token, verify it for exactly this step: expect = { act, target, hash, bar? }.
+// Returns { by, signed, jti?, name?, bar?, note } where `by` is what goes in the log: a name, or
+// "<sub> via <issuer>" for a signed approval, and `note` is the text to add to the event note.
+function begin(model, flags, what = "An approval") {
+  const token = tokenOf(flags);
+  return token ? { token } : { by: humanOnly(model, flags, what) };
+}
+
+function finish(model, started, expect) {
+  if (!started.token) return { by: started.by, signed: false, note: "" };
+  const v = signed.verifyApprovalToken(model, started.token, expect);
+  return { ...v, note: signed.signedNote(v) }; // `note` is the text to add to the event note; `personNote` is what the person wrote
+}
+
+module.exports = { nonInteractive, humanOnly, refuse, begin, finish, tokenOf, NEED_TOKEN };
