@@ -96,6 +96,11 @@ function scenarios() {
   add("confirm", "confirm (an AI may not)", (c) => ["confirm", "REQ-CAMP-001", "--by", "ai:claude", c.root], "HUMAN_REQUIRED", (c) => edit(c.root, "knowledge/02-requirements/requirements.md", (t) => t.replace("**Verified by:** TEST-CAMP-999", "**Verified by:** TEST-CAMP-001").replace("- **Verified by:** TEST-CAMP-001\n", "- **Verified by:** TEST-CAMP-001\n- **Basis:** inferred from apps/web/src/campaigns\n- **Inferred on:** 2026-09-30\n")));
   add("confirm", "confirm", (c) => ["confirm", "REQ-CAMP-001", "--by", "islam", c.root]);
   add("adopt", "adopt docs", (c) => ["adopt", "docs", "apps/web", c.root]);
+  add("adopt", "adopt --plan (a module no component owns)", (c) => ["adopt", "--plan", c.root], "ok", (c) => {
+    fs.mkdirSync(path.join(c.root, "apps", "web", "src", "legacy"), { recursive: true });
+    fs.writeFileSync(path.join(c.root, "apps", "web", "src", "legacy", "old.js"), "exports.old = () => 1;\n");
+  });
+  add("adopt", "adopt --plan (again: nothing new)", (c) => ["adopt", "--plan", c.root]);
   add("new", "new record release", (c) => ["new", "record", "release", "1.0.0", c.root]);
   add("release", "release (writes the baseline)", (c) => ["release", "REL-CAMP-001", "--baseline", c.root]);
   add("release", "release (a baseline is frozen)", (c) => ["release", "REL-CAMP-001", c.root], "ALREADY_EXISTS");

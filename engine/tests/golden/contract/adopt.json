@@ -43,6 +43,108 @@
     }
   },
   {
+    "scenario": "adopt --plan (a module no component owns)",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "adopt",
+      "data": {
+        "mode": "plan",
+        "budget_tokens": 60000,
+        "context_window_tokens": 200000,
+        "largest_checkpoint_tokens": 6,
+        "session_share_percent": 0,
+        "within_session_budget": true,
+        "modules": [
+          {
+            "module": "apps/web/src/legacy",
+            "app": "APP-CAMP-WEB",
+            "files": 1,
+            "unowned": 1,
+            "tokens": 6,
+            "split": false,
+            "checkpoints": [
+              {
+                "n": 1,
+                "part": "apps/web/src/legacy",
+                "globs": [
+                  "apps/web/src/legacy/**"
+                ],
+                "files": 1,
+                "tokens": 6,
+                "over_budget": false
+              }
+            ],
+            "change": "CHG-CAMP-006",
+            "created": true
+          }
+        ],
+        "created": [
+          "CHG-CAMP-006"
+        ],
+        "skipped": []
+      },
+      "warnings": [],
+      "events": [
+        "EVT-CHG-CAMP-006-0001",
+        "EVT-PROJECT-0006"
+      ]
+    }
+  },
+  {
+    "scenario": "adopt --plan (again: nothing new)",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "adopt",
+      "data": {
+        "mode": "plan",
+        "budget_tokens": 60000,
+        "context_window_tokens": 200000,
+        "largest_checkpoint_tokens": 6,
+        "session_share_percent": 0,
+        "within_session_budget": true,
+        "modules": [
+          {
+            "module": "apps/web/src/legacy",
+            "app": "APP-CAMP-WEB",
+            "files": 1,
+            "unowned": 1,
+            "tokens": 6,
+            "split": false,
+            "checkpoints": [
+              {
+                "n": 1,
+                "part": "apps/web/src/legacy",
+                "globs": [
+                  "apps/web/src/legacy/**"
+                ],
+                "files": 1,
+                "tokens": 6,
+                "over_budget": false
+              }
+            ],
+            "change": "CHG-CAMP-006",
+            "created": false
+          }
+        ],
+        "created": [],
+        "skipped": [
+          {
+            "module": "apps/web/src/legacy",
+            "change": "CHG-CAMP-006"
+          }
+        ]
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
     "scenario": "adopt",
     "exit": 0,
     "envelope": {
@@ -51,15 +153,57 @@
       "ok": true,
       "command": "adopt",
       "data": {
-        "modules": [],
-        "files": 0,
+        "modules": [
+          {
+            "module": "apps/web/src/legacy",
+            "app": "APP-CAMP-WEB",
+            "files": 1,
+            "owned": 0,
+            "unowned": [
+              "apps/web/src/legacy/old.js"
+            ],
+            "components": [],
+            "layers": [
+              {
+                "layer": "architecture",
+                "label": "Architecture",
+                "covered": false,
+                "by": []
+              }
+            ],
+            "layer_gaps": [
+              "Architecture"
+            ],
+            "percent": 0
+          }
+        ],
+        "files": 1,
         "owned": 0,
-        "percent": 100,
+        "percent": 0,
         "required_layers": [
           "architecture"
         ],
-        "layer_gap_modules": 0,
-        "next": null
+        "layer_gap_modules": 1,
+        "progress": [
+          {
+            "change": "CHG-CAMP-006",
+            "module": "apps/web/src/legacy",
+            "status": "draft",
+            "percent": 0,
+            "checkpoints": [
+              {
+                "n": 1,
+                "part": "apps/web/src/legacy",
+                "files": 1,
+                "remaining": 1,
+                "done": false
+              }
+            ],
+            "done": 0,
+            "total": 1
+          }
+        ],
+        "next": "apps/web/src/legacy"
       },
       "warnings": [],
       "events": []

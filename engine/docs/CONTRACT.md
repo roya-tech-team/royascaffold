@@ -271,3 +271,17 @@ keeps working if it ignores what it does not know.
   none is named (`data.planned_slice`). `status.requirements[ID].deprecated` holds the slice. The code map of a task shows
   the code of a deprecated component as scheduled for removal.
 - **Events** gain `experiment.decided`, `record.deprecated` and `adoption.planned` (the project log).
+
+### Large code bases (engine 1.6)
+
+- **`adopt --plan [--budget N]`** opens one `knowledge` change per module that is not fully owned (`data.created`; a module that
+  already has one is in `data.skipped`). A module bigger than the budget (tokens of source a session reads, default 60000, or
+  `adopt_budget_tokens` in the profile) is split into checkpoints by sub-folder (`data.modules[].checkpoints`: `part`, `globs`,
+  `files`, `tokens`); neighbours that fit together share one. `data.largest_checkpoint_tokens` against
+  `data.context_window_tokens` (default 200000, `context_window_tokens` in the profile) says whether any session would pass
+  60% of the window (`within_session_budget`). The change lists its checkpoints in `## Checkpoints`; its front matter has
+  `module:`. Different agents can take different modules (claims arrive with engine 1.7).
+- **Progress** is never typed: `adopt` (without `--plan`) lists `data.progress`, the checkpoints of those changes that a
+  component now owns completely, and the board has a `## Modules` summary per module.
+- **`scan`** keeps its cache per file: a file whose size and modification time did not change since it was scanned is not read
+  at all (`data.reads` counts the files actually read; `data.cache` still counts blob-hash hits and misses).

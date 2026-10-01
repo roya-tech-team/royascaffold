@@ -26,8 +26,20 @@ function patternList(value) {
   return String(value).replace(/`/g, "").split(",").map((x) => x.trim()).filter(Boolean);
 }
 
+// Compiled patterns are kept: at scale a check tests thousands of files against hundreds of globs.
+const COMPILED = new Map();
+function compiled(pattern) {
+  let re = COMPILED.get(pattern);
+  if (!re) {
+    re = globToRegExp(pattern);
+    if (COMPILED.size > 20000) COMPILED.clear();
+    COMPILED.set(pattern, re);
+  }
+  return re;
+}
+
 function matchesAny(file, patterns) {
-  return patterns.some((p) => globToRegExp(p).test(file));
+  return patterns.some((p) => compiled(p).test(file));
 }
 
 module.exports = { globToRegExp, patternList, matchesAny };

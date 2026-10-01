@@ -15,7 +15,10 @@ const { moduleOf } = require("./commands/adopt.cjs");
 const { toPosix } = require("./project.cjs");
 const adapters = require("./adapters.cjs");
 
-const CACHE_VERSION = 1;
+// Version 2 also remembers each file's size and modification time: a file that has not changed since it was scanned
+// (and was not modified close to that moment, the way git treats "racy" entries) is not even read.
+const CACHE_VERSION = 2;
+const RACY_MS = 2000;
 const MAX_FACTS_PER_FILE = 100;
 const MAX_FACTS_PER_MODULE = 200;
 const MAX_FILES_DETAIL = 100;
@@ -64,9 +67,9 @@ const regexes = (list) => (list || []).map((x) => new RegExp(x));
 function loadCache(file) {
   try {
     const c = JSON.parse(fs.readFileSync(file, "utf8"));
-    return c && c.version === CACHE_VERSION && c.entries ? c : { version: CACHE_VERSION, entries: {} };
+    return c && c.version === CACHE_VERSION && c.entries ? { files: {}, ...c } : { version: CACHE_VERSION, entries: {}, files: {} };
   } catch {
-    return { version: CACHE_VERSION, entries: {} };
+    return { version: CACHE_VERSION, entries: {}, files: {} };
   }
 }
 
@@ -85,7 +88,9 @@ function scanCommand(start, moduleName, flags = {}) {
   const cacheFile = path.join(model.root, ".cache", "scan.json");
   const cache = loadCache(cacheFile);
   const used = new Set();
-  const stats = { hits: 0, misses: 0 };
+  const stats = { hits: 0, misses: 0, reads: 0 };
+  let dirty = false;
+  const seenFiles = new Set();
 
   const apps = [...model.records.values()].filter((r) => r.kind === "app" && r.fields.Path);
   if (!apps.length) throw fail("INVALID_INPUT", "No APP- record with a Path in project/profile.md: there is no code to scan");
@@ -116,30 +121,52 @@ function scanCommand(start, moduleName, flags = {}) {
     let lines = 0;
     for (const f of m.files) {
       const abs = path.join(model.repo, f);
-      let buf;
+      let st;
       try {
-        buf = fs.readFileSync(abs);
+        st = fs.statSync(abs);
       } catch {
         continue;
       }
-      const readable = buf.length <= MAX_BYTES && !buf.includes(0);
+      seenFiles.add(f);
       let n = 0;
       let facts = {};
-      if (readable) {
-        const reads = extensions.has(path.extname(f).toLowerCase());
-        const key = `${signature}:${reads ? "s" : "n"}:${blobHash(buf)}`;
-        used.add(key);
-        if (cache.entries[key]) {
+      // Unchanged since it was scanned: take the answer from the cache without reading the file.
+      const known = cache.files[f];
+      if (known && known.sig === signature && known.size === st.size && known.mtimeMs === st.mtimeMs && st.mtimeMs + RACY_MS < known.seen && (known.key === null || cache.entries[known.key])) {
+        if (known.key !== null) {
           stats.hits += 1;
-          n = cache.entries[key].lines;
-          facts = cache.entries[key].facts;
-        } else {
-          stats.misses += 1;
-          const text = buf.toString("utf8");
-          n = text.split("\n").length - (text.endsWith("\n") ? 1 : 0);
-          facts = reads ? factsOf(text, compiled) : {};
-          cache.entries[key] = { lines: n, facts };
+          used.add(known.key);
+          n = cache.entries[known.key].lines;
+          facts = cache.entries[known.key].facts;
         }
+      } else {
+        let buf;
+        try {
+          buf = fs.readFileSync(abs);
+        } catch {
+          continue;
+        }
+        stats.reads += 1;
+        const readable = buf.length <= MAX_BYTES && !buf.includes(0);
+        let key = null;
+        if (readable) {
+          const reads = extensions.has(path.extname(f).toLowerCase());
+          key = `${signature}:${reads ? "s" : "n"}:${blobHash(buf)}`;
+          used.add(key);
+          if (cache.entries[key]) {
+            stats.hits += 1;
+            n = cache.entries[key].lines;
+            facts = cache.entries[key].facts;
+          } else {
+            stats.misses += 1;
+            const text = buf.toString("utf8");
+            n = text.split("\n").length - (text.endsWith("\n") ? 1 : 0);
+            facts = reads ? factsOf(text, compiled) : {};
+            cache.entries[key] = { lines: n, facts };
+          }
+        }
+        cache.files[f] = { sig: signature, size: st.size, mtimeMs: st.mtimeMs, seen: Date.now(), key };
+        dirty = true;
       }
       lines += n;
       sizes.push({ path: f, lines: n });
@@ -167,16 +194,18 @@ function scanCommand(start, moduleName, flags = {}) {
   });
 
   // Keep the cache to what this scan used plus what other scans left, and write it only when something new was read.
-  if (stats.misses) {
+  if (stats.misses || dirty) {
     const keys = Object.keys(cache.entries);
     if (keys.length > 20000) for (const k of keys.filter((x) => !used.has(x)).slice(0, keys.length - 20000)) delete cache.entries[k];
+    // A file that is gone, or outside this scan's modules, is dropped only when the whole project was scanned.
+    if (!moduleName) for (const f of Object.keys(cache.files)) if (!seenFiles.has(f)) delete cache.files[f];
     fs.mkdirSync(path.dirname(cacheFile), { recursive: true });
     fs.writeFileSync(cacheFile, JSON.stringify(cache));
   }
   const text = out.length
     ? out.map((m) => `${m.module}: ${m.files} file(s), ${m.lines} line(s); ${Object.entries(m.facts).map(([k, v]) => `${v.length} ${k}`).join(", ") || "no pattern facts"}${m.schema_files.length ? `; schema ${m.schema_files.length}` : ""}${m.config_files.length ? `; config ${m.config_files.length}` : ""}${m.test_files.length ? `; tests ${m.test_files.length}` : ""}`).join("\n")
     : "No modules.";
-  return { adapters: policy.adapters, patterns: Object.keys(spec.patterns || {}), cache: stats, modules: out, text };
+  return { adapters: policy.adapters, patterns: Object.keys(spec.patterns || {}), cache: { hits: stats.hits, misses: stats.misses }, reads: stats.reads, modules: out, text };
 }
 
 module.exports = { scanCommand, factsOf, blobHash, compile };

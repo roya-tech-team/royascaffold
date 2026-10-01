@@ -144,6 +144,8 @@ Adapters (technology guidance and checks; see docs/ADAPTERS.md):
 Existing code:
   adopt [path] [--json]        Modules of each app, how much is owned by components, and which knowledge layers
                                describe each (one module at a time)
+  adopt --plan [--budget N] [path]   One knowledge change per module that is not fully owned, each split into checkpoints a
+                               session can finish (budget: tokens of source per checkpoint, default 60000); run again later
   adopt docs <folder> [path]   Existing documents: which are covered by demands and decisions that quote them (SRC-, ADR-
                                with --source-file and --quote); every quote must be in its file word for word
   scan [module] [path] [--json]   Facts per module for the AI to start from: imports, exports, routes, schema, config and
@@ -504,6 +506,12 @@ function main() {
         const r = adoptDocs(flags.path || positional[3] || ".", positional[2]);
         const { text, ...data } = r;
         return reply(data, `${text}\n`, r.counts.problems ? { refuse: { code: "CHECK_FAILED", message: `${r.counts.problems} quote(s) are not in their files`, missing: r.problems } } : {});
+      }
+      if (flags.plan) {
+        // adopt --plan [--budget N]: one knowledge change per module, each with its checkpoints (E6.4).
+        const r = require("../lib/adoptplan.cjs").planCommand(flags.path || positional[1] || ".", flags);
+        const { text, ...data } = r;
+        return reply(data, `${text}\n`);
       }
       const r = adoptCommand(flags.path || target || ".");
       const { text, ...data } = r;

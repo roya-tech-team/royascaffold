@@ -16,6 +16,7 @@
           "hits": 0,
           "misses": 1
         },
+        "reads": 1,
         "modules": [
           {
             "module": "apps/web (root files)",

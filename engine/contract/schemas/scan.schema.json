@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://royascaff.dev/contract/1.0/scan.schema.json",
   "title": "royascaff scan: data",
-  "description": "The `data` of the contract envelope for `scan`. Facts per module, from the patterns the adapters declare: `facts` maps a fact name (imports, exports, routes, …) to its values; `details` holds the facts per file; `cache` says how many files were read (misses) and how many came from the cache (hits). Extra fields are allowed: adding a field is a minor change.",
+  "description": "The `data` of the contract envelope for `scan`. Facts per module, from the patterns the adapters declare: `facts` maps a fact name (imports, exports, routes, …) to its values; `details` holds the facts per file; `cache` says how many files were scanned (misses) and how many came from the cache (hits); `reads` is how many files were actually read from disk (a file whose size and modification time are unchanged is not read at all). Extra fields are allowed: adding a field is a minor change.",
   "type": "object",
   "required": ["modules", "cache"],
   "properties": {

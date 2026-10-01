@@ -198,6 +198,15 @@ function renderBoard(model, status, drift = null) {
     out.push(`- Unowned code: ${inv.unowned_code.files ? `${inv.unowned_code.files} file(s) in ${inv.unowned_code.modules.length} module(s) (royascaff adopt)` : "none"}`);
     out.push(`- Open repairs: ${inv.open_repairs.length ? inv.open_repairs.map((r) => `${r.change} ${r.blocked ? "blocked, a person decides" : `attempt ${r.attempt} of ${r.limit}`}`).join(" · ") : "none"}`);
     out.push("");
+    // E6.4: a big code base is shown as a summary per module (details: royascaff adopt, show, trace).
+    const progress = require("../adoptplan.cjs").progressOf(model, require("../commands/adopt.cjs").adoption(model));
+    if (progress.length) {
+      const open = progress.filter((p) => p.done < p.total);
+      out.push("## Modules", "", `${progress.length} module(s) have an adoption change; ${progress.length - open.length} done, ${open.length} to go. Open ones first:`, "");
+      const rows = [...open, ...progress.filter((p) => p.done === p.total)].slice(0, 25).map((p) => [p.module, `${p.percent}%`, `${p.done}/${p.total}`, p.change, p.status]);
+      out.push(table(["Module", "Owned", "Checkpoints done", "Change", "Status"], rows), "");
+      if (progress.length > 25) out.push(`_… and ${progress.length - 25} more (royascaff adopt)._`, "");
+    }
   }
   const fs = require("fs");
   const path = require("path");

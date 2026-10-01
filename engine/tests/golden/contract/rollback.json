@@ -8,7 +8,7 @@
       "ok": true,
       "command": "rollback",
       "data": {
-        "id": "CHG-CAMP-006",
+        "id": "CHG-CAMP-007",
         "kind": "rollback",
         "target": "CHG-CAMP-001",
         "reverts": [
@@ -40,11 +40,11 @@
           }
         ],
         "task": "TASK-CAMP-007",
-        "next": "Revert the commits in the task (git revert, newest first), edit the records back to the baseline, then: royascaff verify CHG-CAMP-006 and royascaff advance CHG-CAMP-006 --to closed"
+        "next": "Revert the commits in the task (git revert, newest first), edit the records back to the baseline, then: royascaff verify CHG-CAMP-007 and royascaff advance CHG-CAMP-007 --to closed"
       },
       "warnings": [],
       "events": [
-        "EVT-CHG-CAMP-006-0001"
+        "EVT-CHG-CAMP-007-0001"
       ]
     }
   },

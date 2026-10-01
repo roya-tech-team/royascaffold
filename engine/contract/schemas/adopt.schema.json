@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://royascaff.dev/contract/1.0/adopt.schema.json",
   "title": "royascaff adopt: data",
-  "description": "The `data` of the contract envelope for `adopt`. Without a folder: the modules of each app, how much of each a component owns, and which knowledge layers describe each (layers, layer_gaps). With `adopt docs <folder>`: the documents of the folder, the records that quote them and whether every quote is in its file. Extra fields are allowed: adding a field is a minor change.",
+  "description": "The `data` of the contract envelope for `adopt`. Without a folder: the modules of each app, how much of each a component owns, and which knowledge layers describe each (layers, layer_gaps). With `adopt docs <folder>`: the documents of the folder, the records that quote them and whether every quote is in its file. With `adopt --plan` (since contract 1.1): one knowledge change per module that is not fully owned (`created`, or `skipped` when the module already has one), each module split into checkpoints no bigger than `budget_tokens` of source; `largest_checkpoint_tokens` against `context_window_tokens` says whether any session would go over 60% of the window. Plain `adopt` also lists `progress` of those changes, derived from what components own. Extra fields are allowed: adding a field is a minor change.",
   "type": "object",
   "anyOf": [
     {
@@ -88,6 +88,44 @@
           "properties": { "documents": { "type": "integer" }, "covered": { "type": "integer" }, "records": { "type": "integer" }, "problems": { "type": "integer" } }
         },
         "problems": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    {
+      "required": ["mode", "budget_tokens", "modules", "created"],
+      "properties": {
+        "mode": { "const": "plan" },
+        "budget_tokens": { "type": "integer" },
+        "context_window_tokens": { "type": "integer" },
+        "largest_checkpoint_tokens": { "type": "integer" },
+        "session_share_percent": { "type": "integer" },
+        "within_session_budget": { "type": "boolean" },
+        "created": { "type": "array", "items": { "type": "string" } },
+        "skipped": { "type": "array", "items": { "type": "object", "required": ["module", "change"], "properties": { "module": { "type": "string" }, "change": { "type": "string" } } } },
+        "modules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["module", "files", "unowned", "tokens", "checkpoints"],
+            "properties": {
+              "module": { "type": "string" },
+              "app": { "type": "string" },
+              "files": { "type": "integer" },
+              "unowned": { "type": "integer" },
+              "tokens": { "type": "integer" },
+              "split": { "type": "boolean" },
+              "change": { "type": "string" },
+              "created": { "type": "boolean" },
+              "checkpoints": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["n", "part", "files", "tokens", "globs"],
+                  "properties": { "n": { "type": "integer" }, "part": { "type": "string" }, "files": { "type": "integer" }, "tokens": { "type": "integer" }, "over_budget": { "type": "boolean" }, "globs": { "type": "array", "items": { "type": "string" } } }
+                }
+              }
+            }
+          }
+        }
       }
     }
   ]

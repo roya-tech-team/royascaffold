@@ -53,7 +53,14 @@ function layerTexts(model, layer) {
 
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
+// A model never changes after it is built, so the result is kept for it (a command asks several times).
+const MEMO = new WeakMap();
 function adoption(model) {
+  if (!MEMO.has(model)) MEMO.set(model, adoptionOf(model));
+  return MEMO.get(model);
+}
+
+function adoptionOf(model) {
   const comps = [...model.records.values()].filter((r) => r.kind === "component");
   const globs = comps.flatMap((r) => patternList(r.fields.Code));
   const exclude = patternList(model.profile.code_exclude);
@@ -100,7 +107,13 @@ function adoptCommand(start) {
   const next = a.modules.find((m) => m.percent < 100);
   lines.push(next ? `Next: adopt ${next.module} (${next.files - next.owned} file(s) without a component) — see cards/adopt.md` : "Every module is owned by a component.");
   if (a.layer_gap_modules) lines.push(`Layer gaps: ${a.layer_gap_modules} module(s) lack a page for a layer they need (${a.required_layers.join(", ")}): describe them where the layer's page says.`);
-  return { ...a, next: next ? next.module : null, text: lines.join("\n") };
+  // E6.4: progress of the adoption changes `adopt --plan` opened, from what components own now.
+  const progress = require("../adoptplan.cjs").progressOf(model, a);
+  if (progress.length) {
+    lines.push("Adoption changes (checkpoints done, from code ownership):");
+    for (const p of progress) lines.push(`  ${p.done === p.total ? "✓" : "·"} ${p.change} ${p.module}: ${p.done}/${p.total} checkpoint(s)${p.checkpoints.find((c) => !c.done) ? ` — next: ${p.checkpoints.find((c) => !c.done).part} (${p.checkpoints.find((c) => !c.done).remaining} file(s))` : ""}`);
+  }
+  return { ...a, ...(progress.length ? { progress } : {}), next: next ? next.module : null, text: lines.join("\n") };
 }
 
 // ---- adopt docs <folder> ---------------------------------------------------------------------

@@ -72,6 +72,11 @@ function createChange(start, model, spec, flags) {
   fs.mkdirSync(dirAbs, { recursive: true });
   fs.writeFileSync(path.join(dirAbs, "change.md"), changeTemplate({ id, risk, owner, ...spec }));
   fs.writeFileSync(path.join(dirAbs, "plan.md"), planTemplate(id));
+  if (flags.fast) {
+    // Many changes in a row (adopt --plan): the caller validates once at the end and refreshes the board itself.
+    record({ ...model, root: model.root }, { id, dir: dirRel }, { event: "change.opened", target: id, note: spec.module ? `adoption of ${spec.module}` : `${spec.kind}` }, flags);
+    return { id, dir: dirRel, risk };
+  }
   const after = buildModel(start);
   const introduced = errorsOf(after).filter((e) => e.where && e.where.startsWith(`${dirRel}/`));
   if (introduced.length) {
