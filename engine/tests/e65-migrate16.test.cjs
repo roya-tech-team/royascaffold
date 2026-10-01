@@ -123,6 +123,8 @@ test("migrate on the engine's own project (this repository's dogfood project/) a
     fs.writeFileSync(profile, fs.readFileSync(profile, "utf8").replace(/^royascaff: 1\.[46]$/m, "royascaff: 1.4"));
     fs.rmSync(path.join(dir, "project", "_legacy", "1.5"), { recursive: true, force: true });
     fs.rmSync(path.join(dir, "project", "baselines"), { recursive: true, force: true });
+    const legacy = path.join(dir, "project", "_legacy");
+    if (fs.existsSync(legacy) && !fs.readdirSync(legacy).length) fs.rmdirSync(legacy); // the migration removes the empty folder it made
     cases.push(["the engine's own project", dir]);
   }
   cases.push(["a generated project", withReleases(makeProject({ features: 25 }))]);
