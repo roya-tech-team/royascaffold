@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.2/runner/event.done.json",
+  "title": "Runner event: done",
+  "description": "The agent run ended. `reason` says why.",
+  "type": "object",
+  "required": [
+    "job_id",
+    "seq",
+    "at",
+    "type",
+    "reason"
+  ],
+  "properties": {
+    "job_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "1, 2, 3 … in the order the runner produced the events."
+    },
+    "at": {
+      "type": "string",
+      "description": "ISO time."
+    },
+    "type": {
+      "type": "string",
+      "const": "done"
+    },
+    "reason": {
+      "type": "string",
+      "enum": [
+        "finished",
+        "max_turns",
+        "budget",
+        "agent_failed",
+        "cancelled"
+      ]
+    },
+    "turns": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "exit_code": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    }
+  }
+}

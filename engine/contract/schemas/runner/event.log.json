@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.2/runner/event.log.json",
+  "title": "Runner event: log",
+  "description": "A line of output of the agent or the runner.",
+  "type": "object",
+  "required": [
+    "job_id",
+    "seq",
+    "at",
+    "type",
+    "stream",
+    "text"
+  ],
+  "properties": {
+    "job_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "1, 2, 3 … in the order the runner produced the events."
+    },
+    "at": {
+      "type": "string",
+      "description": "ISO time."
+    },
+    "type": {
+      "type": "string",
+      "const": "log"
+    },
+    "stream": {
+      "type": "string",
+      "enum": [
+        "stdout",
+        "stderr",
+        "runner"
+      ]
+    },
+    "text": {
+      "type": "string"
+    }
+  }
+}

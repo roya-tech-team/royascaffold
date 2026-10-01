@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.2/runner/event.error.json",
+  "title": "Runner event: error",
+  "description": "Something went wrong in the runner (not in the agent's own work).",
+  "type": "object",
+  "required": [
+    "job_id",
+    "seq",
+    "at",
+    "type",
+    "code",
+    "message"
+  ],
+  "properties": {
+    "job_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "1, 2, 3 … in the order the runner produced the events."
+    },
+    "at": {
+      "type": "string",
+      "description": "ISO time."
+    },
+    "type": {
+      "type": "string",
+      "const": "error"
+    },
+    "code": {
+      "type": "string",
+      "enum": [
+        "INVALID_JOB",
+        "REPO_ACCESS",
+        "ENGINE_MISMATCH",
+        "BRANCH_REFUSED",
+        "AGENT_FAILED",
+        "PUSH_FAILED",
+        "INTERNAL"
+      ]
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

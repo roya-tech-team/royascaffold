@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.2/runner/job.json",
+  "title": "Runner job",
+  "description": "A job a runner takes from the queue (plan file 03 section 7). Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": [
+    "job_id",
+    "project_git_url",
+    "branch",
+    "change",
+    "task",
+    "engine_version",
+    "agent",
+    "prompt"
+  ],
+  "properties": {
+    "job_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "project_git_url": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Where the runner clones from. The runner refuses it when the local user cannot access it."
+    },
+    "branch": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The only branch the runner may push."
+    },
+    "change": {
+      "type": "string",
+      "pattern": "^CHG-"
+    },
+    "task": {
+      "type": "string",
+      "pattern": "^TASK-"
+    },
+    "engine_version": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The engine version the runner pins for this job."
+    },
+    "agent": {
+      "type": "object",
+      "required": [
+        "kind",
+        "max_turns",
+        "budget"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "claude-cli",
+            "agent-sdk"
+          ]
+        },
+        "model": {
+          "type": "string"
+        },
+        "max_turns": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "budget": {
+          "type": "object",
+          "description": "Limits; the runner stops the agent when one is passed.",
+          "properties": {
+            "max_usd": {
+              "type": "number",
+              "minimum": 0
+            },
+            "max_tokens": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
+    "prompt": {
+      "type": "string"
+    },
+    "context_pack": {
+      "type": "string",
+      "description": "The budgeted context pack of the task (get_context), so the agent starts without scanning the repository."
+    }
+  }
+}

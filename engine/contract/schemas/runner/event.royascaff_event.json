@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.2/runner/event.royascaff_event.json",
+  "title": "Runner event: royascaff_event",
+  "description": "A RoyaScaff event written in the workspace (the shape of `events` data.events[], from `events --follow`).",
+  "type": "object",
+  "required": [
+    "job_id",
+    "seq",
+    "at",
+    "type",
+    "event"
+  ],
+  "properties": {
+    "job_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "1, 2, 3 … in the order the runner produced the events."
+    },
+    "at": {
+      "type": "string",
+      "description": "ISO time."
+    },
+    "type": {
+      "type": "string",
+      "const": "royascaff_event"
+    },
+    "event": {
+      "type": "object",
+      "required": [
+        "id",
+        "when",
+        "event",
+        "target",
+        "by"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^EVT-"
+        },
+        "change": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "when": {
+          "type": "string"
+        },
+        "event": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        },
+        "by": {
+          "type": "string"
+        },
+        "git": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

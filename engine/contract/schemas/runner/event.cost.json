@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.2/runner/event.cost.json",
+  "title": "Runner event: cost",
+  "description": "Cumulative cost and turns so far. The runner stops the agent when turns pass max_turns or the cost passes the budget.",
+  "type": "object",
+  "required": [
+    "job_id",
+    "seq",
+    "at",
+    "type",
+    "turns"
+  ],
+  "properties": {
+    "job_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "1, 2, 3 … in the order the runner produced the events."
+    },
+    "at": {
+      "type": "string",
+      "description": "ISO time."
+    },
+    "type": {
+      "type": "string",
+      "const": "cost"
+    },
+    "turns": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "usd": {
+      "type": "number",
+      "minimum": 0
+    },
+    "tokens": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.2/runner/result.json",
+  "title": "Runner result",
+  "description": "What the runner reports at the end of a job.",
+  "type": "object",
+  "required": [
+    "job_id",
+    "status",
+    "branch",
+    "pushed",
+    "turns",
+    "events"
+  ],
+  "properties": {
+    "job_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "succeeded",
+        "stopped",
+        "failed",
+        "refused"
+      ],
+      "description": "refused: the runner did not start (no access, wrong engine, bad branch). stopped: max_turns or budget."
+    },
+    "reason": {
+      "type": "string"
+    },
+    "branch": {
+      "type": "string"
+    },
+    "commit": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The commit the branch was pushed at."
+    },
+    "pushed": {
+      "type": "boolean"
+    },
+    "turns": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "cost": {
+      "type": "object",
+      "properties": {
+        "usd": {
+          "type": "number"
+        },
+        "tokens": {
+          "type": "integer"
+        }
+      }
+    },
+    "events": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How many events were streamed."
+    },
+    "engine_version": {
+      "type": "string"
+    }
+  }
+}
