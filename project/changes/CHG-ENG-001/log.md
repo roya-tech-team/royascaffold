@@ -8,3 +8,6 @@
 | 2026-10-01T02:24:14Z | change.advanced | CHG-ENG-001 | ai:claude | ee49dfe | draft → analyzed |
 | 2026-10-01T02:24:14Z | change.advanced | CHG-ENG-001 | ai:claude | ee49dfe | analyzed → approved |
 | 2026-10-01T02:24:56Z | change.advanced | CHG-ENG-001 | ai:claude | ee49dfe | approved → ready |
+| 2026-10-01T02:25:04Z | change.advanced | CHG-ENG-001 | ai:claude | 9c0e5c3 | ready → in-progress (first task started) |
+| 2026-10-01T02:25:04Z | backup.saved | TASK-ENG-001 | ai:claude | 9c0e5c3 | 2 uncommitted developer file(s) saved to .backups/TASK-ENG-001-20261001T022504Z: engine/lib/guard.cjs, engine/tests/e43-dogfood.test.cjs |
+| 2026-10-01T02:25:05Z | task.started | TASK-ENG-001 | ai:claude | 9c0e5c3 | tests first: the guard tests exist and fail without the wiring |

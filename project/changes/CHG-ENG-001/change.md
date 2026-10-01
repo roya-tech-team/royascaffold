@@ -2,7 +2,7 @@
 change_id: CHG-ENG-001
 kind: polish
 affects: [REQ-ENG-001]
-status: ready
+status: in-progress
 risk: low
 owners: [roya-team]
 ---

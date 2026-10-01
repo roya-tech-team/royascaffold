@@ -178,7 +178,7 @@ function printIssues(issues) {
 // --json: every result is a contract envelope on stdout (plan file 01 §3). Success carries `data`;
 // a failure carries `error` with a stable code, and the exit status comes from contract/errors.json.
 // Without --json nothing changes: readable text, and failures as a message on stderr.
-const CALL = { json: false, command: "" };
+const CALL = { json: false, command: "", warnings: [] };
 
 function emitJson(env) {
   process.stdout.write(`${JSON.stringify(env, null, 2)}\n`);
@@ -188,7 +188,7 @@ function emitJson(env) {
 const eventsWritten = () => [...new Set(require("../lib/events.cjs").EMITTED)];
 
 function failJson(err, details) {
-  const env = contract.failure(CALL.command, err, { events: eventsWritten(), ...(details !== undefined ? { details } : {}) });
+  const env = contract.failure(CALL.command, err, { events: eventsWritten(), warnings: CALL.warnings, ...(details !== undefined ? { details } : {}) });
   emitJson(env);
   process.exitCode = contract.exitFor(env.error.code);
 }
@@ -206,7 +206,7 @@ function fail(message, code = 2) {
 function reply(data, text, opts = {}) {
   if (CALL.json) {
     if (opts.refuse) return failJson(Object.assign(new Error(opts.refuse.message), { code: opts.refuse.code, missing: opts.refuse.missing || [] }), data);
-    return emitJson(contract.ok(CALL.command, data, { events: eventsWritten(), warnings: opts.warnings || [] }));
+    return emitJson(contract.ok(CALL.command, data, { events: eventsWritten(), warnings: [...CALL.warnings, ...(opts.warnings || [])] }));
   }
   if (text) process.stdout.write(text);
   if (opts.refuse) process.exitCode = 1;
@@ -222,6 +222,18 @@ function main() {
   USAGE.where = flags.path || positional.slice(1).find((p) => { try { return fs.statSync(p).isDirectory(); } catch { return false; } }) || ".";
   if (flags.version) return process.stdout.write(`${pkg.version}\n`);
   if (!command || flags.help || command === "help") return process.stdout.write(HELP);
+
+  // E4.3: the guard. The engine that runs the work must not be the engine being changed: when the engine's own folder is
+  // inside the repository it works on (outside node_modules), say so once. The pinned copy never warns.
+  try {
+    const w = require("../lib/guard.cjs").guardWarning(path.resolve(__dirname, ".."), findProject(USAGE.where || ".").repo);
+    if (w) {
+      CALL.warnings.push(w);
+      if (!CALL.json) process.stderr.write(`⚠ ${w}\n`);
+    }
+  } catch {
+    // Not a project (init, install, contract, render): nothing to guard.
+  }
 
   switch (command) {
     case "where": {
