@@ -1,0 +1,23 @@
+# Card · Stage 5 — Check & Record
+
+**Check (all tasks done):**
+
+1. Run `royascaff check <CHG> --by ai:<tool>`. It runs Build, Typecheck, Lint, Test and Smoke of the apps in `project/profile.md` and writes the evidence. A passing run proves every `TEST-` record with `- **Check:** runner:test` that verifies this change's requirements.
+2. It also fails on dependency rules written as paths (`` `a/**` must not import `b/**` ``) and on unused dependencies. On a failure, read the output it shows, fix it inside the tasks' allowed paths (or add a follow-up task), and run the check again.
+3. For a requirement that no runner test verifies, add evidence to `project/changes/<CHG>/evidence/evidence.md`:
+   ```
+   ### EVD-<CODE>-NNN · <what was proven>
+   - **Result:** pass
+   - **Proves:** REQ-…
+   - **Command:** manual: <steps>
+   - **Git commit:** <short hash>
+   ```
+   A better fix is to add the test and a `TEST-` record, so the runner proves it next time.
+4. UI change (when the project's adapters declare a smoke check, as `web-ui` does): the app needs a Smoke command (`royascaff smoke init` once; it opens the app in Chromium at three sizes, fails on console errors and on buttons that change nothing, and saves screenshots with the evidence). For medium risk or more, ask the person to open the app, compare it with the visual bar (topic 8 of the discovery) and run `royascaff check <CHG> --result pass --note "looked at …" --bar all` (or the line numbers that pass) in their own terminal: it asks them to confirm, and you cannot answer it. Then run `royascaff advance <CHG> --to verified --by ai:<tool>`.
+
+**Record into Main:**
+
+5. Update the knowledge so it describes the system as it now is: every layer the Impact marks **changed** edits its page (Architecture: `architecture.md` itself), and a record you added (ADR, CMP, CTR, RULE, INV) makes its layer changed. The Record gate checks both.
+6. Commit the knowledge (`git add project && git commit -m "<CHG>: record"`), then run `royascaff advance <CHG> --to closed --by ai:<tool>`. It validates the project and regenerates `STATUS.md`. For high risk, a person approves once more before recording.
+
+**Release** (when the person ships): `royascaff new record release "<version>" --includes CHG-…,CHG-…`. Features whose changes are all released show 🚀 Released.

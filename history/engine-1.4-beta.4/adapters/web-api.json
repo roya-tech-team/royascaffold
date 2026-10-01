@@ -1,0 +1,6 @@
+{
+  "adapter": "web-api",
+  "legacyAppTypes": [
+    "api"
+  ]
+}
