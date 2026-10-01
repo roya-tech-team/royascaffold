@@ -1,0 +1,70 @@
+[
+  {
+    "scenario": "rollback a change",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "rollback",
+      "data": {
+        "id": "CHG-CAMP-006",
+        "kind": "rollback",
+        "target": "CHG-CAMP-001",
+        "reverts": [
+          "CHG-CAMP-001"
+        ],
+        "baseline": "REL-CAMP-001",
+        "risk": "medium",
+        "commits": [],
+        "requirements": [
+          {
+            "id": "REQ-CAMP-001",
+            "now_version": 1,
+            "back_version": 1,
+            "now_state": "released",
+            "back_state": "done",
+            "in_baseline": true,
+            "hash_now": "8dd0f2f9ec75",
+            "hash_back": "8dd0f2f9ec75"
+          },
+          {
+            "id": "REQ-CAMP-002",
+            "now_version": 1,
+            "back_version": 1,
+            "now_state": "released",
+            "back_state": "done",
+            "in_baseline": true,
+            "hash_now": "b9098b0b8e2b",
+            "hash_back": "9e08336abaaf"
+          }
+        ],
+        "task": "TASK-CAMP-007",
+        "next": "Revert the commits in the task (git revert, newest first), edit the records back to the baseline, then: royascaff verify CHG-CAMP-006 and royascaff advance CHG-CAMP-006 --to closed"
+      },
+      "warnings": [],
+      "events": [
+        "EVT-CHG-CAMP-006-0001"
+      ]
+    }
+  },
+  {
+    "scenario": "rollback (the change is still open)",
+    "exit": 1,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": false,
+      "command": "rollback",
+      "error": {
+        "code": "GATE_REFUSED",
+        "message": "CHG-CAMP-002 is in-progress: a rollback reverts work that was verified or closed (cancel an open change with royascaff advance CHG-CAMP-002 --to cancelled --reason \"…\")",
+        "missing": [
+          "CHG-CAMP-002 verified, reconciled or closed"
+        ]
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

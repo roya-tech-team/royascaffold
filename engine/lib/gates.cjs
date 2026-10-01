@@ -293,6 +293,8 @@ const RULES = {
       const j = require("./judge.cjs").gateCheck(model, change);
       if (j) out.push(check(j.id, j.ok, j.message, { judge: true, ...(j.approval ? { approval: true, say: j.say } : {}) }));
     }
+    // 1.6: a rollback is closed only when the records are back at the baseline and a passing verify ran after the revert.
+    if (change.kind === "rollback") out.push(...require("./rollback.cjs").verifiedChecks(model, status, change, ctx.body || changeBody(ctx.projectDir || model.root, change), check));
     return out;
   },
   // verified → reconciled: Main is consistent; high risk needs a second approval.

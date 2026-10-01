@@ -162,9 +162,10 @@ function buildPack(model, status, taskId) {
 
   // Code map: components among the inputs/related, and the files that exist in the allowed paths.
   const code = [];
+  const removal = require("./flags.cjs").removalCode(model); // 1.6: code of deprecated records is scheduled for removal
   for (const id of included) {
     const rec = model.records.get(id);
-    if (rec.kind === "component" && rec.fields.Code) code.push(`- ${id} · ${rec.title} → ${rec.fields.Code}`);
+    if (rec.kind === "component" && rec.fields.Code) code.push(`- ${id} · ${rec.title} → ${rec.fields.Code}${removal.has(id) ? ` — SCHEDULED FOR REMOVAL${removal.get(id).slice ? ` (${removal.get(id).slice})` : ""}: do not extend it` : ""}`);
   }
   const files = [];
   for (const p of allowed) for (const f of listFiles(model.repo, globBase(p))) if (matchesAny(f, [p]) && !files.includes(f)) files.push(f);

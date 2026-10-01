@@ -1,6 +1,6 @@
 ---
 name: royascaff
-description: RoyaScaff navigator for this project. Use for "royascaff continue", what's next, where are we, start, plan a feature, fix a bug, record work done by hand, adopt or migrate a project. Arabic or English.
+description: RoyaScaff navigator. Use for "royascaff continue", what's next, where are we, plan a feature, fix a bug, change or roll back, record work done by hand, adopt or migrate a project.
 ---
 
 # RoyaScaff navigator
@@ -17,7 +17,7 @@ CLI: `{{CLI}}` (below: `royascaff`), run from the repository root.
 
 ## Situations
 
-Plan a feature → `plan-feature.md` · bug or "fix …" → `fix.md` · code changed by hand → `record-manual.md` · new project → `start.md` · open questions → `discover.md` · existing code, no `project/` → `adopt.md` · engine 1.2/1.3 project → `migrate.md` · "where are we?" → `royascaff status` · feedback about RoyaScaff → `royascaff feedback "<their words>" --kind …`, then show them the file.
+Plan a feature → `plan-feature.md` · bug, "fix …", change or roll back what exists → `fix.md` · code changed by hand → `record-manual.md` · new project → `start.md` · open questions → `discover.md` · existing code, no `project/` → `adopt.md` · engine 1.2/1.3 project → `migrate.md` · "where are we?" → `royascaff status` · feedback about RoyaScaff → `royascaff feedback "<their words>" --kind …`, then show the file.
 
 ## Rules
 

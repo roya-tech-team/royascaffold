@@ -182,6 +182,16 @@ function deriveStatus(model) {
   }
   for (const r of requirements.values()) r.openFixes = openFixes.get(r.id) || [];
 
+  // 1.6: a requirement behind an `off` flag is not delivered (outcomes do not count it); a deprecated one is scheduled for removal.
+  const flagsLib = require("../flags.cjs");
+  const hidden = flagsLib.hiddenMap(model);
+  const deprecated = new Map(flagsLib.deprecatedOf(model).map((d) => [d.id, d]));
+  for (const r of requirements.values()) {
+    const off = flagsLib.flaggedOff(model, hidden, r.id);
+    if (off.length) r.flaggedOff = off;
+    if (deprecated.has(r.id)) r.deprecated = deprecated.get(r.id).removal_slice || true;
+  }
+
   // Features roll up their slices and requirements.
   for (const feature of model.features.values()) {
     const sl = feature.slices.map((id) => slices.get(id));
@@ -219,6 +229,12 @@ function deriveStatus(model) {
       openFixes: [...new Set([...(openFixes.get(feature.id) || []), ...rq.flatMap((r) => r.openFixes)])],
       unprovenNfrs: unprovenNfrs.map((r) => r.id),
     });
+  }
+
+  for (const f of features.values()) {
+    const off = new Set(flagsLib.flaggedOff(model, hidden, f.id));
+    for (const rid of f.requirements) for (const x of requirements.get(rid).flaggedOff || []) off.add(x);
+    if (off.size) f.flaggedOff = [...off].sort();
   }
 
   // Plan approvals (1.4 projects, P1): a feature is 🗺 Planned only after a person approved its

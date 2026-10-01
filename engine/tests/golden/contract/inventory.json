@@ -148,6 +148,14 @@
           "modules": []
         },
         "open_repairs": [],
+        "evolution": {
+          "flags": 0,
+          "overdue_flags": [],
+          "experiments_undecided": [],
+          "deprecated": [],
+          "versioned": [],
+          "baselines": []
+        },
         "person_check": null,
         "adapters": [
           {

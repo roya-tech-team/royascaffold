@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://royascaff.dev/contract/1.0/measure.schema.json",
   "title": "royascaff measure: data",
-  "description": "The `data` of the contract envelope for `measure`. Extra fields are allowed: adding a field is a minor change.",
+  "description": "The `data` of the contract envelope for `measure`. For an outcome (OUT-) `result` is `met` or `not-met`. Since contract 1.1 a person can also decide an experiment (EXP-): `result` (and `decision`) is `keep <variant>` or `stop`, `outcome` is the outcome the experiment serves, and `removal_slices` are the slices planned to remove the variants that lost. Extra fields are allowed: adding a field is a minor change.",
   "type": "object",
   "required": [
     "id",
@@ -18,10 +18,13 @@
     },
     "result": {
       "type": "string",
-      "enum": [
-        "met",
-        "not-met"
+      "anyOf": [
+        { "enum": ["met", "not-met", "stop"] },
+        { "pattern": "^keep \\S+$" }
       ]
-    }
+    },
+    "decision": { "type": "string" },
+    "outcome": { "type": ["string", "null"] },
+    "removal_slices": { "type": "array", "items": { "type": "string" } }
   }
 }

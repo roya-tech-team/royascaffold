@@ -52,6 +52,11 @@ function inventoryOf(model, status) {
     unconfirmed: inferred.unconfirmed(model),
     unowned_code: { files: unowned.reduce((n, m) => n + (m.files - m.owned), 0), modules: unowned.map((m) => ({ module: m.module, unowned: m.files - m.owned })) },
     open_repairs: repairs,
+    evolution: (() => {
+      const F = require("../flags.cjs");
+      const flagList = F.flagsOf(model);
+      return { flags: flagList.length, overdue_flags: flagList.filter((f) => f.overdue).map((f) => f.id), experiments_undecided: F.experimentsOf(model).filter((e) => !e.decision).map((e) => e.id), deprecated: F.deprecatedOf(model).map((d) => d.id), versioned: require("../evolve.cjs").versionedIds(model), baselines: require("../baseline.cjs").listBaselines(model) };
+    })(),
     person_check: policy.personCheck ? { kind: policy.personCheck.kind, bar: policy.personCheck.bar } : null,
     adapters: policy.adapters.map((n) => {
       const m = adapters.manifest(n, model.root);
@@ -68,7 +73,9 @@ function textOf(inv) {
   lines.push(`Unconfirmed inferred records: ${inv.unconfirmed.length}${inv.unconfirmed.length ? ` (${inv.unconfirmed.slice(0, 8).map((u) => u.id).join(", ")}${inv.unconfirmed.length > 8 ? ", …" : ""}): a person runs royascaff confirm` : ""}`);
   lines.push(inv.unowned_code.files ? `Unowned code: ${inv.unowned_code.files} file(s) in ${inv.unowned_code.modules.length} module(s) (${inv.unowned_code.modules.slice(0, 5).map((m) => `${m.module} ${m.unowned}`).join(", ")}${inv.unowned_code.modules.length > 5 ? ", …" : ""}): royascaff adopt` : "Unowned code: none");
   lines.push(`Open repairs: ${inv.open_repairs.length}${inv.open_repairs.length ? ` (${inv.open_repairs.map((r) => `${r.change}${r.blocked ? " blocked" : ` attempt ${r.attempt} of ${r.limit}`}`).join(", ")})` : ""}`);
-  lines.push(`Adapters: ${inv.adapters.map((a) => `${a.name} [${a.checks.join(", ") || "no checks"}${a.person_check ? `; person's check: ${a.person_check}` : ""}]`).join(" · ")}`);
+  const ev = inv.evolution;
+  lines.push(`Evolution: ${ev.baselines.length} baseline(s) · ${ev.versioned.length} record(s) changed by a delta · ${ev.flags} flag(s)${ev.overdue_flags.length ? ` (past removal: ${ev.overdue_flags.join(", ")})` : ""} · ${ev.experiments_undecided.length} experiment(s) undecided · ${ev.deprecated.length} deprecated`);
+  lines.push(`Adapters:${inv.adapters.map((a) => `${a.name} [${a.checks.join(", ") || "no checks"}${a.person_check ? `; person's check: ${a.person_check}` : ""}]`).join(" · ")}`);
   return lines.join("\n");
 }
 

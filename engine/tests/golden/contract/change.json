@@ -8,13 +8,13 @@
       "ok": true,
       "command": "change",
       "data": {
-        "id": "CHG-CAMP-006",
+        "id": "CHG-CAMP-007",
         "kind": "evolve",
         "opened": true,
         "joined": false,
         "risk": "medium",
         "status": "draft",
-        "file": "changes/CHG-CAMP-006/change.md",
+        "file": "changes/CHG-CAMP-007/change.md",
         "deltas": [
           {
             "id": "REQ-CAMP-001",
@@ -56,11 +56,11 @@
             "handling": ""
           }
         ],
-        "next": "Write Before/After/Why of each delta in changes/CHG-CAMP-006/change.md, mark every affected item \"update\" or \"still valid (reason)\", then: royascaff advance CHG-CAMP-006 --to analyzed"
+        "next": "Write Before/After/Why of each delta in changes/CHG-CAMP-007/change.md, mark every affected item \"update\" or \"still valid (reason)\", then: royascaff advance CHG-CAMP-007 --to analyzed"
       },
       "warnings": [],
       "events": [
-        "EVT-CHG-CAMP-006-0001"
+        "EVT-CHG-CAMP-007-0001"
       ]
     }
   },

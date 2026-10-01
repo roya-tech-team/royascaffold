@@ -130,6 +130,27 @@ function renderBoard(model, status, drift = null) {
     .map(({ c, when }) => [title(model, c.id), c.slice || c.affects.join(", "), when ? when.slice(0, 10) : "—"]);
   out.push("## Recently closed", "", table(["Change", "Slice / affects", "Closed"], closed), "");
 
+  // E6.3: flags past their removal, experiments waiting for a decision, and what is scheduled for removal. The board keeps
+  // no wall clock: "past" is measured against the date of the last recorded event (every command writes one).
+  {
+    const F = require("../flags.cjs");
+    const asOf = last && /^\d{4}-\d\d-\d\d/.test(last.when) ? last.when.slice(0, 10) : F.today();
+    const flagList = F.flagsOf(model, asOf);
+    const experiments = F.experimentsOf(model);
+    const deprecated = F.deprecatedOf(model);
+    if (flagList.length || experiments.length || deprecated.length) {
+      out.push("## Flags, experiments and removals", "");
+      const overdue = flagList.filter((f) => f.overdue);
+      if (flagList.length) out.push(`- Flags: ${flagList.length} (${flagList.filter((f) => f.state === "off").length} off)${overdue.length ? ` · ⚠ past their removal: ${overdue.map((f) => `${f.id} (${f.why})`).join(", ")}` : ""}`);
+      const waiting = experiments.filter((e) => !e.decision);
+      if (experiments.length) out.push(`- Experiments: ${experiments.length}${waiting.length ? ` · waiting for a decision: ${waiting.map((e) => e.id).join(", ")} (a person runs royascaff measure EXP-… --result "keep A"|stop)` : " · all decided"}`);
+      if (deprecated.length) out.push(`- Scheduled for removal: ${deprecated.map((d) => `${d.id}${d.removal_slice ? ` (${d.removal_slice})` : " (no removal slice)"}`).join(", ")}`);
+      const behind = [...status.requirements.values()].filter((r) => r.flaggedOff).map((r) => `${r.id} (${r.flaggedOff.join(", ")})`);
+      if (behind.length) out.push(`- Behind an off flag, not delivered: ${behind.join(", ")}`);
+      out.push("");
+    }
+  }
+
   // E6.2: what changed since the last baseline (a release's frozen snapshot).
   if (model.is14) {
     const B = require("../baseline.cjs");

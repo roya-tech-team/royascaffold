@@ -106,6 +106,14 @@ function scenarios() {
   add("diff", "diff (no baseline)", (c) => ["diff", "REL-CAMP-009", c.root], "UNKNOWN_ID");
   add("history", "history", (c) => ["history", "REQ-CAMP-001", c.root]);
   add("history", "history (not a record)", (c) => ["history", "REQ-CAMP-404", c.root], "UNKNOWN_ID");
+  add("new", "new record flag", (c) => ["new", "record", "flag", "New campaign form", "--hides", "CAP-CAMP-001", "--remove-by", "2099-01-01", c.root]);
+  add("new", "new record experiment", (c) => ["new", "record", "experiment", "Shorter campaign form", "--feature", "CAP-CAMP-001", "--outcome", "OUT-CAMP-001", "--hypothesis", "Three fields raise sign-ups.", "--variants", "A: six fields ; B: three fields", "--metric", "signup_rate >= 0.05", c.root]);
+  add("measure", "measure an experiment (an AI may not)", (c) => ["measure", "EXP-CAMP-001", "--result", "keep B", "--note", "signup_rate 0.07", "--by", "ai:claude", c.root], "HUMAN_REQUIRED");
+  add("measure", "measure an experiment", (c) => ["measure", "EXP-CAMP-001", "--result", "keep B", "--note", "signup_rate 0.07 over 2 weeks", "--by", "islam", c.root]);
+  add("deprecate", "deprecate a requirement", (c) => ["deprecate", "REQ-CAMP-002", "--reason", "replaced by search", "--by", "islam", c.root]);
+  add("deprecate", "deprecate (not a requirement or component)", (c) => ["deprecate", "CAP-CAMP-001", c.root], "INVALID_INPUT");
+  add("rollback", "rollback a change", (c) => ["rollback", "CHG-CAMP-001", "--by", "islam", c.root]);
+  add("rollback", "rollback (the change is still open)", (c) => ["rollback", "CHG-CAMP-002", c.root], "GATE_REFUSED");
   add("change", "change a requirement", (c) => ["change", "REQ-CAMP-001", "--after", "A planner saves a campaign with a name of at most 80 characters.", "--why", "SRC-CAMP-003", "--by", "ai:claude", c.root]);
   add("change", "change (not a requirement, workflow or contract)", (c) => ["change", "CAP-CAMP-001", c.root], "INVALID_INPUT");
   add("adapter", "adapter new", (c) => ["adapter", "new", "demo-stack", "--includes", "node", c.root]);

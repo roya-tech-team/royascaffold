@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.1/deprecate.schema.json",
+  "title": "royascaff deprecate: data",
+  "description": "The `data` of the contract envelope for `deprecate`. A requirement or component is scheduled for removal: it gets `Status: deprecated` and a `Removal slice` (`removal_slice`; `planned_slice` is true when the call planned that slice). The code map of a task then shows the code of a deprecated component as scheduled for removal. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": ["id", "kind", "removal_slice", "planned_slice", "date", "by"],
+  "properties": {
+    "id": { "type": "string" },
+    "kind": { "type": "string" },
+    "removal_slice": { "type": "string" },
+    "planned_slice": { "type": "boolean" },
+    "date": { "type": "string" },
+    "by": { "type": "string" }
+  }
+}

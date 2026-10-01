@@ -1,0 +1,40 @@
+[
+  {
+    "scenario": "deprecate a requirement",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "deprecate",
+      "data": {
+        "id": "REQ-CAMP-002",
+        "kind": "requirement",
+        "removal_slice": "SLC-CAMP-001-D",
+        "planned_slice": true,
+        "date": "2026-10-01",
+        "by": "islam"
+      },
+      "warnings": [],
+      "events": [
+        "EVT-PROJECT-0009"
+      ]
+    }
+  },
+  {
+    "scenario": "deprecate (not a requirement or component)",
+    "exit": 2,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": false,
+      "command": "deprecate",
+      "error": {
+        "code": "INVALID_INPUT",
+        "message": "CAP-CAMP-001 is a feature: requirements and components can be deprecated"
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

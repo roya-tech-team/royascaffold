@@ -100,6 +100,11 @@ Work (every command records an event and refreshes STATUS.md):
   check <CHG-…> --result pass --note "looked at …" --bar all|1,2,4|none   A person's look, scored against the
                                    visual bar (web-ui); lines not passed are shown as gaps on the board
   measure OUT-… --result met|not-met --note "…"   A person records whether an outcome was reached
+  measure EXP-… --result "keep A"|stop --note "…"  A person decides an experiment; the variant that lost becomes a removal slice
+  rollback <CHG-…|REL-…> [--to REL-…] [path]  Open a rollback change: the commits to revert, the records that go back to the
+                                   previous baseline, and a required verify after the revert (the engine never runs git revert)
+  deprecate <REQ-…|NFR-…|CMP-…> [--slice SLC-… | --feature CAP-…] [--reason "…"]
+                                   Schedule a requirement or component for removal; its code shows as scheduled for removal
   smoke init [path] [--app APP-…]  Install the Playwright smoke check (web-ui): three screen sizes, console
                                    errors, every button, screenshots with the evidence
   verify <CHG-…> [path]            The machine proof of a change: runs every check (the apps' and the adapters'),
@@ -465,8 +470,23 @@ function main() {
       return reply({ removed: existed, path: rel }, `${existed ? "Removed" : "Nothing to remove:"} ${rel} (backups in .backups/ are kept)\n`);
     }
     case "measure": {
+      if (/^EXP-/.test(target || "")) {
+        // measure EXP-… --result "keep A"|stop: a person decides an experiment (E6.3).
+        const r = require("../lib/commands/lifecycle.cjs").measureExperiment(flags.path || positional[2] || ".", target, flags);
+        return reply(r, `${r.id}: ${r.decision} — recorded by ${r.by}${r.removal_slices.length ? `\nThe variant that lost is a removal slice: ${r.removal_slices.join(", ")}` : ""}\n`);
+      }
       const r = require("../lib/commands/approve.cjs").measureOutcome(flags.path || positional[2] || ".", target, flags);
       return reply(r, `${r.id}: ${r.result === "met" ? "met" : "not met"} — recorded by ${r.by}\n`);
+    }
+    case "rollback": {
+      // rollback <CHG-…|REL-…>: a change that reverts work, with its own evidence (E6.3).
+      const r = require("../lib/commands/lifecycle.cjs").rollbackCommand(flags.path || positional[2] || ".", target, flags);
+      return reply(r, `Opened ${r.id} (rollback of ${r.target}, risk ${r.risk}): reverts ${r.reverts.join(", ")}${r.baseline ? `, back to the baseline ${r.baseline}` : " (no baseline before it)"}\n${r.commits.length ? `Commits to revert (newest first):\n${r.commits.map((c) => `  ${c.commit} ${c.subject} (${c.change})`).join("\n")}\n` : "No commits found: see the change's log and evidence.\n"}${r.requirements.length ? `Records that go back:\n${r.requirements.map((x) => `  ${x.id}: v${x.now_version} → ${x.in_baseline ? `v${x.back_version}` : "(not in the baseline)"}`).join("\n")}\n` : ""}${r.task ? `Task: ${r.task}\n` : ""}Next: ${r.next}\n`);
+    }
+    case "deprecate": {
+      // deprecate <ID> [--slice SLC-…]: a requirement or component is scheduled for removal (E6.3).
+      const r = require("../lib/commands/lifecycle.cjs").deprecateCommand(flags.path || positional[2] || ".", target, flags);
+      return reply(r, `${r.id} is deprecated; removal slice ${r.removal_slice}${r.planned_slice ? " (planned now)" : ""}. Its code shows as scheduled for removal.\n`);
     }
     case "smoke": {
       if (target !== "init") fail("Usage: royascaff smoke init [path] [--app APP-…] [--force]");

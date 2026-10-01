@@ -82,8 +82,8 @@ This is the rule for gates and checks: `advance` refused is `GATE_REFUSED`; `che
 ## 3. Commands
 
 `contract.commands` lists them. Today: adapter, adopt, advance, approve, backups, block, brief, cache, change, check, ci, confirm, context,
-continue, contract, diff, events, export, feedback, history, index, init, install, inventory, judge, log, measure, migrate, new, next, open,
-record, refine, release, render, roundtrip, scan, show, smoke, status, task, tasks, trace, unblock, usage, validate, verify, where.
+continue, contract, deprecate, diff, events, export, feedback, history, index, init, install, inventory, judge, log, measure, migrate, new, next, open,
+record, refine, release, render, rollback, roundtrip, scan, show, smoke, status, task, tasks, trace, unblock, usage, validate, verify, where.
 
 Each one has a schema for its `data`. (`adapter.schema.json` is the schema of an adapter manifest, so the data of the
 `adapter` command is described by `adapter-result.schema.json`; `contract.schemaName` gives the file for a command.) The schemas list the fields a program may rely on. They allow
@@ -250,3 +250,24 @@ keeps working if it ignores what it does not know.
   (`before`, `after`, `why`, the change, who approved it), the baselines that hold it, its logged events and the commits that
   introduced it. Everything is rebuilt from the repository.
 - **Events** gain `baseline.written` (the project log).
+
+### Flags, experiments, rollback and deprecation (engine 1.6)
+
+- **FLAG-** records hide `CAP-…`/`REQ-…` (`Hides`), have an `Owner`, a `State` (`on` or `off`) and `Remove by` (a date or a
+  `REL-…`). A flag is past its removal when the date has passed or the release exists: `validate` warns (`flag-overdue`), the
+  board lists it, and `inventory` has `data.evolution.overdue_flags`. A requirement behind an `off` flag is not delivered for
+  outcomes: `status.requirements[ID].flaggedOff` lists the flags (only when there are any).
+- **EXP-** records hold `Hypothesis`, `Variants`, `Metric` (a metric name and a limit, the form of an NFR measure), `Outcome` and
+  `Decision`. `measure EXP-… --result "keep A"` (or `stop`) is the same kind of step as measuring an outcome: only a person
+  (or a signed token for act `measure`) decides. `data.removal_slices` are the slices planned to remove the variants that
+  lost. `measure` data gains `decision`, `outcome` and `removal_slices`; `result` can also be `keep <variant>` or `stop`.
+- **`rollback <CHG-…|REL-…>`** opens a change of kind `rollback` (`data.reverts`, `data.baseline` = the baseline the records go back
+  to, `data.commits` to revert newest first, `data.requirements` with version and wording hash now and then, `data.task`). The
+  engine never runs `git revert`. The rollback cannot be verified until the records equal the baseline and a passing `verify`
+  ran after the revert (gate checks `restored` and `verify-after-revert`). A reverted change no longer counts: its slices are
+  planned again, its evidence proves nothing and its deltas do not count towards a version, from the moment a person
+  approves the rollback's design.
+- **`deprecate <ID>`** (requirements and components) writes `Status: deprecated` and a `Removal slice`; it plans the slice when
+  none is named (`data.planned_slice`). `status.requirements[ID].deprecated` holds the slice. The code map of a task shows
+  the code of a deprecated component as scheduled for removal.
+- **Events** gain `experiment.decided`, `record.deprecated` and `adoption.planned` (the project log).

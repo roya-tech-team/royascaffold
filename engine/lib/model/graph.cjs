@@ -106,6 +106,7 @@ function buildModel(start) {
           affects: asList(fm.affects),
           reverts: asList(fm.reverts),
           baseline: fm.baseline ? String(fm.baseline) : null,
+          module: fm.module ? String(fm.module) : null,
           dir: path.posix.dirname(file.path),
           file: file.path,
           tasks: [],
@@ -132,7 +133,8 @@ function buildModel(start) {
         for (const id of findIds(value)) {
           if (id === seg.id) continue;
           if (type) relations.push({ type, to: id, field: f.key });
-          else fieldMentions.add(id);
+          else if (f.key.trim().toLowerCase() !== "remove by") fieldMentions.add(id); // a flag may name a release that is not made yet
+
         }
       }
       const rec = {
@@ -278,9 +280,11 @@ function buildModel(start) {
     model.evidence.set(rec.id, { id: rec.id, change: change ? change.id : null, kind: String(rec.fields.Kind || "check").trim().toLowerCase() || "check", result, proves, metrics, git: rec.fields["Git commit"] || null, fingerprint, file: rec.file, line: rec.line });
   }
 
-  // 1.6: a change a closed rollback reverted no longer delivers or proves anything.
+  // 1.6: a change a rollback reverted no longer delivers or proves anything. It counts from the moment a person
+  // approved the rollback's design (the same moment a delta counts), so the gate can check the records are back.
   model.reverted = new Set();
-  for (const change of model.changes.values()) if (change.kind === "rollback" && change.status === "closed") for (const id of change.reverts) model.reverted.add(id);
+  const APPROVED_OR_LATER = ["approved", "ready", "in-progress", "verified", "reconciled", "closed"];
+  for (const change of model.changes.values()) if (change.kind === "rollback" && APPROVED_OR_LATER.includes(change.status)) for (const id of change.reverts) model.reverted.add(id);
   for (const change of model.changes.values()) {
     if (change.status === "cancelled" || model.reverted.has(change.id)) continue;
     for (const sid of change.slices) {
@@ -348,6 +352,7 @@ function validate(model, issue) {
   if (model.is14) require("../acceptance.cjs").untypedIssues(model, issue);
   if (model.is14) require("../inferred.cjs").issues(model, issue);
   if (model.is14) sourceFileIssues(model, issue);
+  require("../flags.cjs").issues(model, issue); // 1.6: flags past their removal, experiment metrics and decisions, deprecated records
   if (model.is14) componentHygiene(model, issue);
   for (const feature of model.features.values()) {
     const rec = known.get(feature.id);

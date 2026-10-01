@@ -72,7 +72,7 @@ test("new record: every kind gets the next ID, lands in its home file above the 
   assert.throws(() => newRecord(repo, "requirement", "Broken", { feature: "CAP-EXM-404" }), /CAP-EXM-404 does not exist/);
   assert.throws(() => newRecord(repo, "widget", "X"), /Usage: royascaff new record/);
   // Records created without their links are valid but flagged, so nothing stays an orphan silently.
-  assert.deepEqual([...new Set(buildModel(repo).issues.map((i) => `${i.severity}:${i.code}`))].sort(), ["warning:component-without-code", "warning:requirement-without-feature", "warning:source-uncovered", "warning:test-without-verifies"]);
+  assert.deepEqual([...new Set(buildModel(repo).issues.map((i) => `${i.severity}:${i.code}`))].sort(), ["warning:component-without-code", "warning:experiment-metric", "warning:flag-without-hides", "warning:flag-without-removal", "warning:requirement-without-feature", "warning:source-uncovered", "warning:test-without-verifies"]);
   const f = newFeature(repo, "Results", { horizon: "now" });
   const roadmap = fs.readFileSync(path.join(repo, "project/knowledge/00-roadmap/roadmap.md"), "utf8");
   assert.ok(roadmap.indexOf(`## ${f.id} · Results`) < roadmap.indexOf("## Record format"), "features go above the example");

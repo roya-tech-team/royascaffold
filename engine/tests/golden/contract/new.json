@@ -123,5 +123,39 @@
         "EVT-PROJECT-0007"
       ]
     }
+  },
+  {
+    "scenario": "new record flag",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "new",
+      "data": {
+        "id": "FLAG-CAMP-001",
+        "kind": "flag",
+        "file": "knowledge/05-implementation/flags.md"
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "new record experiment",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "new",
+      "data": {
+        "id": "EXP-CAMP-001",
+        "kind": "experiment",
+        "file": "knowledge/06-quality/experiments.md"
+      },
+      "warnings": [],
+      "events": []
+    }
   }
 ]

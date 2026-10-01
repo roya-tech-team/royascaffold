@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.1/rollback.schema.json",
+  "title": "royascaff rollback: data",
+  "description": "The `data` of the contract envelope for `rollback`. A change of kind `rollback` was opened for a change (CHG-) or a release (REL-): `commits` are the commits to revert (newest first, from the changes' events, evidence and the git log), `requirements` are the records that return to the previous baseline (`baseline`) with their version and wording hash now and then, `task` is the seeded task that does the revert. The engine never runs `git revert`. The rollback is closed only after the records match the baseline and a passing `verify` ran after the revert. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": ["id", "kind", "target", "reverts", "risk", "commits", "requirements"],
+  "properties": {
+    "id": { "type": "string" },
+    "kind": { "const": "rollback" },
+    "target": { "type": "string" },
+    "reverts": { "type": "array", "items": { "type": "string" } },
+    "baseline": { "type": ["string", "null"] },
+    "risk": { "type": "string" },
+    "task": { "type": ["string", "null"] },
+    "next": { "type": "string" },
+    "commits": { "type": "array", "items": { "type": "object", "required": ["commit"], "properties": { "commit": { "type": "string" }, "subject": { "type": "string" }, "change": { "type": "string" } } } },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "now_version", "in_baseline"],
+        "properties": {
+          "id": { "type": "string" },
+          "now_version": { "type": "integer" },
+          "back_version": { "type": ["integer", "null"] },
+          "now_state": { "type": ["string", "null"] },
+          "back_state": { "type": ["string", "null"] },
+          "in_baseline": { "type": "boolean" },
+          "hash_now": { "type": ["string", "null"] },
+          "hash_back": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}

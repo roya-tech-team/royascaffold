@@ -8,8 +8,9 @@
 const DONE = new Set(["done", "released"]);
 
 function itemDone(model, status, id) {
-  if (status.requirements.has(id)) return DONE.has(status.requirements.get(id).state);
-  if (status.features.has(id)) return DONE.has(status.features.get(id).state);
+  // 1.6: a requirement (or a feature) behind an `off` flag is not delivered, whatever its checks say.
+  if (status.requirements.has(id)) return DONE.has(status.requirements.get(id).state) && !status.requirements.get(id).flaggedOff;
+  if (status.features.has(id)) return DONE.has(status.features.get(id).state) && !status.features.get(id).flaggedOff;
   if (status.slices.has(id)) return status.slices.get(id).state === "done";
   return false;
 }
@@ -28,7 +29,7 @@ function outcomesOf(model, status) {
   const events = model.approvals ? model.approvals.events : [];
   return [...model.records.values()].filter((r) => r.kind === "outcome").map((o) => {
     const features = [...model.features.values()].filter((f) => model.records.get(f.id).relations.some((x) => x.type === "outcome" && x.to === o.id)).map((f) => f.id);
-    const done = features.filter((f) => DONE.has(status.features.get(f).state));
+    const done = features.filter((f) => itemDone(model, status, f));
     const m = [...events].reverse().find((e) => e.event === "outcome.measured" && e.target === o.id);
     const result = m ? (/^met\b/i.test(m.note || "") ? "met" : "not met") : null;
     const state = result || (features.length && done.length === features.length ? "delivered" : "open");

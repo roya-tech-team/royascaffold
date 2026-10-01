@@ -14,5 +14,49 @@
       "warnings": [],
       "events": []
     }
+  },
+  {
+    "scenario": "measure an experiment (an AI may not)",
+    "exit": 1,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": false,
+      "command": "measure",
+      "error": {
+        "code": "HUMAN_REQUIRED",
+        "message": "A decision must come from a person, not \"ai:claude\". Run it yourself, or pass --by <your name>.",
+        "missing": [
+          "a person: run it yourself in a terminal",
+          "a signed approval token from an issuer the project trusts (--approval-token or ROYASCAFF_APPROVAL_TOKEN), or a person running this in a terminal"
+        ]
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "measure an experiment",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "measure",
+      "data": {
+        "id": "EXP-CAMP-001",
+        "by": "islam",
+        "result": "keep B",
+        "decision": "keep B",
+        "outcome": "OUT-CAMP-001",
+        "removal_slices": [
+          "SLC-CAMP-001-C"
+        ]
+      },
+      "warnings": [],
+      "events": [
+        "EVT-PROJECT-0008"
+      ]
+    }
   }
 ]

@@ -59,7 +59,7 @@ const RECORD_KINDS = {
   test: { prefix: "TEST", doc: "tests", file: "knowledge/05-implementation/tests.md", fields: (o) => [["Owner", o.owner], ["Check", o.check || "runner:test"], ["Verifies", o.verifies || ""]], body: "" },
   // 1.6: a flag hides what is not ready; an experiment compares variants against a metric.
   flag: { prefix: "FLAG", doc: "flags", file: "knowledge/05-implementation/flags.md", fields: (o) => [["Owner", o.owner], ["Hides", o.hides || ""], ["State", "off"], ["Remove by", o.removeBy || ""]], body: "_What this flag switches, and how it is turned on and off._" },
-  experiment: { prefix: "EXP", doc: "experiments", file: "knowledge/06-quality/experiments.md", fields: (o) => [["Owner", o.owner], ["Feature", o.feature || ""], ["Hypothesis", o.hypothesis || ""], ["Variants", o.variants || ""], ["Metric", o.metric || ""], ["Outcome", o.outcome || ""], ["Decision", ""]], body: "" },
+  experiment: { prefix: "EXP", doc: "experiments", file: "knowledge/06-quality/experiments.md", fields: (o) => [["Owner", o.owner], ["Feature", o.feature || ""], ["Hypothesis", o.hypothesis || ""], ["Variants", o.variants || ""], ["Metric", o.metric ? (/`/.test(o.metric) ? o.metric : `\`${o.metric}\``) : ""], ["Outcome", o.outcome || ""], ["Decision", ""]], body: "" },
 };
 
 const KIND_ALIASES = { exp: "experiment", src: "source", qst: "question", asm: "assumption", req: "requirement", out: "outcome", adr: "decision", cmp: "component", ctr: "contract", inv: "invariant", con: "concept", wf: "workflow" };
