@@ -1,0 +1,8 @@
+# The engine's parser, fixtures and golden files expect LF on every OS (core.autocrlf would give CRLF on Windows).
+engine/** text eol=lf
+engine/**/*.tgz binary
+engine/**/*.png binary
+history/** text=auto
+plans/** text eol=lf
+*.md text eol=lf
+*.tgz binary

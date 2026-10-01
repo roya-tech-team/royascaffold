@@ -1,30 +1,6 @@
 {
-  "name": "royascaff",
-  "version": "1.2.5",
-  "description": "AI-Control engine — drives AI from product description through planning, specs, code generation, and verification",
-  "bin": {
-    "royascaff": "bin/royascaff.js"
-  },
-  "files": [
-    "bin",
-    "engine",
-    "skills",
-    "README.md",
-    "LICENSE"
-  ],
-  "engines": {
-    "node": ">=18"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/roya-tech-team/royascaffold.git"
-  },
-  "keywords": [
-    "ai",
-    "scaffolding",
-    "cursor",
-    "code-generation",
-    "blueprint"
-  ],
+  "name": "royascaff-repo",
+  "private": true,
+  "description": "Repository root. The published package is engine/ (npm: royascaff). The 1.2.x root package is frozen in history/root-1.2.6/.",
   "license": "MIT"
 }

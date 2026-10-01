@@ -32,6 +32,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/roya-tech-team/royascaffold.git",
-    "directory": "engine-1.4-beta.4"
+    "directory": "engine"
   }
 }
