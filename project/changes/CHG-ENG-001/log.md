@@ -18,3 +18,4 @@
 | 2026-10-01T02:27:37Z | task.started | TASK-ENG-002 | ai:claude | 7b9ee5a | reopened: the adopt card teaches scan, inferred records and adopt docs |
 | 2026-10-01T02:27:44Z | task.done | TASK-ENG-002 | ai:claude | c38128e | the adopt card is updated; budgets hold |
 | 2026-10-01T02:33:44Z | check.run | CHG-ENG-001 | ai:claude | c38128e | pass: APP-ENG-ENGINE — test ✓ · rules ✓ (EVD-ENG-001) |
+| 2026-10-01T02:33:59Z | change.advanced | CHG-ENG-001 | ai:claude | 949b1c0 | in-progress → verified |
