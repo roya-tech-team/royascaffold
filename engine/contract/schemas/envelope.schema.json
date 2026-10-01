@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.0/envelope.schema.json",
+  "title": "RoyaScaff contract envelope",
+  "description": "What every command prints with --json. `data` is specified per command in this folder; failures carry `error` instead of `data`.",
+  "type": "object",
+  "oneOf": [{ "$ref": "#/definitions/success" }, { "$ref": "#/definitions/failure" }],
+  "definitions": {
+    "contractVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$" },
+    "success": {
+      "type": "object",
+      "required": ["contract", "engine", "ok", "command", "data", "warnings", "events"],
+      "additionalProperties": false,
+      "properties": {
+        "contract": { "$ref": "#/definitions/contractVersion" },
+        "engine": { "type": "string" },
+        "ok": { "const": true },
+        "command": { "type": "string" },
+        "data": {},
+        "warnings": { "type": "array", "items": { "type": "string" } },
+        "events": { "type": "array", "items": { "type": "string", "pattern": "^EVT-" } }
+      }
+    },
+    "failure": {
+      "type": "object",
+      "required": ["contract", "engine", "ok", "command", "error", "warnings", "events"],
+      "additionalProperties": false,
+      "properties": {
+        "contract": { "$ref": "#/definitions/contractVersion" },
+        "engine": { "type": "string" },
+        "ok": { "const": false },
+        "command": { "type": "string" },
+        "error": { "$ref": "#/definitions/error" },
+        "warnings": { "type": "array", "items": { "type": "string" } },
+        "events": { "type": "array", "items": { "type": "string", "pattern": "^EVT-" } }
+      }
+    },
+    "error": {
+      "type": "object",
+      "required": ["code", "message"],
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": ["NOT_A_PROJECT", "UNKNOWN_ID", "GATE_REFUSED", "HUMAN_REQUIRED", "STALE_APPROVAL", "OUTSIDE_PATHS", "CHECK_FAILED", "VERSION_MISMATCH", "ALREADY_EXISTS", "INVALID_INPUT", "UNKNOWN_COMMAND", "INTERNAL"]
+        },
+        "message": { "type": "string" },
+        "missing": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

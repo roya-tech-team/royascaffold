@@ -26,6 +26,8 @@ const usageLib = require("../lib/usage.cjs");
 const { migrateCommand, renderMigrate } = require("../lib/commands/migrate.cjs");
 const { approveProject, approveFeatures } = require("../lib/commands/approve.cjs");
 const { adoptCommand } = require("../lib/commands/adopt.cjs");
+const contract = require("../lib/contract.cjs");
+const adapterLib = require("../lib/adapters.cjs");
 
 // Local usage counters (Q21): one line per command, written when the process exits.
 const USAGE = { started: Date.now(), cmd: null, sub: null, result: "ok", failed_checks: [], where: null };
@@ -69,6 +71,7 @@ Commands:
   feedback "<note>" [path] [--kind bug|confusing|idea|praise|other]
                                Write a feedback report (note, counts, brief) to review and send
   usage [path] [--json]        What the local usage counters hold (they never leave this machine)
+  contract [path] [--json]     The machine contract: version, commands, adapters, error codes
 
 Work (every command records an event and refreshes STATUS.md):
   open <SLC-…> [path] [--risk low|medium|high|critical] [--force]
@@ -154,14 +157,27 @@ function printIssues(issues) {
   return issues.map((i) => `  ${i.severity === "error" ? "✗" : "!"} ${i.message}${i.where ? `  (${i.where})` : ""}`).join("\n");
 }
 
+// In --json mode a failure is a contract envelope on stdout (ok:false, a stable error code) and the
+// exit status comes from contract/errors.json. Without --json nothing changes: the message on stderr.
+const CALL = { json: false, command: "" };
+
 function fail(message, code = 2) {
+  if (CALL.json) return failJson(new Error(message));
   process.stderr.write(`${message}\n`);
   process.exit(code);
+}
+
+function failJson(err) {
+  const env = contract.failure(CALL.command, err);
+  process.stdout.write(`${JSON.stringify(env, null, 2)}\n`);
+  process.exit(contract.exitFor(env.error.code));
 }
 
 function main() {
   const { flags, positional } = parseArgs(process.argv.slice(2));
   const [command, target] = positional;
+  CALL.json = Boolean(flags.json);
+  CALL.command = command || "";
   USAGE.cmd = command || null;
   USAGE.sub = SUBCOMMANDS.has(command) ? (command === "task" ? positional[2] : positional[1]) || null : null;
   USAGE.where = flags.path || positional.slice(1).find((p) => { try { return fs.statSync(p).isDirectory(); } catch { return false; } }) || ".";
@@ -441,7 +457,19 @@ function main() {
       }
       return fail('Usage: royascaff new feature "<title>" | royascaff new slice <CAP-…> "<title>"');
     }
+    case "contract": {
+      let projectDir = null;
+      try {
+        projectDir = findProject(flags.path || target || ".").projectDir;
+      } catch {
+        // Outside a project the contract still describes the engine and its own adapters.
+      }
+      const data = { contract: contract.CONTRACT_VERSION, engine: contract.ENGINE_VERSION, commands: contract.COMMANDS, adapters: adapterLib.KNOWN(projectDir), error_codes: Object.keys(contract.ERRORS) };
+      if (flags.json) return process.stdout.write(`${JSON.stringify(contract.ok("contract", data), null, 2)}\n`);
+      return process.stdout.write(`Contract ${data.contract} · engine ${data.engine}\nCommands: ${data.commands.join(", ")}\nAdapters: ${data.adapters.join(", ")}\nError codes: ${data.error_codes.join(", ")}\n`);
+    }
     default:
+      if (CALL.json) return failJson(Object.assign(new Error(`Unknown command: ${command}`), { code: "UNKNOWN_COMMAND" }));
       fail(`Unknown command: ${command}\n\n${HELP}`);
   }
 }
@@ -449,5 +477,6 @@ function main() {
 try {
   main();
 } catch (error) {
+  if (CALL.json) failJson(error);
   fail(error.message, 1);
 }

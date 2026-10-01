@@ -1,0 +1,54 @@
+{
+  "contract": "1.0",
+  "note": "Stable error codes of the machine contract. Adding a code is a minor change; removing or renaming one is a major change (docs/CONTRACT.md). `exit` is the process exit status in --json mode: 1 = the work was refused or failed, 2 = the call itself was wrong. Generated from lib/contract.cjs.",
+  "codes": {
+    "NOT_A_PROJECT": {
+      "exit": 1,
+      "description": "The path does not exist or holds no RoyaScaff project."
+    },
+    "UNKNOWN_ID": {
+      "exit": 1,
+      "description": "A record, task, change, slice, feature or backup the call names does not exist."
+    },
+    "GATE_REFUSED": {
+      "exit": 1,
+      "description": "A gate refused the step; `missing` lists what must be done first."
+    },
+    "HUMAN_REQUIRED": {
+      "exit": 1,
+      "description": "Only a person can do this step (an approval, a look, a confirmation); an AI or a script cannot."
+    },
+    "STALE_APPROVAL": {
+      "exit": 1,
+      "description": "The approval no longer holds because what was approved has changed since."
+    },
+    "OUTSIDE_PATHS": {
+      "exit": 1,
+      "description": "Files changed outside the paths the task allows."
+    },
+    "CHECK_FAILED": {
+      "exit": 1,
+      "description": "A check the step depends on ran and failed."
+    },
+    "VERSION_MISMATCH": {
+      "exit": 1,
+      "description": "The project, the engine or the requested version do not fit each other."
+    },
+    "ALREADY_EXISTS": {
+      "exit": 1,
+      "description": "What the call would create, or the state it would set, is already there."
+    },
+    "INVALID_INPUT": {
+      "exit": 2,
+      "description": "The call is malformed: a missing argument, a bad option value or wrong usage."
+    },
+    "UNKNOWN_COMMAND": {
+      "exit": 2,
+      "description": "The command does not exist in this engine version."
+    },
+    "INTERNAL": {
+      "exit": 1,
+      "description": "An error the engine has no stable code for yet; the message says what happened."
+    }
+  }
+}
