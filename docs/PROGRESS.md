@@ -1,4 +1,4 @@
-﻿# Progress â€” RoyaScaff 1.5 â†’ 2.0
+﻿# Progress — RoyaScaff 1.5 → 2.0
 
 Program: `plans/v1.5-v2.0/05-build-program-for-claude-code.md`. One line per work package (WP).
 
