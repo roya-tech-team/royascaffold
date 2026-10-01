@@ -14,15 +14,38 @@ const { spawnSync } = require("child_process");
 const { patternList } = require("./glob.cjs");
 const { globBase } = require("./context.cjs");
 
-const FULL = ["Build", "Typecheck", "Lint", "Test", "Smoke"]; // Smoke: WP-C5, the app in a real browser
+// Smoke: WP-C5, the app in a real browser. Record: E2.2, the commands a person's check reads (a recorded run).
+const FULL = ["Build", "Typecheck", "Lint", "Test", "Smoke", "Record"];
 const QUICK = ["Typecheck", "Lint"];
 const RED = ["Test"]; // WP-C4: tests written first must fail before the work
 const TAIL_LINES = 30;
 
 function appsOf(model) {
+  // The adapter names the APP field whose commands record what a person reads (`personCheck.record`).
+  const recordField = (require("./adapters.cjs").policy(model).personCheck || {}).record;
+  const value = (r, k) => String(r.fields[k === "Record" ? recordField : k] || "").replace(/^`|`$/g, "").trim();
   return [...model.records.values()]
     .filter((r) => r.kind === "app")
-    .map((r) => ({ id: r.id, title: r.title, path: String(r.fields.Path || "").replace(/`/g, "").trim().replace(/\/+$/, ""), commands: Object.fromEntries(FULL.map((k) => [k, String(r.fields[k] || "").replace(/^`|`$/g, "").trim()]).filter(([, v]) => v)) }));
+    .map((r) => ({ id: r.id, title: r.title, path: String(r.fields.Path || "").replace(/`/g, "").trim().replace(/\/+$/, ""), commands: Object.fromEntries(FULL.filter((k) => k !== "Record" || recordField).map((k) => [k, value(r, k)]).filter(([, v]) => v)) }));
+}
+
+// The recorded run a person reads (E2.2): each command of `A ;; B` runs in turn and its output is kept as it was.
+// An error exit is part of the record (a person judges the message), so only a command that cannot finish fails it.
+function runRecord(repo, app, command, timeoutMs) {
+  const cwd = app.path && fs.existsSync(path.join(repo, app.path)) ? path.join(repo, app.path) : repo;
+  const started = Date.now();
+  const transcript = [];
+  let timedOut = false;
+  for (const step of String(command).split(/\s*;;\s*/).map((s) => s.trim()).filter(Boolean)) {
+    const r = spawnSync(step, { cwd, shell: true, encoding: "utf8", timeout: timeoutMs, maxBuffer: 32 * 1024 * 1024, env: { ...process.env, CI: process.env.CI || "1", FORCE_COLOR: "0" } });
+    const stopped = Boolean(r.error && r.error.code === "ETIMEDOUT");
+    transcript.push({ command: step, exit: stopped ? null : r.status, output: `${r.stdout || ""}${r.stderr || ""}`.replace(/\r/g, "").trimEnd(), timedOut: stopped });
+    if (stopped) {
+      timedOut = true;
+      break;
+    }
+  }
+  return { app: app.id, kind: "Record", command, cwd: slash(path.relative(repo, cwd)) || ".", exit: timedOut ? null : 0, ms: Date.now() - started, pass: !timedOut, timedOut, metrics: {}, tail: timedOut ? "a recorded command timed out" : "", transcript };
 }
 
 // Apps a change touches: those whose folder contains (or is contained in) a task's allowed paths.
@@ -67,7 +90,10 @@ function runChecks(model, apps, mode, options = {}) {
   const timeoutMs = (Number(model.profile.check_timeout_seconds) || 600) * 1000;
   const results = [];
   for (const app of apps) {
-    for (const kind of kinds) if (app.commands[kind]) results.push(runOne(model.repo, app, kind, app.commands[kind], timeoutMs, kind === "Smoke" ? smokeEnv(model, app, options) : {}));
+    for (const kind of kinds) {
+      if (!app.commands[kind]) continue;
+      results.push(kind === "Record" ? runRecord(model.repo, app, app.commands[kind], timeoutMs) : runOne(model.repo, app, kind, app.commands[kind], timeoutMs, kind === "Smoke" ? smokeEnv(model, app, options) : {}));
+    }
     // E1.2: checks the adapters declare (`checks: { <type>: <command> }`) that the app does not declare itself.
     // `unit` stands in for the app's Test and `smoke` for its Smoke command.
     if (mode === "full") {

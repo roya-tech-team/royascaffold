@@ -262,7 +262,12 @@ const RULES = {
     // R8: a change the adapters mark for a person's look (kind and risk) is looked at before verified.
     if (model.is14 && require("./adapters.cjs").needsPersonLook(model, change)) {
       const looked = events.some((e, i) => i > lastTaskDoneAt && e.event === "check.run" && isHuman(e.by) && /^pass\b/i.test(e.note || "") && !/ — .*[✓✗]/.test(e.note || ""));
-      out.push(check("visual-check", looked, looked ? "a person looked at the UI" : `a person opens the app, tries the flow and records it: royascaff check ${change.id} --result pass --note "looked at …" (the AI cannot record this)`, { approval: true, say: `royascaff check ${change.id} --result pass --note "looked at …"` }));
+      // E2.2: the adapter says what kind of check the person does; the web default keeps its wording.
+      const pc = require("./adapters.cjs").policy(model).personCheck;
+      const generic = pc && pc.kind !== "visual";
+      const note = generic ? "checked …" : "looked at …";
+      const ask = generic ? `a person's ${pc.kind} check (${pc.prompt || `score the ${pc.bar}`}), recorded with` : "a person opens the app, tries the flow and records it:";
+      out.push(check("visual-check", looked, looked ? (generic ? `a person did the ${pc.kind} check` : "a person looked at the UI") : `${ask} royascaff check ${change.id} --result pass --note "${note}"${generic ? " --bar all|1,2,4|none" : ""} (the AI cannot record this)`, { approval: true, say: `royascaff check ${change.id} --result pass --note "${note}"` }));
     }
     const rule = EVIDENCE_REQUIRED[change.kind] || "none";
     if (rule === "per-requirement") {

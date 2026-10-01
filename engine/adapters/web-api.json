@@ -2,5 +2,18 @@
   "adapter": "web-api",
   "legacyAppTypes": [
     "api"
-  ]
+  ],
+  "personCheck": {
+    "kind": "demo",
+    "bar": "API bar",
+    "minLines": 3,
+    "prompt": "watch a scripted call sequence and its responses, and score them against the API bar",
+    "record": "Demo"
+  },
+  "personLook": {
+    "kinds": [
+      "feature"
+    ],
+    "minRisk": "high"
+  }
 }

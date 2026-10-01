@@ -9,7 +9,11 @@
   "requiresDocs": [
     "experience"
   ],
-  "visualBar": true,
+  "personCheck": {
+    "kind": "visual",
+    "bar": "Visual bar",
+    "minLines": 5
+  },
   "personLook": {
     "kinds": [
       "feature",

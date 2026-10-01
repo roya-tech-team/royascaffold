@@ -97,14 +97,21 @@ function discoveryState(model, files) {
     ...base,
     techOptions: techLines.filter((l) => /^\s*(?:[-*]|\d+\.)\s+\*\*Option\b/i.test(l)).length,
     techRecommendation: techLines.some((l) => /\*\*Recommendation:?\*\*/i.test(l)),
-    visualBar: visualBar(find(TOPICS[7])),
+    visualBar: visualBar(find(TOPICS[7]), barLabelOf(model)),
   };
 }
 
-// WP-C5 (P7): the `**Visual bar:**` list in topic 8 — what good looks like, what is not acceptable.
-function visualBar(section) {
+// The name of the bar the project's adapters ask a person to score (E2.2): "Visual bar" for a screen,
+// "Usage bar" for a command line tool, "Feel bar" for a game. Without an adapter's say it is "Visual bar".
+function barLabelOf(model) {
+  const pc = require("./adapters.cjs").policy(model).personCheck;
+  return pc ? pc.bar : "Visual bar";
+}
+
+// WP-C5 (P7): the `**<bar name>:**` list in topic 8 — what good looks like, what is not acceptable.
+function visualBar(section, label = "Visual bar") {
   const lines = section ? section.lines : [];
-  const at = lines.findIndex((l) => /\*\*Visual bar:?\*\*/i.test(l));
+  const at = lines.findIndex((l) => new RegExp(`\\*\\*${label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}:?\\*\\*`, "i").test(l));
   if (at < 0) return [];
   const out = [];
   for (const l of lines.slice(at + 1)) {
@@ -196,8 +203,10 @@ function computeApprovals(model, files) {
   }
   const { coverageOf } = require("./coverage.cjs");
   const { visualBarRequired } = require("./smoke.cjs");
+  const personCheck = require("./adapters.cjs").policy(model).personCheck;
   return {
     visualBarRequired: visualBarRequired(model),
+    personCheck,
     events,
     problems,
     coverage: coverageOf(model, files),
@@ -217,7 +226,8 @@ function projectBlockers(a) {
     if (a.discovery.empty.length) out.push(`fill the discovery topics: ${a.discovery.empty.join(", ")}`);
     if (a.discovery.open.length) out.push(`answer ${a.discovery.open.length} open question(s): ${a.discovery.open.map((q) => q.id).join(", ")}`);
     if (a.discovery.techOptions < 2 || !a.discovery.techRecommendation) out.push("the Technology topic needs at least two `- **Option …:**` lines and a `**Recommendation:**`");
-    if (a.visualBarRequired && a.discovery.visualBar.length < 5) out.push(`topic 8 (Look, feel and references) needs a \`**Visual bar:**\` list of at least 5 lines taken from the request — what good looks like and what is not acceptable (${a.discovery.visualBar.length} now)`);
+    const need = a.personCheck ? a.personCheck.minLines : 5;
+    if (a.visualBarRequired && a.discovery.visualBar.length < need) out.push(`topic 8 (Look, feel and references) needs a \`**${a.personCheck ? a.personCheck.bar : "Visual bar"}:**\` list of at least ${need} lines taken from the request — what good looks like and what is not acceptable (${a.discovery.visualBar.length} now)`);
   }
   // WP-C1: the request is kept word for word and every concrete demand is listed (SRC-).
   if (a.coverage.exists) {

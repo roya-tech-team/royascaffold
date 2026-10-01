@@ -1,6 +1,19 @@
 {
   "adapter": "node",
   "legacyAppTypes": [],
+  "personCheck": {
+    "kind": "transcript",
+    "bar": "Usage bar",
+    "minLines": 3,
+    "prompt": "read the recorded run of the commands and their output, and score it against the usage bar",
+    "record": "Transcript"
+  },
+  "personLook": {
+    "kinds": [
+      "feature"
+    ],
+    "minRisk": "high"
+  },
   "lockfiles": [
     "package-lock.json",
     "npm-shrinkwrap.json",

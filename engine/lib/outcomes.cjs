@@ -51,11 +51,12 @@ function designBrief(model) {
   for (const name of doc.pack || []) {
     const s = secs.find((x) => x.title.toLowerCase().startsWith(name.toLowerCase()));
     if (!s || onlyTemplate(s.lines)) continue;
-    const text = s.lines.join("\n").split(/\*\*Visual bar:?\*\*/i)[0].replace(/\s+/g, " ").trim();
+    const text = s.lines.join("\n").split(/\*\*[A-Z][\w ]* bar:?\*\*/)[0].replace(/\s+/g, " ").trim();
     if (text) out.push(`${s.title}: ${text}`);
   }
   const bar = model.approvals ? model.approvals.discovery.visualBar : [];
-  if (bar.length) out.push(`Visual bar: ${bar.map((l, i) => `${i + 1}. ${l}`).join(" ")}`);
+  const label = (require("./adapters.cjs").policy(model).personCheck || { bar: "Visual bar" }).bar;
+  if (bar.length) out.push(`${label}: ${bar.map((l, i) => `${i + 1}. ${l}`).join(" ")}`);
   return out;
 }
 

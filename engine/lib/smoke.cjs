@@ -87,6 +87,17 @@ function latestShots(model, change) {
   return [];
 }
 
+// The latest recorded run (a transcript) of a change, repo-relative, or null (E2.2).
+function latestTranscript(model, change) {
+  const ev = [...model.evidence.values()].filter((e) => e.change === change.id).sort((a, b) => b.id.localeCompare(a.id));
+  for (const e of ev) {
+    const rec = model.records.get(e.id);
+    const rel = rec && String(rec.fields.Transcript || "").trim();
+    if (rel && fs.existsSync(path.join(model.root, change.dir, "evidence", rel))) return slash(path.relative(model.repo, path.join(model.root, change.dir, "evidence", rel)));
+  }
+  return null;
+}
+
 // --bar all | 1,2,4 → { note, gaps } against a bar of n lines.
 function parseBar(value, n) {
   const v = String(value === true ? "" : value || "").trim().toLowerCase();
@@ -110,4 +121,4 @@ function barGaps(change) {
   return m ? m[1].split(/[\s,]+/).filter(Boolean).map(Number) : [];
 }
 
-module.exports = { smokeInit, setAppField, shotsIn, latestShots, parseBar, barGaps, smokePolicy, visualBarRequired };
+module.exports = { smokeInit, setAppField, shotsIn, latestShots, latestTranscript, parseBar, barGaps, smokePolicy, visualBarRequired };

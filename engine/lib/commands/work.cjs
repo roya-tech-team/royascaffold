@@ -408,29 +408,38 @@ function recordCheck(start, changeId, flags = {}) {
       // WP-C5 (P7): a person's look is scored against the visual bar.
       const claimedBar = token && flags.bar === undefined ? require("../signed.cjs").parseToken(token).claims.bar : undefined;
       const scored = smoke.parseBar(flags.bar !== undefined ? flags.bar : claimedBar, bar.length);
+      // E2.2: what the person reads and how the check is called come from the adapter's personCheck; the web wording stays.
+      const pc = require("../adapters.cjs").policy(model).personCheck;
+      const generic = Boolean(pc && pc.kind !== "visual");
+      const noun = generic ? `${pc.kind} check` : "look";
+      const barName = generic ? pc.bar.toLowerCase() : "visual bar";
+      const transcript = generic ? smoke.latestTranscript(model, change) : null;
+      const artifacts = (shots) => (generic ? (transcript ? `Recorded run:\n  ${transcript}\n` : "") : (shots.length ? `Screenshots:\n${shots.map((s) => `  ${s}`).join("\n")}\n` : ""));
       if (!scored) {
         const shots = smoke.latestShots(model, change);
         const ev = [...model.evidence.values()].filter((e) => e.change === change.id).sort((a, b) => b.id.localeCompare(a.id))[0];
         const ph = ev && model.records.get(ev.id) ? model.records.get(ev.id).fields.Placeholders : null;
-        throw new Error(`Score the look against the visual bar with --bar all | --bar 1,2,4 (the lines that pass) | --bar none:\n${bar.map((l, i) => `  ${i + 1}. ${l}`).join("\n")}\n${shots.length ? `Latest screenshots:\n${shots.map((s) => `  ${s}`).join("\n")}` : "No screenshots yet: run royascaff check " + changeId}${ph ? `\nPlaceholder content found by the last check: ${ph}` : ""}`);
+        const have = generic ? (transcript ? `Latest recorded run:\n  ${transcript}` : `No recorded run yet: run royascaff verify ${changeId}`) : (shots.length ? `Latest screenshots:\n${shots.map((s) => `  ${s}`).join("\n")}` : "No screenshots yet: run royascaff check " + changeId);
+        throw new Error(`Score the ${noun} against the ${barName} with --bar all | --bar 1,2,4 (the lines that pass) | --bar none:\n${bar.map((l, i) => `  ${i + 1}. ${l}`).join("\n")}\n${have}${ph ? `\nPlaceholder content found by the last check: ${ph}` : ""}`);
       }
+      const did = generic ? "checked the run" : "looked at the app";
       note = scored.gaps.length
-        ? `pass with gaps ${scored.gaps.join(", ")}: ${flags.note || "looked at the app"} · bar: ${scored.passed.length} of ${bar.length}`
-        : `pass: ${flags.note || "looked at the app"} · bar: all ${bar.length}`;
+        ? `pass with gaps ${scored.gaps.join(", ")}: ${flags.note || did} · bar: ${scored.passed.length} of ${bar.length}`
+        : `pass: ${flags.note || did} · bar: all ${bar.length}`;
       if (token) {
         const sig = finish(model, { token }, { act: "person-check", target: changeId, hash: designHash(model.root, change), bar: String(flags.bar !== undefined ? flags.bar : claimedBar) });
         by = sig.by;
-        if (flags.note === undefined && sig.personNote) note = note.replace(": looked at the app", `: ${sig.personNote}`);
+        if (flags.note === undefined && sig.personNote) note = note.replace(`: ${did}`, `: ${sig.personNote}`);
         note += ` · look:signed${sig.note}`;
       }
       // D9 (owner decision Q2-A): the look is confirmed in a terminal. An AI tool's shell has no
       // terminal to answer from, so it cannot record a person's look.
       if (!token) {
         const shots = smoke.latestShots(model, change);
-        const prompt = `\n${change.id} · your look against the visual bar:\n${bar.map((l, i) => `  ${scored.passed.includes(i + 1) ? "✓" : "✗"} ${i + 1}. ${l}`).join("\n")}\n${shots.length ? `Screenshots:\n${shots.map((s) => `  ${s}`).join("\n")}\n` : ""}Record this look as ${who(flags, model.repo)}? Type yes: `;
+        const prompt = `\n${change.id} · your ${noun} against the ${barName}:\n${bar.map((l, i) => `  ${scored.passed.includes(i + 1) ? "✓" : "✗"} ${i + 1}. ${l}`).join("\n")}\n${artifacts(shots)}Record this ${noun} as ${who(flags, model.repo)}? Type yes: `;
         const answer = (typeof flags.confirm === "function" ? flags.confirm : ttyConfirm)(prompt);
-        if (answer === null) throw refuse("HUMAN_REQUIRED", "A person's look is confirmed in a terminal: run this command yourself in a terminal and answer the prompt (an AI tool cannot)", [NEED_TOKEN]);
-        if (!/^\s*y(es)?\s*$/i.test(answer)) throw new Error(`Look not recorded (answer: "${String(answer).trim()}")`);
+        if (answer === null) throw refuse("HUMAN_REQUIRED", `A person's ${noun} is confirmed in a terminal: run this command yourself in a terminal and answer the prompt (an AI tool cannot)`, [NEED_TOKEN]);
+        if (!/^\s*y(es)?\s*$/i.test(answer)) throw new Error(`${generic ? "Check" : "Look"} not recorded (answer: "${String(answer).trim()}")`);
         note += " · look:tty";
       }
     }
@@ -471,7 +480,7 @@ function runChecksFor(start, model, status, change, flags, { verify }) {
   const note = `${mode === "quick" ? "quick " : ""}${result}: ${apps.map((a) => a.id).join(", ")} — ${runner.summary(run)}${evidence ? ` (${evidence.id})` : ""}${linesFailing.length ? ` · failing lines: ${linesFailing.join(", ")}` : ""}`;
   const after = buildModel(start);
   record(after, after.changes.get(changeId), { event: "check.run", target: changeId, note }, flags);
-  const out = { id: changeId, mode, result, results: run.results, evidence: evidence ? evidence.id : null, proves: evidence ? evidence.proves : [], shots: evidence ? evidence.shots : [], placeholders: content.placeholders, sourceReaders: model.is14 && mode === "full" ? require("../testsfirst.cjs").sourceReaders(model, apps) : [] };
+  const out = { id: changeId, mode, result, results: run.results, evidence: evidence ? evidence.id : null, proves: evidence ? evidence.proves : [], shots: evidence ? evidence.shots : [], ...(evidence && evidence.transcript ? { transcript: evidence.transcript } : {}), placeholders: content.placeholders, sourceReaders: model.is14 && mode === "full" ? require("../testsfirst.cjs").sourceReaders(model, apps) : [] };
   if (verify) {
     out.mode = "verify";
     out.fingerprint = fp.hash;
@@ -531,6 +540,16 @@ function writeCheckEvidence(model, status, change, run, apps, evdId = null, shot
   const id = evdId || nextEvidenceId(model);
   const shots = shotsDir ? require("../smoke.cjs").shotsIn(shotsDir) : [];
   const dir = path.join(model.root, change.dir, "evidence");
+  // E2.2: the recorded run a person reads (a transcript of commands and their output), next to the evidence.
+  const recorded = run.results.filter((r) => r.transcript && r.transcript.length);
+  let transcriptRel = null;
+  if (recorded.length) {
+    transcriptRel = `transcripts/${id}/session.md`;
+    const body = [`# Recorded run · ${change.id} · ${id}`, "", "> Written by `royascaff verify`. Read it as a person would: are the messages clear, are the defaults sensible, does every error say what to do?", ""];
+    for (const r of recorded) for (const step of r.transcript) body.push(`## $ ${step.command}`, "", `exit status ${step.exit === null ? "(timed out)" : step.exit}`, "", "```text", step.output || "(no output)", "```", "");
+    fs.mkdirSync(path.join(dir, "transcripts", id), { recursive: true });
+    fs.writeFileSync(path.join(dir, transcriptRel), body.join("\n"));
+  }
   const file = path.join(dir, "checks.md");
   fs.mkdirSync(dir, { recursive: true });
   if (!fs.existsSync(file)) fs.writeFileSync(file, `# Checks · ${change.id}\n\n> **What:** results of \`royascaff check\` runs (written by the CLI)\n> **Read when:** a check failed, or to see what proved this change\n`);
@@ -546,6 +565,7 @@ function writeCheckEvidence(model, status, change, run, apps, evdId = null, shot
     ...(opts.fingerprint ? [`- **Fingerprint:** ${opts.fingerprint.hash} (${opts.fingerprint.files} file(s) and the engine version)`] : []),
     `- **Checks:** ${run.results.map((r) => `${r.kind.toLowerCase()} ${r.pass ? "pass" : r.timedOut ? "timed out" : `fail (exit ${r.exit})`} ${(r.ms / 1000).toFixed(1)}s`).join(" · ")}`,
     ...(shots.length ? [`- **Screenshots:** ${shots.map((s) => `shots/${id}/${s}`).join(", ")}`] : []),
+    ...(transcriptRel ? [`- **Transcript:** ${transcriptRel}`] : []),
     ...(metricsLine(run) ? [`- **Metrics:** ${metricsLine(run)}`] : []),
     ...(placeholders.length ? [`- **Placeholders:** ${require("../content.cjs").placeholderLine(placeholders)}`] : []),
     ...(opts.lines && opts.lines.length ? ["", "**Acceptance lines**", "", ...opts.lines.map((l) => `- ${l.key} · ${l.type || "untyped"} · ${l.result}${l.why ? ` (${l.why})` : ""}`)] : []),
@@ -553,7 +573,7 @@ function writeCheckEvidence(model, status, change, run, apps, evdId = null, shot
   ];
   for (const r of run.results.filter((x) => !x.pass)) lines.push(`**${r.kind} failed** in \`${r.cwd}\`:`, "", "```text", r.tail || "(no output)", "```", "");
   fs.appendFileSync(file, lines.join("\n"));
-  return { id, proves, shots };
+  return { id, proves, shots, transcript: transcriptRel ? require("../project.cjs").toPosix(path.relative(model.repo, path.join(dir, transcriptRel))) : null };
 }
 
 // judge <CHG-…>: build the judge pack for a separate AI session (no verdict flags), or record that

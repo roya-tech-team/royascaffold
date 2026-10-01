@@ -46,7 +46,7 @@ _Where the data comes from, how much, how real it must look, and who owns it._
 
 _References, tone, brand, density, motion; what must not be copied._
 
-_For a web-ui app, end with `**Visual bar:**` and at least 5 list lines taken from the request: what good looks like, and what is not acceptable. The person scores every UI change against it._
+_When the project's adapter asks for a person's check with a bar (`royascaff next` says which: a **Visual bar** for screens, a **Usage bar** for command line tools, …), end with `**<bar name>:**` and the list lines it needs, taken from the request: what good looks like, and what is not acceptable. The person scores every change against it._
 
 ## Questions and assumptions
 

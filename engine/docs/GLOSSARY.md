@@ -27,10 +27,16 @@
 | **Hand-off note** | The sentence written when a task is done or blocked, so the next session can continue |
 | **Changed since verified** | Code of a finished feature changed after its evidence was recorded |
 | **Work outside the engine** | Commits or uncommitted files that no task or change covers, and project knowledge not committed yet |
-| **Person's check** | For a UI change of medium risk or more, the person opens the app and records `royascaff check CHG-… --result pass --note "looked at …"` |
+| **Person's check** | The check only a person can do, with a bar the adapter names. For a UI change of medium risk or more the person opens the app and records `royascaff check CHG-… --result pass --note "looked at …" --bar all`. The kind comes from the adapter: `visual` (screens), `transcript` (command line tools: a recorded run), `demo` (APIs), `playtest` (games) |
+| **Usage bar** · **API bar** · **Feel bar** | The bar a person scores for command line tools, APIs and games, written in discovery topic 8 like the Visual bar (the adapter says how many lines) |
+| **Check type** | How an acceptance line is proven, written at its start: `[unit]`, `[e2e]`, `[metric]`, `[manual]` or `[inspection]` |
+| **Verify** | `royascaff verify CHG-…`: runs every check, answers each typed acceptance line, and writes evidence with a fingerprint |
+| **Stale evidence** | Evidence whose fingerprint no longer matches the code or tests it covered. It shows ⚠️ Stale, not ✅ Done, until `royascaff verify` runs again |
+| **Judge** | A separate AI session (never the builder) that reads the pack from `royascaff judge CHG-…` and gives each acceptance line `met`, `not-met` or `unclear`. High and critical risk need `met` for every must line |
+| **Repair limit** | `repair_limit` in the profile (default 2): how many repair attempts a failed verify or judge verdict gets before the change is blocked and a person decides |
 | **Request** · **Demand** (`SRC-`) | The original request, kept word for word in `00-discovery/request.md` · one concrete thing it asks for, with its exact quote; covered by a requirement or feature, or out of scope with a reason |
 | **Visual bar** | At least 5 lines in discovery topic 8: what good looks like and what is not acceptable. You score every UI change against it (`--bar`) |
-| **Foundation slice** | The slice that delivers a *must* NFR (for a web app: design tokens, theme, typography, layout); it is built first |
+| **Foundation slice** | The slice that delivers a *must* NFR (for a web app: design tokens, theme, typography, layout); it is built first. A feature can also mark slices with `- **Foundation:** SLC-…` (or `new slice --foundation`): they are done before the feature's other slices open |
 | **Red check** | `royascaff check CHG-… --red`: inside a task, the new tests run before the code exists and must fail, proving they test the new behavior |
 | **Smoke check** | The app opened in a real browser by every full check: three screen sizes, no console errors, every button changes something, screenshots kept with the evidence |
 | **Deferred to** | Work left for later names the slice that will do it (`Deferred to: SLC-…`); vague "later" is refused |
@@ -41,4 +47,4 @@
 | **Metric** · **Measure** | A number a check reports (`ROYASCAFF_METRIC smoke.fps=60`) · an NFR written as `` `smoke.fps >= 50` ``: proven only while the latest check meets it |
 | **Delivered** · **Measured** | A demand whose covering requirements are done · an outcome a person has judged met or not met |
 | **Rule** (`RULE-`) · **Release** (`REL-`) | A rule of this project that every change follows · what was shipped and which changes it includes |
-| **States** | 💡 Idea · 📝 Outlined · 🗺 Planned · ✏️ Designing · 🔨 Building · 🧪 Checking · ✅ Done · 🚀 Released · ⚠️ Partly done · ⛔ Blocked |
+| **States** | 💡 Idea · 📝 Outlined · 🗺 Planned · ✏️ Designing · 🔨 Building · 🧪 Checking · ✅ Done · 🚀 Released · ⚠️ Partly done · ⚠️ Stale · ⛔ Blocked |

@@ -109,7 +109,8 @@ function designParts(ctx) {
   // 5. The visual bar.
   const { policy } = require("./adapters.cjs");
   const bar = model.approvals ? model.approvals.discovery.visualBar : [];
-  if (policy(model).visualBar && bar.length) parts.push({ name: "Visual bar (the person scores the result against it)", body: bar.map((l, i) => `${i + 1}. ${l}`).join("\n"), priority: 2 });
+  const barName = (policy(model).personCheck || { bar: "Visual bar" }).bar;
+  if (policy(model).visualBar && bar.length) parts.push({ name: `${barName} (the person scores the result against it)`, body: bar.map((l, i) => `${i + 1}. ${l}`).join("\n"), priority: 2 });
 
   return parts;
 }
