@@ -20,6 +20,7 @@ const { resolve: resolveCommit, git } = require("../git.cjs");
 const { parseMarkdown, renderMarkdown } = require("../parse/markdown.cjs");
 const { readTables } = require("../model/tables.cjs");
 const runner = require("../runner.cjs");
+const { humanOnly, nonInteractive, refuse, NEED_TOKEN } = require("../authority.cjs");
 
 function load(start) {
   const model = buildModel(start);
@@ -221,7 +222,7 @@ function projectUpdatedBy(start, changeId) {
 
 // Asks on the controlling terminal and reads one line; null when there is no terminal.
 function ttyConfirm(prompt) {
-  if (process.env.ROYASCAFF_NO_TTY === "1") return null; // tests and scripts: behave as without a terminal
+  if (process.env.ROYASCAFF_NO_TTY === "1" || nonInteractive()) return null; // tests and scripts: behave as without a terminal
   let fd;
   try {
     fd = fs.openSync(process.platform === "win32" ? "CON" : "/dev/tty", "r+");
@@ -249,8 +250,7 @@ function ttyConfirm(prompt) {
 function approve(start, changeId, flags = {}) {
   const { model } = load(start);
   const change = changeOf(model, changeId);
-  const by = who(flags, model.repo);
-  if (!isHuman(by)) throw new Error(`Approval must come from a person, not "${by}". Run it yourself, or pass --by <your name>.`);
+  const by = humanOnly(model, flags);
   if (!["analyzed", "verified"].includes(change.status)) throw new Error(`${changeId} is ${change.status}: approvals are given at Design (analyzed) or before Record (verified)`);
   const hash = designHash(model.root, change);
   record(model, change, { event: "change.approved", target: changeId, by, note: `design ${hash}${flags.note ? ` — ${flags.note}` : ""}` }, flags);
@@ -402,7 +402,7 @@ function recordCheck(start, changeId, flags = {}) {
       const shots = smoke.latestShots(model, change);
       const prompt = `\n${change.id} · your look against the visual bar:\n${bar.map((l, i) => `  ${scored.passed.includes(i + 1) ? "✓" : "✗"} ${i + 1}. ${l}`).join("\n")}\n${shots.length ? `Screenshots:\n${shots.map((s) => `  ${s}`).join("\n")}\n` : ""}Record this look as ${who(flags, model.repo)}? Type yes: `;
       const answer = (typeof flags.confirm === "function" ? flags.confirm : ttyConfirm)(prompt);
-      if (answer === null) throw new Error("A person's look is confirmed in a terminal: run this command yourself in a terminal and answer the prompt (an AI tool cannot)");
+      if (answer === null) throw refuse("HUMAN_REQUIRED", "A person's look is confirmed in a terminal: run this command yourself in a terminal and answer the prompt (an AI tool cannot)", [NEED_TOKEN]);
       if (!/^\s*y(es)?\s*$/i.test(answer)) throw new Error(`Look not recorded (answer: "${String(answer).trim()}")`);
       note += " · look:tty";
     }

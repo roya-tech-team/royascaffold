@@ -10,12 +10,11 @@ const { deriveStatus } = require("../derive/status.cjs");
 const { appendEvent } = require("../events.cjs");
 const { headShort } = require("../git.cjs");
 const { who } = require("../identity.cjs");
-const { projectBlockers, isHuman } = require("../approvals.cjs");
+const { projectBlockers } = require("../approvals.cjs");
+const { humanOnly } = require("../authority.cjs");
 
 function person(model, flags) {
-  const by = who(flags, model.repo);
-  if (!isHuman(by)) throw new Error(`Approval must come from a person, not "${by}". Run it yourself, or pass --by <your name>.`);
-  return by;
+  return humanOnly(model, flags);
 }
 
 function load(start) {
