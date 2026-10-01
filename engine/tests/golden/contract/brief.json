@@ -1,0 +1,19 @@
+[
+  {
+    "scenario": "brief",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "brief",
+      "data": {
+        "change": "CHG-CAMP-003",
+        "text": "# Brief · Campaign Planner\n\n## Next action\n\nContinue TASK-CAMP-005 · Validate date order (CHG-CAMP-003, tasks 0/1)\nRead the stage card: `build.md`\n\nThen:\n- Continue TASK-CAMP-004 · Posts on the grid (CHG-CAMP-002, tasks 1/2)\n\n## CHG-CAMP-003 · End date accepted before start date\n\n- Kind: bug · risk: low · status: in-progress · stage: 4 Build\n- Affects: REQ-CAMP-001\n\n### Tasks (0/1 done)\n\n- doing   TASK-CAMP-005 · Validate date order — fixing by hand\n\n### Recent history\n\n- 2026-09-23T10:00Z change.opened CHG-CAMP-003 by islam — bug in REQ-CAMP-001\n- 2026-09-23T10:15Z task.started TASK-CAMP-005 by islam — fixing by hand\n\n### Read before working\n\n- `changes/CHG-CAMP-003/change.md` — Outcome, Impact, After-state\n- `changes/CHG-CAMP-003/plan.md` — the task you work on (inputs, allowed paths, checks)\n- Inputs of TASK-CAMP-005: REQ-CAMP-001 (knowledge/02-requirements/requirements.md)\n",
+        "approx_tokens": "<varies>"
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

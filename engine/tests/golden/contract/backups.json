@@ -1,0 +1,17 @@
+[
+  {
+    "scenario": "backups",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "backups",
+      "data": {
+        "backups": []
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

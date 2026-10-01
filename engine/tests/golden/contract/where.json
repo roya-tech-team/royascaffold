@@ -1,0 +1,47 @@
+[
+  {
+    "scenario": "where",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "where",
+      "data": {
+        "repo": "<root>",
+        "project_dir": "<root>/project",
+        "layout": "project-folder",
+        "markdown_files": 25,
+        "files": [
+          "changes/CHG-CAMP-001/change.md",
+          "changes/CHG-CAMP-001/evidence/evidence.md",
+          "changes/CHG-CAMP-001/log.md",
+          "changes/CHG-CAMP-001/plan.md",
+          "changes/CHG-CAMP-002/change.md",
+          "changes/CHG-CAMP-002/log.md",
+          "changes/CHG-CAMP-002/plan.md",
+          "changes/CHG-CAMP-003/change.md",
+          "changes/CHG-CAMP-003/log.md",
+          "changes/CHG-CAMP-003/plan.md",
+          "knowledge/00-discovery/coverage.md",
+          "knowledge/00-discovery/discovery.md",
+          "knowledge/00-discovery/request.md",
+          "knowledge/00-roadmap/roadmap.md",
+          "knowledge/01-business/brd.md",
+          "knowledge/02-requirements/requirements.md",
+          "knowledge/03-domain/domain.md",
+          "knowledge/04-design/architecture.md",
+          "knowledge/04-design/data.md",
+          "knowledge/04-design/decisions.md",
+          "knowledge/04-design/rules.md",
+          "knowledge/05-implementation/components/components.md",
+          "knowledge/06-quality/quality.md",
+          "log.md",
+          "profile.md"
+        ]
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

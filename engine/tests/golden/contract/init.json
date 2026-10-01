@@ -1,0 +1,40 @@
+[
+  {
+    "scenario": "init",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "init",
+      "data": {
+        "project": "<fresh>/project",
+        "code": "DEMO",
+        "apps": [
+          {
+            "name": "web",
+            "dir": "apps/web"
+          }
+        ],
+        "created": [
+          "project/profile.md",
+          "project/knowledge/00-roadmap/roadmap.md",
+          "project/knowledge/00-discovery/request.md",
+          "project/knowledge/00-discovery/discovery.md",
+          "project/knowledge/00-discovery/coverage.md",
+          "project/knowledge/01-business/brd.md",
+          "project/knowledge/04-design/architecture.md",
+          "project/knowledge/02-requirements/requirements.md",
+          "project/knowledge/04-design/decisions.md",
+          "project/knowledge/05-implementation/components.md",
+          "project/knowledge/05-implementation/tests.md",
+          "project/log.md",
+          "project/PLAYBOOK.md",
+          "project/GLOSSARY.md"
+        ]
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

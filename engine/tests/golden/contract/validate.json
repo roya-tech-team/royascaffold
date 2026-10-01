@@ -1,0 +1,27 @@
+[
+  {
+    "scenario": "validate",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "validate",
+      "data": {
+        "ok": true,
+        "counts": {
+          "records": 60,
+          "features": 5,
+          "slices": 4,
+          "changes": 3,
+          "tasks": 5,
+          "errors": 0,
+          "warnings": 0
+        },
+        "issues": []
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

@@ -1,0 +1,21 @@
+[
+  {
+    "scenario": "adopt",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "adopt",
+      "data": {
+        "modules": [],
+        "files": 0,
+        "owned": 0,
+        "percent": 100,
+        "next": null
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

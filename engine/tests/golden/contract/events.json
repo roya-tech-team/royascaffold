@@ -1,0 +1,448 @@
+[
+  {
+    "scenario": "events",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "events",
+      "data": {
+        "events": [
+          {
+            "id": "EVT-CHG-CAMP-001-0001",
+            "change": "CHG-CAMP-001",
+            "when": "2026-09-10T08:00Z",
+            "event": "change.opened",
+            "target": "CHG-CAMP-001",
+            "by": "islam",
+            "git": "a1b2c3d",
+            "note": "from SLC-CAMP-001-A"
+          },
+          {
+            "id": "EVT-CHG-CAMP-001-0002",
+            "change": "CHG-CAMP-001",
+            "when": "2026-09-10T08:30Z",
+            "event": "change.advanced",
+            "target": "CHG-CAMP-001",
+            "by": "islam",
+            "git": "a1b2c3d",
+            "note": "draft → ready (low risk)"
+          },
+          {
+            "id": "EVT-CHG-CAMP-001-0003",
+            "change": "CHG-CAMP-001",
+            "when": "2026-09-10T09:00Z",
+            "event": "task.started",
+            "target": "TASK-CAMP-001",
+            "by": "ai:claude",
+            "git": "a1b2c3d",
+            "note": ""
+          },
+          {
+            "id": "EVT-CHG-CAMP-001-0004",
+            "change": "CHG-CAMP-001",
+            "when": "2026-09-10T11:00Z",
+            "event": "task.done",
+            "target": "TASK-CAMP-001",
+            "by": "ai:claude",
+            "git": "b2c3d4e",
+            "note": "form with date validation"
+          },
+          {
+            "id": "EVT-CHG-CAMP-001-0005",
+            "change": "CHG-CAMP-001",
+            "when": "2026-09-10T11:05Z",
+            "event": "task.started",
+            "target": "TASK-CAMP-002",
+            "by": "ai:claude",
+            "git": "b2c3d4e",
+            "note": ""
+          },
+          {
+            "id": "EVT-CHG-CAMP-001-0006",
+            "change": "CHG-CAMP-001",
+            "when": "2026-09-10T12:00Z",
+            "event": "task.done",
+            "target": "TASK-CAMP-002",
+            "by": "ai:claude",
+            "git": "c3d4e5f",
+            "note": "list newest first"
+          },
+          {
+            "id": "EVT-CHG-CAMP-001-0007",
+            "change": "CHG-CAMP-001",
+            "when": "2026-09-10T12:10Z",
+            "event": "check.run",
+            "target": "CHG-CAMP-001",
+            "by": "ai:claude",
+            "git": "c3d4e5f",
+            "note": "full checks passed"
+          },
+          {
+            "id": "EVT-CHG-CAMP-001-0008",
+            "change": "CHG-CAMP-001",
+            "when": "2026-09-10T12:20Z",
+            "event": "change.advanced",
+            "target": "CHG-CAMP-001",
+            "by": "islam",
+            "git": "c3d4e5f",
+            "note": "verified → closed"
+          },
+          {
+            "id": "EVT-PROJECT-0001",
+            "change": null,
+            "when": "2026-09-19T15:00Z",
+            "event": "project.approved",
+            "target": "project",
+            "by": "islam",
+            "git": "a1b2c3d",
+            "note": "hash 0fad272542 · base a075e25d10 · 1 question(s) answered · 1 assumption(s) confirmed"
+          },
+          {
+            "id": "EVT-PROJECT-0002",
+            "change": null,
+            "when": "2026-09-19T16:00Z",
+            "event": "feature.approved",
+            "target": "CAP-CAMP-001",
+            "by": "islam",
+            "git": "a1b2c3d",
+            "note": "hash e4cebe4e6b · 2 requirement(s) · 1 slice(s)"
+          },
+          {
+            "id": "EVT-PROJECT-0003",
+            "change": null,
+            "when": "2026-09-19T16:00Z",
+            "event": "feature.approved",
+            "target": "CAP-CAMP-002",
+            "by": "islam",
+            "git": "a1b2c3d",
+            "note": "hash 6b1470ad62 · 2 requirement(s) · 2 slice(s)"
+          },
+          {
+            "id": "EVT-PROJECT-0004",
+            "change": null,
+            "when": "2026-09-19T16:00Z",
+            "event": "feature.approved",
+            "target": "CAP-CAMP-003",
+            "by": "islam",
+            "git": "a1b2c3d",
+            "note": "hash 1a0a339ee3 · 1 requirement(s) · 1 slice(s)"
+          },
+          {
+            "id": "EVT-CHG-CAMP-002-0001",
+            "change": "CHG-CAMP-002",
+            "when": "2026-09-20T08:00Z",
+            "event": "change.opened",
+            "target": "CHG-CAMP-002",
+            "by": "islam",
+            "git": "c3d4e5f",
+            "note": "from SLC-CAMP-002-A"
+          },
+          {
+            "id": "EVT-CHG-CAMP-002-0002",
+            "change": "CHG-CAMP-002",
+            "when": "2026-09-20T09:00Z",
+            "event": "change.approved",
+            "target": "CHG-CAMP-002",
+            "by": "islam",
+            "git": "c3d4e5f",
+            "note": "risk medium, after design"
+          },
+          {
+            "id": "EVT-CHG-CAMP-002-0003",
+            "change": "CHG-CAMP-002",
+            "when": "2026-09-21T08:30Z",
+            "event": "check.red",
+            "target": "CHG-CAMP-002",
+            "by": "ai:claude",
+            "git": "c3d4e5f",
+            "note": "tests fail before the work: APP-CAMP-WEB — test ✗"
+          },
+          {
+            "id": "EVT-CHG-CAMP-002-0004",
+            "change": "CHG-CAMP-002",
+            "when": "2026-09-21T09:00Z",
+            "event": "task.started",
+            "target": "TASK-CAMP-003",
+            "by": "ai:claude",
+            "git": "d4e5f6a",
+            "note": ""
+          },
+          {
+            "id": "EVT-CHG-CAMP-002-0005",
+            "change": "CHG-CAMP-002",
+            "when": "2026-09-21T12:00Z",
+            "event": "task.done",
+            "target": "TASK-CAMP-003",
+            "by": "ai:claude",
+            "git": "e5f6a7b",
+            "note": "month grid renders the campaign dates"
+          },
+          {
+            "id": "EVT-CHG-CAMP-002-0006",
+            "change": "CHG-CAMP-002",
+            "when": "2026-09-22T09:00Z",
+            "event": "task.started",
+            "target": "TASK-CAMP-004",
+            "by": "ai:claude",
+            "git": "e5f6a7b",
+            "note": ""
+          },
+          {
+            "id": "EVT-CHG-CAMP-002-0007",
+            "change": "CHG-CAMP-002",
+            "when": "2026-09-22T09:20Z",
+            "event": "check.red",
+            "target": "CHG-CAMP-002",
+            "by": "ai:claude",
+            "git": "e5f6a7b",
+            "note": "tests fail before the work: APP-CAMP-WEB — test ✗"
+          },
+          {
+            "id": "EVT-CHG-CAMP-003-0001",
+            "change": "CHG-CAMP-003",
+            "when": "2026-09-23T10:00Z",
+            "event": "change.opened",
+            "target": "CHG-CAMP-003",
+            "by": "islam",
+            "git": "e5f6a7b",
+            "note": "bug in REQ-CAMP-001"
+          },
+          {
+            "id": "EVT-CHG-CAMP-003-0002",
+            "change": "CHG-CAMP-003",
+            "when": "2026-09-23T10:15Z",
+            "event": "task.started",
+            "target": "TASK-CAMP-005",
+            "by": "islam",
+            "git": "e5f6a7b",
+            "note": "fixing by hand"
+          }
+        ],
+        "count": 21,
+        "last": "EVT-CHG-CAMP-003-0002"
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "events --since an event",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "events",
+      "data": {
+        "events": [
+          {
+            "id": "EVT-CHG-CAMP-001-0002",
+            "change": "CHG-CAMP-001",
+            "when": "2026-09-10T08:30Z",
+            "event": "change.advanced",
+            "target": "CHG-CAMP-001",
+            "by": "islam",
+            "git": "a1b2c3d",
+            "note": "draft → ready (low risk)"
+          },
+          {
+            "id": "EVT-CHG-CAMP-001-0003",
+            "change": "CHG-CAMP-001",
+            "when": "2026-09-10T09:00Z",
+            "event": "task.started",
+            "target": "TASK-CAMP-001",
+            "by": "ai:claude",
+            "git": "a1b2c3d",
+            "note": ""
+          },
+          {
+            "id": "EVT-CHG-CAMP-001-0004",
+            "change": "CHG-CAMP-001",
+            "when": "2026-09-10T11:00Z",
+            "event": "task.done",
+            "target": "TASK-CAMP-001",
+            "by": "ai:claude",
+            "git": "b2c3d4e",
+            "note": "form with date validation"
+          },
+          {
+            "id": "EVT-CHG-CAMP-001-0005",
+            "change": "CHG-CAMP-001",
+            "when": "2026-09-10T11:05Z",
+            "event": "task.started",
+            "target": "TASK-CAMP-002",
+            "by": "ai:claude",
+            "git": "b2c3d4e",
+            "note": ""
+          },
+          {
+            "id": "EVT-CHG-CAMP-001-0006",
+            "change": "CHG-CAMP-001",
+            "when": "2026-09-10T12:00Z",
+            "event": "task.done",
+            "target": "TASK-CAMP-002",
+            "by": "ai:claude",
+            "git": "c3d4e5f",
+            "note": "list newest first"
+          },
+          {
+            "id": "EVT-CHG-CAMP-001-0007",
+            "change": "CHG-CAMP-001",
+            "when": "2026-09-10T12:10Z",
+            "event": "check.run",
+            "target": "CHG-CAMP-001",
+            "by": "ai:claude",
+            "git": "c3d4e5f",
+            "note": "full checks passed"
+          },
+          {
+            "id": "EVT-CHG-CAMP-001-0008",
+            "change": "CHG-CAMP-001",
+            "when": "2026-09-10T12:20Z",
+            "event": "change.advanced",
+            "target": "CHG-CAMP-001",
+            "by": "islam",
+            "git": "c3d4e5f",
+            "note": "verified → closed"
+          },
+          {
+            "id": "EVT-PROJECT-0001",
+            "change": null,
+            "when": "2026-09-19T15:00Z",
+            "event": "project.approved",
+            "target": "project",
+            "by": "islam",
+            "git": "a1b2c3d",
+            "note": "hash 0fad272542 · base a075e25d10 · 1 question(s) answered · 1 assumption(s) confirmed"
+          },
+          {
+            "id": "EVT-PROJECT-0002",
+            "change": null,
+            "when": "2026-09-19T16:00Z",
+            "event": "feature.approved",
+            "target": "CAP-CAMP-001",
+            "by": "islam",
+            "git": "a1b2c3d",
+            "note": "hash e4cebe4e6b · 2 requirement(s) · 1 slice(s)"
+          },
+          {
+            "id": "EVT-PROJECT-0003",
+            "change": null,
+            "when": "2026-09-19T16:00Z",
+            "event": "feature.approved",
+            "target": "CAP-CAMP-002",
+            "by": "islam",
+            "git": "a1b2c3d",
+            "note": "hash 6b1470ad62 · 2 requirement(s) · 2 slice(s)"
+          },
+          {
+            "id": "EVT-PROJECT-0004",
+            "change": null,
+            "when": "2026-09-19T16:00Z",
+            "event": "feature.approved",
+            "target": "CAP-CAMP-003",
+            "by": "islam",
+            "git": "a1b2c3d",
+            "note": "hash 1a0a339ee3 · 1 requirement(s) · 1 slice(s)"
+          },
+          {
+            "id": "EVT-CHG-CAMP-002-0001",
+            "change": "CHG-CAMP-002",
+            "when": "2026-09-20T08:00Z",
+            "event": "change.opened",
+            "target": "CHG-CAMP-002",
+            "by": "islam",
+            "git": "c3d4e5f",
+            "note": "from SLC-CAMP-002-A"
+          },
+          {
+            "id": "EVT-CHG-CAMP-002-0002",
+            "change": "CHG-CAMP-002",
+            "when": "2026-09-20T09:00Z",
+            "event": "change.approved",
+            "target": "CHG-CAMP-002",
+            "by": "islam",
+            "git": "c3d4e5f",
+            "note": "risk medium, after design"
+          },
+          {
+            "id": "EVT-CHG-CAMP-002-0003",
+            "change": "CHG-CAMP-002",
+            "when": "2026-09-21T08:30Z",
+            "event": "check.red",
+            "target": "CHG-CAMP-002",
+            "by": "ai:claude",
+            "git": "c3d4e5f",
+            "note": "tests fail before the work: APP-CAMP-WEB — test ✗"
+          },
+          {
+            "id": "EVT-CHG-CAMP-002-0004",
+            "change": "CHG-CAMP-002",
+            "when": "2026-09-21T09:00Z",
+            "event": "task.started",
+            "target": "TASK-CAMP-003",
+            "by": "ai:claude",
+            "git": "d4e5f6a",
+            "note": ""
+          },
+          {
+            "id": "EVT-CHG-CAMP-002-0005",
+            "change": "CHG-CAMP-002",
+            "when": "2026-09-21T12:00Z",
+            "event": "task.done",
+            "target": "TASK-CAMP-003",
+            "by": "ai:claude",
+            "git": "e5f6a7b",
+            "note": "month grid renders the campaign dates"
+          },
+          {
+            "id": "EVT-CHG-CAMP-002-0006",
+            "change": "CHG-CAMP-002",
+            "when": "2026-09-22T09:00Z",
+            "event": "task.started",
+            "target": "TASK-CAMP-004",
+            "by": "ai:claude",
+            "git": "e5f6a7b",
+            "note": ""
+          },
+          {
+            "id": "EVT-CHG-CAMP-002-0007",
+            "change": "CHG-CAMP-002",
+            "when": "2026-09-22T09:20Z",
+            "event": "check.red",
+            "target": "CHG-CAMP-002",
+            "by": "ai:claude",
+            "git": "e5f6a7b",
+            "note": "tests fail before the work: APP-CAMP-WEB — test ✗"
+          },
+          {
+            "id": "EVT-CHG-CAMP-003-0001",
+            "change": "CHG-CAMP-003",
+            "when": "2026-09-23T10:00Z",
+            "event": "change.opened",
+            "target": "CHG-CAMP-003",
+            "by": "islam",
+            "git": "e5f6a7b",
+            "note": "bug in REQ-CAMP-001"
+          },
+          {
+            "id": "EVT-CHG-CAMP-003-0002",
+            "change": "CHG-CAMP-003",
+            "when": "2026-09-23T10:15Z",
+            "event": "task.started",
+            "target": "TASK-CAMP-005",
+            "by": "islam",
+            "git": "e5f6a7b",
+            "note": "fixing by hand"
+          }
+        ],
+        "count": 20,
+        "last": "EVT-CHG-CAMP-003-0002"
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

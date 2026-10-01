@@ -1,0 +1,234 @@
+[
+  {
+    "scenario": "status",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "status",
+      "data": {
+        "next": [
+          {
+            "kind": "continue-task",
+            "change": "CHG-CAMP-003",
+            "task": "TASK-CAMP-005",
+            "stage": "build",
+            "card": "build.md",
+            "text": "Continue TASK-CAMP-005 · Validate date order (CHG-CAMP-003, tasks 0/1)",
+            "say": "royascaff continue"
+          },
+          {
+            "kind": "continue-task",
+            "change": "CHG-CAMP-002",
+            "task": "TASK-CAMP-004",
+            "stage": "build",
+            "card": "build.md",
+            "text": "Continue TASK-CAMP-004 · Posts on the grid (CHG-CAMP-002, tasks 1/2)",
+            "say": "royascaff continue"
+          }
+        ],
+        "features": [
+          {
+            "id": "CAP-CAMP-001",
+            "state": "done",
+            "depth": "designed",
+            "horizon": "now",
+            "slicesDone": 1,
+            "slicesTotal": 1,
+            "requirementsDone": 2,
+            "requirementsTotal": 2,
+            "requirements": [
+              "REQ-CAMP-001",
+              "REQ-CAMP-002"
+            ],
+            "openFixes": [
+              "CHG-CAMP-003"
+            ],
+            "unprovenNfrs": [],
+            "approval": "approved",
+            "title": "Create campaigns",
+            "changedSinceVerified": []
+          },
+          {
+            "id": "CAP-CAMP-002",
+            "state": "building",
+            "depth": "designed",
+            "horizon": "now",
+            "slicesDone": 0,
+            "slicesTotal": 2,
+            "requirementsDone": 0,
+            "requirementsTotal": 2,
+            "requirements": [
+              "REQ-CAMP-003",
+              "REQ-CAMP-004"
+            ],
+            "openFixes": [],
+            "unprovenNfrs": [],
+            "approval": "approved",
+            "title": "Schedule posts",
+            "changedSinceVerified": []
+          },
+          {
+            "id": "CAP-CAMP-003",
+            "state": "planned",
+            "depth": "sliced",
+            "horizon": "next",
+            "slicesDone": 0,
+            "slicesTotal": 1,
+            "requirementsDone": 0,
+            "requirementsTotal": 1,
+            "requirements": [
+              "REQ-CAMP-005"
+            ],
+            "openFixes": [],
+            "unprovenNfrs": [],
+            "approval": "approved",
+            "title": "Client approval",
+            "changedSinceVerified": []
+          },
+          {
+            "id": "CAP-CAMP-004",
+            "state": "outlined",
+            "depth": "outlined",
+            "horizon": "later",
+            "slicesDone": 0,
+            "slicesTotal": 0,
+            "requirementsDone": 0,
+            "requirementsTotal": 1,
+            "requirements": [
+              "REQ-CAMP-006"
+            ],
+            "openFixes": [],
+            "unprovenNfrs": [],
+            "approval": "none",
+            "title": "Campaign analytics",
+            "changedSinceVerified": []
+          },
+          {
+            "id": "CAP-CAMP-005",
+            "state": "idea",
+            "depth": "idea",
+            "horizon": "backlog",
+            "slicesDone": 0,
+            "slicesTotal": 0,
+            "requirementsDone": 0,
+            "requirementsTotal": 0,
+            "requirements": [],
+            "openFixes": [],
+            "unprovenNfrs": [],
+            "approval": "none",
+            "title": "AI caption suggestions",
+            "changedSinceVerified": []
+          }
+        ],
+        "changes": [
+          {
+            "id": "CHG-CAMP-001",
+            "stage": "closed",
+            "stageLabel": "Closed",
+            "blocked": false,
+            "tasksDone": 2,
+            "tasksTotal": 2,
+            "released": false,
+            "last": {
+              "id": "EVT-CHG-CAMP-001-0008",
+              "index": 7,
+              "when": "2026-09-10T12:20Z",
+              "event": "change.advanced",
+              "target": "CHG-CAMP-001",
+              "by": "islam",
+              "git": "c3d4e5f",
+              "note": "verified → closed",
+              "line": 14
+            },
+            "kind": "feature",
+            "slice": "SLC-CAMP-001-A",
+            "slices": [
+              "SLC-CAMP-001-A"
+            ],
+            "affects": [],
+            "title": "Campaign form and list"
+          },
+          {
+            "id": "CHG-CAMP-002",
+            "stage": "build",
+            "stageLabel": "4 Build",
+            "blocked": false,
+            "tasksDone": 1,
+            "tasksTotal": 2,
+            "released": false,
+            "last": {
+              "id": "EVT-CHG-CAMP-002-0007",
+              "index": 6,
+              "when": "2026-09-22T09:20Z",
+              "event": "check.red",
+              "target": "CHG-CAMP-002",
+              "by": "ai:claude",
+              "git": "e5f6a7b",
+              "note": "tests fail before the work: APP-CAMP-WEB — test ✗",
+              "line": 13
+            },
+            "kind": "feature",
+            "slice": "SLC-CAMP-002-A",
+            "slices": [
+              "SLC-CAMP-002-A"
+            ],
+            "affects": [],
+            "title": "Calendar with posts"
+          },
+          {
+            "id": "CHG-CAMP-003",
+            "stage": "build",
+            "stageLabel": "4 Build",
+            "blocked": false,
+            "tasksDone": 0,
+            "tasksTotal": 1,
+            "released": false,
+            "last": {
+              "id": "EVT-CHG-CAMP-003-0002",
+              "index": 1,
+              "when": "2026-09-23T10:15Z",
+              "event": "task.started",
+              "target": "TASK-CAMP-005",
+              "by": "islam",
+              "git": "e5f6a7b",
+              "note": "fixing by hand",
+              "line": 8
+            },
+            "kind": "bug",
+            "slice": null,
+            "slices": [],
+            "affects": [
+              "REQ-CAMP-001"
+            ],
+            "title": "End date accepted before start date"
+          }
+        ],
+        "outside": {
+          "git": false,
+          "untrackedCommits": [],
+          "uncommitted": []
+        },
+        "issues": [],
+        "health": {
+          "doc_lines": 667,
+          "app_lines": 0,
+          "ratio": null,
+          "target_ratio": 1,
+          "saved_pack_lines": 0,
+          "largest_pack": {
+            "task": "TASK-CAMP-004",
+            "tokens": 996,
+            "budget": 12000
+          },
+          "budget": 12000,
+          "source_files": 0,
+          "owned_files": 0
+        }
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

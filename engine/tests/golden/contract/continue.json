@@ -1,0 +1,29 @@
+[
+  {
+    "scenario": "continue",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "continue",
+      "data": {
+        "kind": "unblock",
+        "change": "CHG-CAMP-002",
+        "stage": "build",
+        "human": true,
+        "text": "Unblock CHG-CAMP-002 — TASK-CAMP-004 is blocked: waiting for the designer",
+        "say": "royascaff task TASK-CAMP-004 start",
+        "initialized": true,
+        "others": [
+          "Continue TASK-CAMP-005 · Validate date order (CHG-CAMP-003, tasks 0/1)",
+          "CHG-CAMP-004 is ready to move on: royascaff advance CHG-CAMP-004 --to approved",
+          "Check CHG-CAMP-005: run the full checks after the last task (`royascaff check CHG-CAMP-005`)",
+          "The discovery, the brief or a project decision changed since islam approved them: review, then run royascaff approve project"
+        ]
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

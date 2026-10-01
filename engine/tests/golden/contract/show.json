@@ -1,0 +1,84 @@
+[
+  {
+    "scenario": "show",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "show",
+      "data": {
+        "id": "REQ-CAMP-001",
+        "kind": "requirement",
+        "title": "Create a campaign",
+        "source": "knowledge/02-requirements/requirements.md:31",
+        "fields": {
+          "Priority": "must",
+          "Owner": "product-owner",
+          "Feature": "CAP-CAMP-001",
+          "Verified by": "TEST-CAMP-001"
+        },
+        "relations": [
+          {
+            "type": "feature",
+            "to": "CAP-CAMP-001"
+          },
+          {
+            "type": "verified_by",
+            "to": "TEST-CAMP-001"
+          }
+        ],
+        "incoming": [
+          {
+            "from": "TASK-CAMP-001",
+            "type": "inputs"
+          },
+          {
+            "from": "CHG-CAMP-003",
+            "type": "affects"
+          },
+          {
+            "from": "TASK-CAMP-005",
+            "type": "inputs"
+          },
+          {
+            "from": "SRC-CAMP-001",
+            "type": "covered_by"
+          },
+          {
+            "from": "SLC-CAMP-001-A",
+            "type": "delivers"
+          },
+          {
+            "from": "TEST-CAMP-001",
+            "type": "verifies"
+          },
+          {
+            "from": "CMP-CAMP-CAMPAIGNS",
+            "type": "realizes"
+          }
+        ],
+        "mentions": [],
+        "status": {
+          "id": "REQ-CAMP-001",
+          "state": "done",
+          "measure": null,
+          "slices": [
+            "SLC-CAMP-001-A"
+          ],
+          "baseline": [],
+          "evidence": [
+            "EVD-CAMP-001"
+          ],
+          "missingEvidence": false,
+          "openFixes": [
+            "CHG-CAMP-003"
+          ]
+        },
+        "text": "REQ-CAMP-001 · Create a campaign   [requirement]   ✅ Done\n  source: knowledge/02-requirements/requirements.md:31\n  Priority: must · Owner: product-owner · Feature: CAP-CAMP-001 · Verified by: TEST-CAMP-001\n  slices: SLC-CAMP-001-A · evidence: EVD-CAMP-001 · open fixes: CHG-CAMP-003\n  links:\n    feature → CAP-CAMP-001 · Create campaigns\n    verified_by → TEST-CAMP-001 · Campaign form validation\n  linked from:\n    TASK-CAMP-001 · Campaign form (inputs)\n    CHG-CAMP-003 · End date accepted before start date (affects)\n    TASK-CAMP-005 · Validate date order (inputs)\n    SRC-CAMP-001 · Create a campaign with name, dates and channels (covered_by)\n    SLC-CAMP-001-A · Campaign form and list (delivers)\n    TEST-CAMP-001 · Campaign form validation (verifies)\n    CMP-CAMP-CAMPAIGNS · Campaigns module (realizes)"
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

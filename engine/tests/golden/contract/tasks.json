@@ -1,0 +1,92 @@
+[
+  {
+    "scenario": "tasks",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "tasks",
+      "data": {
+        "tasks": [
+          {
+            "id": "TASK-CAMP-001",
+            "title": "Campaign form",
+            "change": "CHG-CAMP-001",
+            "feature": "CAP-CAMP-001",
+            "state": "done",
+            "depends_on": [],
+            "last": {
+              "when": "2026-09-10T11:00Z",
+              "event": "task.done",
+              "by": "ai:claude",
+              "note": "form with date validation"
+            }
+          },
+          {
+            "id": "TASK-CAMP-002",
+            "title": "Campaign list",
+            "change": "CHG-CAMP-001",
+            "feature": "CAP-CAMP-001",
+            "state": "done",
+            "depends_on": [
+              "TASK-CAMP-001"
+            ],
+            "last": {
+              "when": "2026-09-10T12:00Z",
+              "event": "task.done",
+              "by": "ai:claude",
+              "note": "list newest first"
+            }
+          },
+          {
+            "id": "TASK-CAMP-003",
+            "title": "Calendar grid",
+            "change": "CHG-CAMP-002",
+            "feature": "CAP-CAMP-002",
+            "state": "done",
+            "depends_on": [],
+            "last": {
+              "when": "2026-09-21T12:00Z",
+              "event": "task.done",
+              "by": "ai:claude",
+              "note": "month grid renders the campaign dates"
+            }
+          },
+          {
+            "id": "TASK-CAMP-004",
+            "title": "Posts on the grid",
+            "change": "CHG-CAMP-002",
+            "feature": "CAP-CAMP-002",
+            "state": "doing",
+            "depends_on": [
+              "TASK-CAMP-003"
+            ],
+            "last": {
+              "when": "2026-09-22T09:00Z",
+              "event": "task.started",
+              "by": "ai:claude",
+              "note": ""
+            }
+          },
+          {
+            "id": "TASK-CAMP-005",
+            "title": "Validate date order",
+            "change": "CHG-CAMP-003",
+            "feature": "CAP-CAMP-001",
+            "state": "doing",
+            "depends_on": [],
+            "last": {
+              "when": "2026-09-23T10:15Z",
+              "event": "task.started",
+              "by": "islam",
+              "note": "fixing by hand"
+            }
+          }
+        ]
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

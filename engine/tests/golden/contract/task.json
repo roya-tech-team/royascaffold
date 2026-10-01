@@ -1,0 +1,23 @@
+[
+  {
+    "scenario": "task block",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "task",
+      "data": {
+        "id": "TASK-CAMP-004",
+        "change": "CHG-CAMP-002",
+        "state": "blocked",
+        "tasksDone": 1,
+        "tasksTotal": 2
+      },
+      "warnings": [],
+      "events": [
+        "EVT-CHG-CAMP-002-0008"
+      ]
+    }
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "scenario": "render",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "render",
+      "data": {
+        "out": "<tmp>/rendered",
+        "files": 25
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

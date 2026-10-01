@@ -1,0 +1,18 @@
+[
+  {
+    "scenario": "trace",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "trace",
+      "data": {
+        "id": "CAP-CAMP-001",
+        "text": "CAP-CAMP-001 · Create campaigns   ✅ Done · slices 1/1 · requirements 2/2\n  outcome  OUT-CAMP-001 · Campaigns are planned in one place\n  REQ-CAMP-001 · Create a campaign   ✅ Done\n    slice    SLC-CAMP-001-A · Campaign form and list   ✅ Done\n      change CHG-CAMP-001 · Campaign form and list   Closed · tasks 2/2\n        task TASK-CAMP-001 · Campaign form   done\n    test     TEST-CAMP-001 · Campaign form validation\n    evidence EVD-CAMP-001 · Campaign form tests   pass (CHG-CAMP-001)\n    code     CMP-CAMP-CAMPAIGNS · Campaigns module → apps/web/src/campaigns/**\n    open fix CHG-CAMP-003 · End date accepted before start date   4 Build\n  REQ-CAMP-002 · List campaigns per client   ✅ Done\n    slice    SLC-CAMP-001-A · Campaign form and list   ✅ Done\n      change CHG-CAMP-001 · Campaign form and list   Closed · tasks 2/2\n        task TASK-CAMP-002 · Campaign list   done\n    test     TEST-CAMP-010 · Campaign list order\n    evidence EVD-CAMP-002 · Manual check of the campaign list   pass (CHG-CAMP-001)\n    code     CMP-CAMP-CAMPAIGNS · Campaigns module → apps/web/src/campaigns/**"
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

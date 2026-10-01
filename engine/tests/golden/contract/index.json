@@ -1,0 +1,22 @@
+[
+  {
+    "scenario": "index",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "index",
+      "data": {
+        "status_file": "project/STATUS.md",
+        "board_changed": true,
+        "root_pointer": "STATUS.md",
+        "summaries_updated": [
+          "knowledge/02-requirements/requirements.md"
+        ]
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

@@ -1,0 +1,27 @@
+[
+  {
+    "scenario": "next",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "next",
+      "data": {
+        "kind": "continue-task",
+        "change": "CHG-CAMP-003",
+        "task": "TASK-CAMP-005",
+        "stage": "build",
+        "card": "build.md",
+        "text": "Continue TASK-CAMP-005 · Validate date order (CHG-CAMP-003, tasks 0/1)",
+        "say": "royascaff continue",
+        "initialized": true,
+        "others": [
+          "Continue TASK-CAMP-004 · Posts on the grid (CHG-CAMP-002, tasks 1/2)"
+        ]
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

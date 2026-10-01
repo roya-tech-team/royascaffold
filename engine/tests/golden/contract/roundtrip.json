@@ -1,0 +1,28 @@
+[
+  {
+    "scenario": "roundtrip",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "roundtrip",
+      "data": {
+        "ok": true,
+        "mismatches": [],
+        "stats": {
+          "files": 25,
+          "records": 39,
+          "fields": 123,
+          "raw_headings": 0,
+          "raw_fields": 0,
+          "raw_frontmatter": 0
+        },
+        "layout": "project-folder",
+        "project_dir": "project"
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

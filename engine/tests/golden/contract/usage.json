@@ -1,0 +1,62 @@
+[
+  {
+    "scenario": "usage",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "usage",
+      "data": {
+        "enabled": false,
+        "file": "project/.usage/usage.jsonl",
+        "usage": {
+          "runs": 0,
+          "first": null,
+          "last": null,
+          "refused": 0,
+          "by_command": {},
+          "gate_refusals_by_check": {}
+        },
+        "stages": {
+          "stages": {
+            "draft": {
+              "changes": 2,
+              "median_hours": "<varies>",
+              "max_hours": "<varies>"
+            },
+            "ready": {
+              "changes": 1,
+              "median_hours": "<varies>",
+              "max_hours": "<varies>"
+            }
+          },
+          "open": [
+            {
+              "change": "CHG-CAMP-002",
+              "status": "draft",
+              "hours": "<varies>"
+            },
+            {
+              "change": "CHG-CAMP-003",
+              "status": "draft",
+              "hours": "<varies>"
+            },
+            {
+              "change": "CHG-CAMP-004",
+              "status": "draft",
+              "hours": "<varies>"
+            },
+            {
+              "change": "CHG-CAMP-005",
+              "status": "in-progress",
+              "hours": "<varies>"
+            }
+          ]
+        }
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

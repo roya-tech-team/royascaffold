@@ -1,0 +1,41 @@
+[
+  {
+    "scenario": "install",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "install",
+      "data": {
+        "tools": [
+          "claude"
+        ],
+        "cli": "node <engine>/bin/royascaff.cjs",
+        "skill_files": [
+          ".claude/skills/royascaff/cards/adopt.md",
+          ".claude/skills/royascaff/cards/build.md",
+          ".claude/skills/royascaff/cards/check-record.md",
+          ".claude/skills/royascaff/cards/design.md",
+          ".claude/skills/royascaff/cards/discover.md",
+          ".claude/skills/royascaff/cards/fix.md",
+          ".claude/skills/royascaff/cards/migrate.md",
+          ".claude/skills/royascaff/cards/plan-feature.md",
+          ".claude/skills/royascaff/cards/plan.md",
+          ".claude/skills/royascaff/cards/record-manual.md",
+          ".claude/skills/royascaff/cards/start.md",
+          ".claude/skills/royascaff/cards/understand.md",
+          ".claude/skills/royascaff/SKILL.md",
+          ".claude/skills/royascaff/adapters/generic.md",
+          ".claude/skills/royascaff/adapters/node.md",
+          ".claude/skills/royascaff/adapters/web-3d.md",
+          ".claude/skills/royascaff/adapters/web-api.md",
+          ".claude/skills/royascaff/adapters/web-ui.md"
+        ],
+        "docs_created": []
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

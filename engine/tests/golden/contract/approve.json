@@ -1,0 +1,42 @@
+[
+  {
+    "scenario": "approve (an AI may not)",
+    "exit": 1,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": false,
+      "command": "approve",
+      "error": {
+        "code": "HUMAN_REQUIRED",
+        "message": "An approval must come from a person, not \"ai:claude\". Run it yourself, or pass --by <your name>.",
+        "missing": [
+          "a person: run it yourself in a terminal",
+          "a signed approval token from an issuer the project trusts (--approval-token or ROYASCAFF_APPROVAL_TOKEN), or a person running this in a terminal"
+        ]
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "approve a design",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "approve",
+      "data": {
+        "id": "CHG-CAMP-004",
+        "by": "islam",
+        "design": "96f27ac17f",
+        "at": "analyzed"
+      },
+      "warnings": [],
+      "events": [
+        "EVT-CHG-CAMP-004-0004"
+      ]
+    }
+  }
+]

@@ -1,0 +1,2695 @@
+[
+  {
+    "scenario": "export",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "export",
+      "data": {
+        "format": "royascaff-exchange",
+        "format_version": 1,
+        "layout": "project-folder",
+        "project_dir": "project",
+        "files": [
+          {
+            "path": "changes/CHG-CAMP-001/change.md",
+            "frontmatter": {
+              "data": {
+                "change_id": "CHG-CAMP-001",
+                "kind": "feature",
+                "slice": "SLC-CAMP-001-A",
+                "status": "closed",
+                "risk": "low",
+                "owners": [
+                  "roya-team"
+                ]
+              },
+              "newline": true
+            },
+            "segments": [
+              {
+                "type": "text",
+                "text": "\n# CHG-CAMP-001 · Campaign form and list\n\n## Outcome\n\nPlanners can create campaigns and see them listed per client.\n"
+              }
+            ]
+          },
+          {
+            "path": "changes/CHG-CAMP-001/evidence/evidence.md",
+            "segments": [
+              {
+                "type": "text",
+                "text": "# Evidence · CHG-CAMP-001\n"
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "EVD-CAMP-001",
+                "title": "Campaign form tests",
+                "fields": [
+                  {
+                    "key": "Result",
+                    "value": "pass"
+                  },
+                  {
+                    "key": "Proves",
+                    "value": "TEST-CAMP-001"
+                  },
+                  {
+                    "key": "Command",
+                    "value": "npm test -- campaigns"
+                  },
+                  {
+                    "key": "Git commit",
+                    "value": "c3d4e5f"
+                  }
+                ],
+                "body": ""
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "EVD-CAMP-002",
+                "title": "Manual check of the campaign list",
+                "fields": [
+                  {
+                    "key": "Result",
+                    "value": "pass"
+                  },
+                  {
+                    "key": "Proves",
+                    "value": "REQ-CAMP-002"
+                  },
+                  {
+                    "key": "Command",
+                    "value": "manual"
+                  },
+                  {
+                    "key": "Git commit",
+                    "value": "c3d4e5f"
+                  }
+                ],
+                "body": "\nChecked with three clients: newest campaign first for each.\n"
+              }
+            ]
+          },
+          {
+            "path": "changes/CHG-CAMP-001/log.md",
+            "segments": [
+              {
+                "type": "text",
+                "text": "# Log · CHG-CAMP-001\n\n> Written by `royascaff`. Do not edit by hand.\n\n| When | Event | Target | By | Git | Note |\n|---|---|---|---|---|---|\n| 2026-09-10T08:00Z | change.opened | CHG-CAMP-001 | islam | a1b2c3d | from SLC-CAMP-001-A |\n| 2026-09-10T08:30Z | change.advanced | CHG-CAMP-001 | islam | a1b2c3d | draft → ready (low risk) |\n| 2026-09-10T09:00Z | task.started | TASK-CAMP-001 | ai:claude | a1b2c3d | — |\n| 2026-09-10T11:00Z | task.done | TASK-CAMP-001 | ai:claude | b2c3d4e | form with date validation |\n| 2026-09-10T11:05Z | task.started | TASK-CAMP-002 | ai:claude | b2c3d4e | — |\n| 2026-09-10T12:00Z | task.done | TASK-CAMP-002 | ai:claude | c3d4e5f | list newest first |\n| 2026-09-10T12:10Z | check.run | CHG-CAMP-001 | ai:claude | c3d4e5f | full checks passed |\n| 2026-09-10T12:20Z | change.advanced | CHG-CAMP-001 | islam | c3d4e5f | verified → closed |\n"
+              }
+            ]
+          },
+          {
+            "path": "changes/CHG-CAMP-001/plan.md",
+            "segments": [
+              {
+                "type": "text",
+                "text": "# Plan · CHG-CAMP-001\n"
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "TASK-CAMP-001",
+                "title": "Campaign form",
+                "fields": [
+                  {
+                    "key": "Goal",
+                    "value": "form with validation"
+                  },
+                  {
+                    "key": "Inputs",
+                    "value": "REQ-CAMP-001, CMP-CAMP-CAMPAIGNS"
+                  },
+                  {
+                    "key": "Allowed paths",
+                    "value": "apps/web/src/campaigns/**"
+                  },
+                  {
+                    "key": "Checks",
+                    "value": "typecheck, test"
+                  },
+                  {
+                    "key": "Done when",
+                    "value": "form saves a valid campaign and blocks invalid dates"
+                  }
+                ],
+                "body": ""
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "TASK-CAMP-002",
+                "title": "Campaign list",
+                "fields": [
+                  {
+                    "key": "Goal",
+                    "value": "list per client"
+                  },
+                  {
+                    "key": "Inputs",
+                    "value": "REQ-CAMP-002, CMP-CAMP-CAMPAIGNS"
+                  },
+                  {
+                    "key": "Depends on",
+                    "value": "TASK-CAMP-001"
+                  },
+                  {
+                    "key": "Allowed paths",
+                    "value": "apps/web/src/campaigns/**"
+                  },
+                  {
+                    "key": "Checks",
+                    "value": "typecheck"
+                  },
+                  {
+                    "key": "Done when",
+                    "value": "campaigns appear newest first"
+                  }
+                ],
+                "body": ""
+              }
+            ]
+          },
+          {
+            "path": "changes/CHG-CAMP-002/change.md",
+            "frontmatter": {
+              "data": {
+                "change_id": "CHG-CAMP-002",
+                "kind": "feature",
+                "slice": "SLC-CAMP-002-A",
+                "status": "in-progress",
+                "risk": "medium",
+                "owners": [
+                  "roya-team"
+                ]
+              },
+              "newline": true
+            },
+            "segments": [
+              {
+                "type": "text",
+                "text": "\n# CHG-CAMP-002 · Calendar with posts\n\n## Outcome\n\nPlanners see the posts of a campaign on a calendar.\n"
+              }
+            ]
+          },
+          {
+            "path": "changes/CHG-CAMP-002/log.md",
+            "segments": [
+              {
+                "type": "text",
+                "text": "# Log · CHG-CAMP-002\n\n> Written by `royascaff`. Do not edit by hand.\n\n| When | Event | Target | By | Git | Note |\n|---|---|---|---|---|---|\n| 2026-09-20T08:00Z | change.opened | CHG-CAMP-002 | islam | c3d4e5f | from SLC-CAMP-002-A |\n| 2026-09-20T09:00Z | change.approved | CHG-CAMP-002 | islam | c3d4e5f | risk medium, after design |\n| 2026-09-21T08:30Z | check.red | CHG-CAMP-002 | ai:claude | c3d4e5f | tests fail before the work: APP-CAMP-WEB — test ✗ |\n| 2026-09-21T09:00Z | task.started | TASK-CAMP-003 | ai:claude | d4e5f6a | — |\n| 2026-09-21T12:00Z | task.done | TASK-CAMP-003 | ai:claude | e5f6a7b | month grid renders the campaign dates |\n| 2026-09-22T09:00Z | task.started | TASK-CAMP-004 | ai:claude | e5f6a7b | — |\n| 2026-09-22T09:20Z | check.red | CHG-CAMP-002 | ai:claude | e5f6a7b | tests fail before the work: APP-CAMP-WEB — test ✗ |\n"
+              }
+            ]
+          },
+          {
+            "path": "changes/CHG-CAMP-002/plan.md",
+            "segments": [
+              {
+                "type": "text",
+                "text": "# Plan · CHG-CAMP-002\n"
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "TASK-CAMP-003",
+                "title": "Calendar grid",
+                "fields": [
+                  {
+                    "key": "Goal",
+                    "value": "month grid for a campaign's dates"
+                  },
+                  {
+                    "key": "Inputs",
+                    "value": "REQ-CAMP-003, CMP-CAMP-CALENDAR"
+                  },
+                  {
+                    "key": "Allowed paths",
+                    "value": "apps/web/src/calendar/**"
+                  },
+                  {
+                    "key": "Checks",
+                    "value": "typecheck"
+                  },
+                  {
+                    "key": "Done when",
+                    "value": "grid renders the campaign's date range"
+                  }
+                ],
+                "body": ""
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "TASK-CAMP-004",
+                "title": "Posts on the grid",
+                "fields": [
+                  {
+                    "key": "Goal",
+                    "value": "show posts on their day"
+                  },
+                  {
+                    "key": "Inputs",
+                    "value": "REQ-CAMP-003, CMP-CAMP-CALENDAR"
+                  },
+                  {
+                    "key": "Depends on",
+                    "value": "TASK-CAMP-003"
+                  },
+                  {
+                    "key": "Allowed paths",
+                    "value": "apps/web/src/calendar/**"
+                  },
+                  {
+                    "key": "Checks",
+                    "value": "typecheck, test"
+                  },
+                  {
+                    "key": "Done when",
+                    "value": "each post appears on its scheduled day"
+                  }
+                ],
+                "body": ""
+              }
+            ]
+          },
+          {
+            "path": "changes/CHG-CAMP-003/change.md",
+            "frontmatter": {
+              "data": {
+                "change_id": "CHG-CAMP-003",
+                "kind": "bug",
+                "affects": [
+                  "REQ-CAMP-001"
+                ],
+                "status": "in-progress",
+                "risk": "low",
+                "owners": [
+                  "roya-team"
+                ]
+              },
+              "newline": true
+            },
+            "segments": [
+              {
+                "type": "text",
+                "text": "\n# CHG-CAMP-003 · End date accepted before start date\n\n## Defect\n\nSaving a campaign with the end date before the start date succeeds. REQ-CAMP-001 says it\nmust not.\n"
+              }
+            ]
+          },
+          {
+            "path": "changes/CHG-CAMP-003/log.md",
+            "segments": [
+              {
+                "type": "text",
+                "text": "# Log · CHG-CAMP-003\n\n> Written by `royascaff`. Do not edit by hand.\n\n| When | Event | Target | By | Git | Note |\n|---|---|---|---|---|---|\n| 2026-09-23T10:00Z | change.opened | CHG-CAMP-003 | islam | e5f6a7b | bug in REQ-CAMP-001 |\n| 2026-09-23T10:15Z | task.started | TASK-CAMP-005 | islam | e5f6a7b | fixing by hand |\n"
+              }
+            ]
+          },
+          {
+            "path": "changes/CHG-CAMP-003/plan.md",
+            "segments": [
+              {
+                "type": "text",
+                "text": "# Plan · CHG-CAMP-003\n"
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "TASK-CAMP-005",
+                "title": "Validate date order",
+                "fields": [
+                  {
+                    "key": "Goal",
+                    "value": "block end date before start date"
+                  },
+                  {
+                    "key": "Inputs",
+                    "value": "REQ-CAMP-001"
+                  },
+                  {
+                    "key": "Allowed paths",
+                    "value": "apps/web/src/campaigns/**"
+                  },
+                  {
+                    "key": "Checks",
+                    "value": "test"
+                  },
+                  {
+                    "key": "Done when",
+                    "value": "regression test passes"
+                  }
+                ],
+                "body": ""
+              }
+            ]
+          },
+          {
+            "path": "knowledge/00-discovery/coverage.md",
+            "frontmatter": {
+              "data": {
+                "document_id": "DOC-CAMP-COVERAGE",
+                "title": "Brief coverage",
+                "layer": "discovery",
+                "schema_version": 2,
+                "document_status": "approved",
+                "owners": [
+                  "product-owner"
+                ]
+              },
+              "newline": true
+            },
+            "segments": [
+              {
+                "type": "text",
+                "text": "\n# Brief coverage\n\n> **What:** every concrete demand of the original request (SRC-), and the requirement that covers it or why it is out of scope\n> **Read when:** planning features, approving the roadmap, or checking nothing asked for was dropped\n\nAdd one per demand with `royascaff new record source \"<the demand>\" --quote \"<exact words from request.md>\"`: each numbered acceptance criterion, each visual effect, each control, each \"do not\". While planning, fill **Covered by** with the REQ-/NFR-/CAP- that delivers it, or write **Out of scope** with the reason. `royascaff approve roadmap` refuses while a demand is neither.\n\n## Record format (example)\n\n```md\n### SRC-CAMP-012 · Subtle bloom that keeps the graph readable\n\n- **Quote:** Bloom … Do NOT overdo bloom.\n- **Covered by:** NFR-CAMP-002\n\n### SRC-CAMP-020 · Real search is not built yet\n\n- **Quote:** It does not need real search functionality yet.\n- **Out of scope:** only the visual placeholder is asked for\n```\n"
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "SRC-CAMP-001",
+                "title": "Create a campaign with name, dates and channels",
+                "fields": [
+                  {
+                    "key": "Quote",
+                    "value": "Planners create a campaign for a client with a name, dates and channels."
+                  },
+                  {
+                    "key": "Covered by",
+                    "value": "REQ-CAMP-001"
+                  }
+                ],
+                "body": ""
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "SRC-CAMP-002",
+                "title": "Campaigns per client, newest first",
+                "fields": [
+                  {
+                    "key": "Quote",
+                    "value": "Planners see all campaigns of a client, newest first."
+                  },
+                  {
+                    "key": "Covered by",
+                    "value": "REQ-CAMP-002"
+                  }
+                ],
+                "body": ""
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "SRC-CAMP-003",
+                "title": "Calendar with drag between days",
+                "fields": [
+                  {
+                    "key": "Quote",
+                    "value": "A calendar shows every scheduled post; planners drag posts between days."
+                  },
+                  {
+                    "key": "Covered by",
+                    "value": "REQ-CAMP-003, REQ-CAMP-004"
+                  }
+                ],
+                "body": ""
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "SRC-CAMP-004",
+                "title": "Client approval by link",
+                "fields": [
+                  {
+                    "key": "Quote",
+                    "value": "Clients approve posts through a link."
+                  },
+                  {
+                    "key": "Covered by",
+                    "value": "REQ-CAMP-005"
+                  }
+                ],
+                "body": ""
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "SRC-CAMP-005",
+                "title": "No AI features yet",
+                "fields": [
+                  {
+                    "key": "Quote",
+                    "value": "No AI features yet."
+                  },
+                  {
+                    "key": "Out of scope",
+                    "value": "the request defers AI; CAP-CAMP-005 stays an idea in the backlog"
+                  }
+                ],
+                "body": ""
+              }
+            ]
+          },
+          {
+            "path": "knowledge/00-discovery/discovery.md",
+            "frontmatter": {
+              "data": {
+                "document_id": "DOC-CAMP-DISCOVERY",
+                "title": "Discovery",
+                "layer": "discovery",
+                "schema_version": 2,
+                "document_status": "approved",
+                "owners": [
+                  "product-owner"
+                ]
+              },
+              "newline": true
+            },
+            "segments": [
+              {
+                "type": "text",
+                "text": "\n# Discovery\n\n> **What:** what we know, what we assumed and what we asked before planning Campaign Planner\n> **Read when:** starting the project, or when a plan seems to contradict what the person wants\n\n## 1. Users and roles\n\nAgency planners create and schedule campaigns. Clients review and approve posts through a link.\n\n## 2. Problem and outcomes\n\nCampaigns live in spreadsheets and approvals happen by email (OUT-CAMP-001, OUT-CAMP-002).\n\n## 3. Scope and out of scope\n\nFirst release: campaigns, a post calendar and client approval. Out: publishing to social networks, billing.\n\n## 4. Success measures\n\nEvery active campaign is in the app within a month; median approval time under one working day.\n\n## 5. Constraints\n\nDesktop browsers first; two developers; English only.\n\n## 6. Technology\n\n- **Option A:** React + TypeScript web app with a small Node API: the team's current stack\n- **Option B:** a low-code tool: fast, but client links and the calendar need custom work\n\n**Recommendation:** Option A; confirmed by the owner (ADR-CAMP-001).\n\n## 7. Data and content\n\nCampaigns, posts and approvals created by planners; no import in the first release.\n\n## 8. Look, feel and references\n\nThe agency brand; a calm calendar like a paper planner.\n\n**Visual bar:**\n- Calm like a paper planner: plenty of white space, no clutter\n- The agency brand colors and font throughout\n- A week of posts reads at a glance on a laptop screen\n- Dragging a post shows where it will land\n- Nothing looks like a default admin template\n\n## Questions and assumptions\n"
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "QST-CAMP-001",
+                "title": "Do clients need an account to approve?",
+                "fields": [
+                  {
+                    "key": "Topic",
+                    "value": "users"
+                  },
+                  {
+                    "key": "Answer",
+                    "value": "no, a private link per campaign is enough"
+                  },
+                  {
+                    "key": "Source",
+                    "value": "chat 2026-09-19"
+                  }
+                ],
+                "body": ""
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "ASM-CAMP-001",
+                "title": "Planners work on desktop, clients may use phones",
+                "fields": [
+                  {
+                    "key": "Topic",
+                    "value": "constraints"
+                  },
+                  {
+                    "key": "Basis",
+                    "value": "approvals are opened from email links"
+                  }
+                ],
+                "body": ""
+              },
+              {
+                "type": "text",
+                "text": "## Record format (example)\n\n```md\n### QST-CAMP-001 · Who judges the visual quality?\n\n- **Topic:** look\n- **Answer:** the product owner\n- **Source:** chat 2026-09-30\n```\n"
+              }
+            ]
+          },
+          {
+            "path": "knowledge/00-discovery/request.md",
+            "frontmatter": {
+              "data": {
+                "document_id": "DOC-CAMP-REQUEST",
+                "title": "The original request",
+                "layer": "discovery",
+                "schema_version": 2,
+                "document_status": "approved",
+                "owners": [
+                  "product-owner"
+                ]
+              },
+              "newline": true
+            },
+            "segments": [
+              {
+                "type": "text",
+                "text": "\n# The original request\n\n> **What:** the request for Campaign Planner exactly as the person gave it, kept word for word\n> **Read when:** checking that the plan still covers what was asked (every demand is listed in coverage.md)\n\nPaste the request below once, word for word, and never edit it. A new or changed request is a new section with its date, added below.\n\n## Request\n\nBuild a campaign planner for our agency.\n\n- Planners create a campaign for a client with a name, dates and channels.\n- Planners see all campaigns of a client, newest first.\n- A calendar shows every scheduled post; planners drag posts between days.\n- Clients approve posts through a link.\n- Later: reach per campaign. No AI features yet.\n\nIt should feel calm, like a paper planner, in the agency brand.\n"
+              }
+            ]
+          },
+          {
+            "path": "knowledge/00-roadmap/roadmap.md",
+            "frontmatter": {
+              "data": {
+                "document_id": "DOC-CAMP-ROADMAP",
+                "title": "Features and roadmap",
+                "layer": "roadmap",
+                "schema_version": 2,
+                "document_status": "approved",
+                "owners": [
+                  "product-owner"
+                ]
+              },
+              "newline": true
+            },
+            "segments": [
+              {
+                "type": "text",
+                "text": "\n# Features and roadmap\n\n> **What:** every feature, its horizon (Now / Next / Later / Backlog) and its slices\n> **Read when:** planning work, or asking \"what is planned?\"\n"
+              },
+              {
+                "type": "record",
+                "level": 2,
+                "id": "CAP-CAMP-001",
+                "title": "Create campaigns",
+                "fields": [
+                  {
+                    "key": "Owner",
+                    "value": "product-owner"
+                  },
+                  {
+                    "key": "Priority",
+                    "value": "must"
+                  },
+                  {
+                    "key": "Horizon",
+                    "value": "now"
+                  },
+                  {
+                    "key": "Outcome",
+                    "value": "OUT-CAMP-001"
+                  }
+                ],
+                "body": "\nA planner creates a campaign for a client with a name, dates and channels.\n\n| Slice | Title | Order | Depends on | Delivers | Planned at |\n|---|---|---|---|---|---|\n| SLC-CAMP-001-A | Campaign form and list | 1 | — | REQ-CAMP-001, REQ-CAMP-002 | a1b2c3d |\n"
+              },
+              {
+                "type": "record",
+                "level": 2,
+                "id": "CAP-CAMP-002",
+                "title": "Schedule posts",
+                "fields": [
+                  {
+                    "key": "Owner",
+                    "value": "product-owner"
+                  },
+                  {
+                    "key": "Priority",
+                    "value": "must"
+                  },
+                  {
+                    "key": "Horizon",
+                    "value": "now"
+                  },
+                  {
+                    "key": "Outcome",
+                    "value": "OUT-CAMP-001"
+                  }
+                ],
+                "body": "\nPlanners add posts to a campaign calendar and move them between days.\n\n| Slice | Title | Order | Depends on | Delivers | Planned at |\n|---|---|---|---|---|---|\n| SLC-CAMP-002-A | Calendar with posts | 1 | SLC-CAMP-001-A | REQ-CAMP-003 | a1b2c3d |\n| SLC-CAMP-002-B | Drag posts between days | 2 | SLC-CAMP-002-A | REQ-CAMP-004 | a1b2c3d |\n"
+              },
+              {
+                "type": "record",
+                "level": 2,
+                "id": "CAP-CAMP-003",
+                "title": "Client approval",
+                "fields": [
+                  {
+                    "key": "Owner",
+                    "value": "product-owner"
+                  },
+                  {
+                    "key": "Priority",
+                    "value": "should"
+                  },
+                  {
+                    "key": "Horizon",
+                    "value": "next"
+                  },
+                  {
+                    "key": "Outcome",
+                    "value": "OUT-CAMP-002"
+                  }
+                ],
+                "body": "\nClients review scheduled posts and approve or request changes.\n\n| Slice | Title | Order | Depends on | Delivers | Planned at |\n|---|---|---|---|---|---|\n| SLC-CAMP-003-A | Approval link for clients | 1 | SLC-CAMP-002-A | REQ-CAMP-005 | a1b2c3d |\n"
+              },
+              {
+                "type": "record",
+                "level": 2,
+                "id": "CAP-CAMP-004",
+                "title": "Campaign analytics",
+                "fields": [
+                  {
+                    "key": "Owner",
+                    "value": "product-owner"
+                  },
+                  {
+                    "key": "Priority",
+                    "value": "could"
+                  },
+                  {
+                    "key": "Horizon",
+                    "value": "later"
+                  }
+                ],
+                "body": "\nShow reach and engagement per campaign. Requirements outlined, not sliced yet.\n"
+              },
+              {
+                "type": "record",
+                "level": 2,
+                "id": "CAP-CAMP-005",
+                "title": "AI caption suggestions",
+                "fields": [
+                  {
+                    "key": "Owner",
+                    "value": "product-owner"
+                  },
+                  {
+                    "key": "Priority",
+                    "value": "could"
+                  },
+                  {
+                    "key": "Horizon",
+                    "value": "backlog"
+                  }
+                ],
+                "body": "\nIdea: suggest captions from the campaign brief.\n"
+              }
+            ]
+          },
+          {
+            "path": "knowledge/01-business/brd.md",
+            "frontmatter": {
+              "data": {
+                "document_id": "DOC-CAMP-BRD",
+                "title": "Business brief",
+                "layer": "business",
+                "schema_version": 2,
+                "document_status": "approved",
+                "owners": [
+                  "product-owner"
+                ]
+              },
+              "newline": true
+            },
+            "segments": [
+              {
+                "type": "text",
+                "text": "\n# Business brief\n\n> **What:** why Campaign Planner exists and the outcomes it serves\n> **Read when:** deciding whether a feature is worth building\n\nAgency teams plan social campaigns for clients in spreadsheets. Campaign Planner replaces\nthe spreadsheet with one place to plan, schedule and approve posts.\n"
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "OUT-CAMP-001",
+                "title": "Campaigns are planned in one place",
+                "fields": [
+                  {
+                    "key": "Owner",
+                    "value": "product-owner"
+                  }
+                ],
+                "body": "\nMeasured by: every active client campaign lives in the app, not in a spreadsheet.\n"
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "OUT-CAMP-002",
+                "title": "Clients approve content faster",
+                "fields": [
+                  {
+                    "key": "Owner",
+                    "value": "product-owner"
+                  }
+                ],
+                "body": "\nMeasured by: median approval time under one working day.\n"
+              }
+            ]
+          },
+          {
+            "path": "knowledge/02-requirements/requirements.md",
+            "frontmatter": {
+              "data": {
+                "document_id": "DOC-CAMP-REQUIREMENTS",
+                "title": "Functional requirements",
+                "layer": "requirements",
+                "schema_version": 2,
+                "document_status": "approved",
+                "owners": [
+                  "product-owner"
+                ]
+              },
+              "newline": true
+            },
+            "segments": [
+              {
+                "type": "text",
+                "text": "\n# Functional requirements\n\n> **What:** what each feature must do, and how we know it works\n> **Read when:** designing, building or checking a slice\n\n<!-- royascaff:summary:start -->\n<!-- royascaff:summary:end -->\n"
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "REQ-CAMP-001",
+                "title": "Create a campaign",
+                "fields": [
+                  {
+                    "key": "Priority",
+                    "value": "must"
+                  },
+                  {
+                    "key": "Owner",
+                    "value": "product-owner"
+                  },
+                  {
+                    "key": "Feature",
+                    "value": "CAP-CAMP-001"
+                  },
+                  {
+                    "key": "Verified by",
+                    "value": "TEST-CAMP-001"
+                  }
+                ],
+                "body": "\nA planner enters client, name, start and end dates, and channels, then saves.\n\n**Acceptance**\n- Saving without a name shows an inline error.\n- The end date cannot be before the start date.\n"
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "REQ-CAMP-002",
+                "title": "List campaigns per client",
+                "fields": [
+                  {
+                    "key": "Priority",
+                    "value": "must"
+                  },
+                  {
+                    "key": "Owner",
+                    "value": "product-owner"
+                  },
+                  {
+                    "key": "Feature",
+                    "value": "CAP-CAMP-001"
+                  }
+                ],
+                "body": "\nCampaigns are listed by client, newest first.\n"
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "REQ-CAMP-003",
+                "title": "Calendar shows scheduled posts",
+                "fields": [
+                  {
+                    "key": "Priority",
+                    "value": "must"
+                  },
+                  {
+                    "key": "Owner",
+                    "value": "product-owner"
+                  },
+                  {
+                    "key": "Feature",
+                    "value": "CAP-CAMP-002"
+                  }
+                ],
+                "body": ""
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "REQ-CAMP-004",
+                "title": "Move a post to another day",
+                "fields": [
+                  {
+                    "key": "Priority",
+                    "value": "should"
+                  },
+                  {
+                    "key": "Owner",
+                    "value": "product-owner"
+                  },
+                  {
+                    "key": "Feature",
+                    "value": "CAP-CAMP-002"
+                  }
+                ],
+                "body": ""
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "REQ-CAMP-005",
+                "title": "Client approves a post",
+                "fields": [
+                  {
+                    "key": "Priority",
+                    "value": "should"
+                  },
+                  {
+                    "key": "Owner",
+                    "value": "product-owner"
+                  },
+                  {
+                    "key": "Feature",
+                    "value": "CAP-CAMP-003"
+                  }
+                ],
+                "body": ""
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "REQ-CAMP-006",
+                "title": "Reach per campaign",
+                "fields": [
+                  {
+                    "key": "Priority",
+                    "value": "could"
+                  },
+                  {
+                    "key": "Owner",
+                    "value": "product-owner"
+                  },
+                  {
+                    "key": "Feature",
+                    "value": "CAP-CAMP-004"
+                  }
+                ],
+                "body": ""
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "TEST-CAMP-001",
+                "title": "Campaign form validation",
+                "fields": [
+                  {
+                    "key": "Owner",
+                    "value": "roya-team"
+                  },
+                  {
+                    "key": "Check",
+                    "value": "runner:test"
+                  },
+                  {
+                    "key": "Verifies",
+                    "value": "REQ-CAMP-001"
+                  }
+                ],
+                "body": ""
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "TEST-CAMP-010",
+                "title": "Campaign list order",
+                "fields": [
+                  {
+                    "key": "Owner",
+                    "value": "roya-team"
+                  },
+                  {
+                    "key": "Check",
+                    "value": "manual"
+                  },
+                  {
+                    "key": "Verifies",
+                    "value": "REQ-CAMP-002"
+                  }
+                ],
+                "body": ""
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "TEST-CAMP-011",
+                "title": "Calendar shows posts",
+                "fields": [
+                  {
+                    "key": "Owner",
+                    "value": "roya-team"
+                  },
+                  {
+                    "key": "Check",
+                    "value": "manual"
+                  },
+                  {
+                    "key": "Verifies",
+                    "value": "REQ-CAMP-003"
+                  }
+                ],
+                "body": ""
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "TEST-CAMP-012",
+                "title": "Drag a post to another day",
+                "fields": [
+                  {
+                    "key": "Owner",
+                    "value": "roya-team"
+                  },
+                  {
+                    "key": "Check",
+                    "value": "manual"
+                  },
+                  {
+                    "key": "Verifies",
+                    "value": "REQ-CAMP-004"
+                  }
+                ],
+                "body": ""
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "TEST-CAMP-013",
+                "title": "Client approves through the link",
+                "fields": [
+                  {
+                    "key": "Owner",
+                    "value": "roya-team"
+                  },
+                  {
+                    "key": "Check",
+                    "value": "manual"
+                  },
+                  {
+                    "key": "Verifies",
+                    "value": "REQ-CAMP-005"
+                  }
+                ],
+                "body": ""
+              }
+            ]
+          },
+          {
+            "path": "knowledge/03-domain/domain.md",
+            "frontmatter": {
+              "data": {
+                "document_id": "DOC-CAMP-DOMAIN",
+                "title": "Domain",
+                "layer": "domain",
+                "schema_version": 2,
+                "document_status": "approved",
+                "owners": [
+                  "roya-team"
+                ]
+              },
+              "newline": true
+            },
+            "segments": [
+              {
+                "type": "text",
+                "text": "\n# Domain\n\n> **What:** the concepts of the business, the rules that must always hold, and important workflows\n> **Read when:** a requirement uses a business word you are not sure about, or a rule must never break\n"
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "CON-CAMP-001",
+                "title": "Campaign",
+                "fields": [
+                  {
+                    "key": "Owner",
+                    "value": "roya-team"
+                  }
+                ],
+                "body": "\nA planned set of posts for one client, with a start and an end date.\n"
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "INV-CAMP-001",
+                "title": "A post is scheduled inside its campaign dates",
+                "fields": [
+                  {
+                    "key": "Owner",
+                    "value": "roya-team"
+                  },
+                  {
+                    "key": "Constrained by",
+                    "value": "REQ-CAMP-003"
+                  }
+                ],
+                "body": "\nA post's day lies between its campaign's start and end dates; moving it outside is refused with a message.\n"
+              },
+              {
+                "type": "text",
+                "text": "## Record format (examples)\n\n```md\n### CON-CAMP-001 · Campaign\n\n- **Owner:** roya-team\n\nA planned set of posts for one client, with a start and an end date.\n\n### INV-CAMP-001 · A client only sees their own campaigns\n\n- **Owner:** roya-team\n- **Constrained by:** REQ-CAMP-001\n```\n"
+              }
+            ]
+          },
+          {
+            "path": "knowledge/04-design/architecture.md",
+            "frontmatter": {
+              "data": {
+                "document_id": "DOC-CAMP-ARCHITECTURE",
+                "title": "Architecture",
+                "layer": "design",
+                "schema_version": 2,
+                "document_status": "approved",
+                "owners": [
+                  "product-owner"
+                ]
+              },
+              "newline": true
+            },
+            "segments": [
+              {
+                "type": "text",
+                "text": "\n# Architecture\n\n> **What:** the system on one page: context, apps, main parts, data flow and the rules between them\n> **Read when:** designing any change, or finding where something belongs\n\n## 1. Context\n\nPlanners and clients use the web app (APP-CAMP-WEB) in a browser.\n\n## 3. Main parts\n\nCampaign form and list (CMP-CAMP-001), the post calendar.\n\n## 5. Dependency rules\n\nPages call the API client only; business rules live in the API.\n\n- `apps/web/src/calendar/**` must not import `apps/web/src/campaigns/**`: the calendar reads campaigns through the API client.\n\n## 6. Key decisions\n\nADR-CAMP-001.\n"
+              }
+            ]
+          },
+          {
+            "path": "knowledge/04-design/data.md",
+            "frontmatter": {
+              "data": {
+                "document_id": "DOC-CAMP-DATA",
+                "title": "Data",
+                "layer": "design",
+                "schema_version": 2,
+                "document_status": "approved",
+                "owners": [
+                  "roya-team"
+                ]
+              },
+              "newline": true
+            },
+            "segments": [
+              {
+                "type": "text",
+                "text": "\n# Data\n\n> **What:** the data the system keeps: entities, fields, rules, and where the truth lives\n> **Read when:** designing anything that stores, loads or changes data\n\n## 1. Entities\n\n| Entity | Key fields | Concept |\n|---|---|---|\n| Campaign | id, clientId, name, startDate, endDate, channels | CON-CAMP-001 |\n| Post | id, campaignId, channel, scheduledAt | — |\n\n## 2. Rules and constraints\n\n_Required fields, allowed values, uniqueness, and the invariants (INV-) the data must keep._\n\n## 3. Source of truth and flow\n\n_Where each entity comes from, who may change it, and how it is loaded, cached or generated._\n\n## 4. Changes over time\n\n_Migrations, versioning, backfills and how to roll back. \"None yet\" is a valid answer._\n\n## Record format (example)\n\n```md\n## 1. Entities\n\n| Entity | Key fields | Concept |\n|---|---|---|\n| Campaign | id, clientId, name, startDate, endDate, channels | CON-CAMP-001 |\n| Post | id, campaignId, channel, scheduledAt, status | CON-CAMP-002 |\n```\n"
+              }
+            ]
+          },
+          {
+            "path": "knowledge/04-design/decisions.md",
+            "frontmatter": {
+              "data": {
+                "document_id": "DOC-CAMP-DECISIONS",
+                "title": "Decisions",
+                "layer": "design",
+                "schema_version": 2,
+                "document_status": "approved",
+                "owners": [
+                  "product-owner"
+                ]
+              },
+              "newline": true
+            },
+            "segments": [
+              {
+                "type": "text",
+                "text": "\n# Decisions\n\n> **What:** material technical choices (ADR-): the options, the choice, and why\n> **Read when:** before choosing a pattern, library, data shape or UI approach\n"
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "ADR-CAMP-001",
+                "title": "React and TypeScript web app",
+                "fields": [
+                  {
+                    "key": "Owner",
+                    "value": "product-owner"
+                  },
+                  {
+                    "key": "Scope",
+                    "value": "project"
+                  },
+                  {
+                    "key": "Supports",
+                    "value": "CAP-CAMP-001, CAP-CAMP-002, CAP-CAMP-003"
+                  }
+                ],
+                "body": "\n**Options:** React + TypeScript · a low-code tool.\n**Choice:** React + TypeScript.\n**Why:** the team's current stack; the calendar needs custom interaction.\n"
+              }
+            ]
+          },
+          {
+            "path": "knowledge/04-design/rules.md",
+            "frontmatter": {
+              "data": {
+                "document_id": "DOC-CAMP-RULES",
+                "title": "Project rules",
+                "layer": "design",
+                "schema_version": 2,
+                "document_status": "approved",
+                "owners": [
+                  "roya-team"
+                ]
+              },
+              "newline": true
+            },
+            "segments": [
+              {
+                "type": "text",
+                "text": "\n# Project rules\n\n> **What:** the rules specific to this project that every change must follow (RULE-)\n> **Read when:** designing or building anything; rules are included in full in every Context Pack that links them\n\nAdd one with `royascaff new record rule \"<the rule>\"`. General technology rules live in the adapter cards; only this project's own rules belong here.\n"
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "RULE-CAMP-001",
+                "title": "Dates use the client time zone",
+                "fields": [
+                  {
+                    "key": "Owner",
+                    "value": "roya-team"
+                  },
+                  {
+                    "key": "Applies to",
+                    "value": "CMP-CAMP-CALENDAR"
+                  }
+                ],
+                "body": "\nEvery date on screen uses the client's time zone from the campaign. Breaking it shows a post on the wrong day.\n"
+              },
+              {
+                "type": "text",
+                "text": "## Record format (example)\n\n```md\n### RULE-CAMP-001 · Dates are shown in the client's time zone\n\n- **Owner:** roya-team\n- **Applies to:** CMP-CAMP-001\n\nEvery date on screen uses the client's time zone from the campaign, never the browser's. Breaking it looks like a post landing on the wrong day.\n```\n"
+              }
+            ]
+          },
+          {
+            "path": "knowledge/05-implementation/components/components.md",
+            "frontmatter": {
+              "data": {
+                "document_id": "DOC-CAMP-COMPONENTS",
+                "title": "Components",
+                "layer": "implementation",
+                "schema_version": 2,
+                "document_status": "approved",
+                "owners": [
+                  "roya-team"
+                ]
+              },
+              "newline": true
+            },
+            "segments": [
+              {
+                "type": "text",
+                "text": "\n# Components\n\n> **What:** the parts of the code that own each responsibility\n> **Read when:** finding where a feature lives in the code\n"
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "CMP-CAMP-CAMPAIGNS",
+                "title": "Campaigns module",
+                "fields": [
+                  {
+                    "key": "Owner",
+                    "value": "roya-team"
+                  },
+                  {
+                    "key": "Code",
+                    "value": "apps/web/src/campaigns/**"
+                  },
+                  {
+                    "key": "Realizes",
+                    "value": "REQ-CAMP-001, REQ-CAMP-002"
+                  }
+                ],
+                "body": ""
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "CMP-CAMP-CALENDAR",
+                "title": "Calendar module",
+                "fields": [
+                  {
+                    "key": "Owner",
+                    "value": "roya-team"
+                  },
+                  {
+                    "key": "Code",
+                    "value": "apps/web/src/calendar/**"
+                  },
+                  {
+                    "key": "Realizes",
+                    "value": "REQ-CAMP-003"
+                  }
+                ],
+                "body": ""
+              }
+            ]
+          },
+          {
+            "path": "knowledge/06-quality/quality.md",
+            "frontmatter": {
+              "data": {
+                "document_id": "DOC-CAMP-QUALITY",
+                "title": "Quality strategy",
+                "layer": "quality",
+                "schema_version": 2,
+                "document_status": "approved",
+                "owners": [
+                  "product-owner"
+                ]
+              },
+              "newline": true
+            },
+            "segments": [
+              {
+                "type": "text",
+                "text": "\n# Quality strategy\n\n> **What:** how we know Campaign Planner is good enough: targets, checks, who judges, and the risks we accept\n> **Read when:** planning checks for a change, or deciding whether something is ready to ship\n\n## 2. Checks and who runs them\n\n- Runner: typecheck and lint on every task; build and all tests at Check.\n- Person: a planner tries every calendar change on a desktop screen before it is verified.\n"
+              }
+            ]
+          },
+          {
+            "path": "log.md",
+            "segments": [
+              {
+                "type": "text",
+                "text": "# Log · project\n\n> Written by `royascaff`. Do not edit by hand.\n\n| When | Event | Target | By | Git | Note |\n|---|---|---|---|---|---|\n| 2026-09-19T15:00Z | project.approved | project | islam | a1b2c3d | hash 0fad272542 · base a075e25d10 · 1 question(s) answered · 1 assumption(s) confirmed |\n| 2026-09-19T16:00Z | feature.approved | CAP-CAMP-001 | islam | a1b2c3d | hash e4cebe4e6b · 2 requirement(s) · 1 slice(s) |\n| 2026-09-19T16:00Z | feature.approved | CAP-CAMP-002 | islam | a1b2c3d | hash 6b1470ad62 · 2 requirement(s) · 2 slice(s) |\n| 2026-09-19T16:00Z | feature.approved | CAP-CAMP-003 | islam | a1b2c3d | hash 1a0a339ee3 · 1 requirement(s) · 1 slice(s) |\n"
+              }
+            ]
+          },
+          {
+            "path": "profile.md",
+            "frontmatter": {
+              "data": {
+                "document_id": "DOC-CAMP-PROFILE",
+                "title": "Project profile",
+                "layer": "profile",
+                "schema_version": 2,
+                "document_status": "approved",
+                "owners": [
+                  "roya-team"
+                ],
+                "royascaff": "1.4",
+                "project_code": "CAMP",
+                "project_name": "Campaign Planner"
+              },
+              "newline": true
+            },
+            "segments": [
+              {
+                "type": "text",
+                "text": "\n# Project profile\n\n> **What:** how this project is built, checked and owned\n> **Read when:** setting up, or when a command or path is unclear\n"
+              },
+              {
+                "type": "record",
+                "level": 3,
+                "id": "APP-CAMP-WEB",
+                "title": "Web app",
+                "fields": [
+                  {
+                    "key": "Path",
+                    "value": "apps/web"
+                  },
+                  {
+                    "key": "Build",
+                    "value": "npm run build"
+                  },
+                  {
+                    "key": "Typecheck",
+                    "value": "npm run typecheck"
+                  },
+                  {
+                    "key": "Lint",
+                    "value": "npm run lint"
+                  },
+                  {
+                    "key": "Test",
+                    "value": "npm test"
+                  }
+                ],
+                "body": ""
+              }
+            ]
+          }
+        ],
+        "records": [
+          {
+            "id": "EVD-CAMP-001",
+            "title": "Campaign form tests",
+            "level": 3,
+            "fields": {
+              "Result": "pass",
+              "Proves": "TEST-CAMP-001",
+              "Command": "npm test -- campaigns",
+              "Git commit": "c3d4e5f"
+            },
+            "field_ids": [
+              "TEST-CAMP-001"
+            ],
+            "mentions": [],
+            "file": "changes/CHG-CAMP-001/evidence/evidence.md",
+            "line": 3
+          },
+          {
+            "id": "EVD-CAMP-002",
+            "title": "Manual check of the campaign list",
+            "level": 3,
+            "fields": {
+              "Result": "pass",
+              "Proves": "REQ-CAMP-002",
+              "Command": "manual",
+              "Git commit": "c3d4e5f"
+            },
+            "field_ids": [
+              "REQ-CAMP-002"
+            ],
+            "mentions": [],
+            "file": "changes/CHG-CAMP-001/evidence/evidence.md",
+            "line": 10
+          },
+          {
+            "id": "TASK-CAMP-001",
+            "title": "Campaign form",
+            "level": 3,
+            "fields": {
+              "Goal": "form with validation",
+              "Inputs": "REQ-CAMP-001, CMP-CAMP-CAMPAIGNS",
+              "Allowed paths": "apps/web/src/campaigns/**",
+              "Checks": "typecheck, test",
+              "Done when": "form saves a valid campaign and blocks invalid dates"
+            },
+            "field_ids": [
+              "REQ-CAMP-001",
+              "CMP-CAMP-CAMPAIGNS"
+            ],
+            "mentions": [],
+            "file": "changes/CHG-CAMP-001/plan.md",
+            "line": 3
+          },
+          {
+            "id": "TASK-CAMP-002",
+            "title": "Campaign list",
+            "level": 3,
+            "fields": {
+              "Goal": "list per client",
+              "Inputs": "REQ-CAMP-002, CMP-CAMP-CAMPAIGNS",
+              "Depends on": "TASK-CAMP-001",
+              "Allowed paths": "apps/web/src/campaigns/**",
+              "Checks": "typecheck",
+              "Done when": "campaigns appear newest first"
+            },
+            "field_ids": [
+              "REQ-CAMP-002",
+              "CMP-CAMP-CAMPAIGNS",
+              "TASK-CAMP-001"
+            ],
+            "mentions": [],
+            "file": "changes/CHG-CAMP-001/plan.md",
+            "line": 11
+          },
+          {
+            "id": "TASK-CAMP-003",
+            "title": "Calendar grid",
+            "level": 3,
+            "fields": {
+              "Goal": "month grid for a campaign's dates",
+              "Inputs": "REQ-CAMP-003, CMP-CAMP-CALENDAR",
+              "Allowed paths": "apps/web/src/calendar/**",
+              "Checks": "typecheck",
+              "Done when": "grid renders the campaign's date range"
+            },
+            "field_ids": [
+              "REQ-CAMP-003",
+              "CMP-CAMP-CALENDAR"
+            ],
+            "mentions": [],
+            "file": "changes/CHG-CAMP-002/plan.md",
+            "line": 3
+          },
+          {
+            "id": "TASK-CAMP-004",
+            "title": "Posts on the grid",
+            "level": 3,
+            "fields": {
+              "Goal": "show posts on their day",
+              "Inputs": "REQ-CAMP-003, CMP-CAMP-CALENDAR",
+              "Depends on": "TASK-CAMP-003",
+              "Allowed paths": "apps/web/src/calendar/**",
+              "Checks": "typecheck, test",
+              "Done when": "each post appears on its scheduled day"
+            },
+            "field_ids": [
+              "REQ-CAMP-003",
+              "CMP-CAMP-CALENDAR",
+              "TASK-CAMP-003"
+            ],
+            "mentions": [],
+            "file": "changes/CHG-CAMP-002/plan.md",
+            "line": 11
+          },
+          {
+            "id": "TASK-CAMP-005",
+            "title": "Validate date order",
+            "level": 3,
+            "fields": {
+              "Goal": "block end date before start date",
+              "Inputs": "REQ-CAMP-001",
+              "Allowed paths": "apps/web/src/campaigns/**",
+              "Checks": "test",
+              "Done when": "regression test passes"
+            },
+            "field_ids": [
+              "REQ-CAMP-001"
+            ],
+            "mentions": [],
+            "file": "changes/CHG-CAMP-003/plan.md",
+            "line": 3
+          },
+          {
+            "id": "SRC-CAMP-001",
+            "title": "Create a campaign with name, dates and channels",
+            "level": 3,
+            "fields": {
+              "Quote": "Planners create a campaign for a client with a name, dates and channels.",
+              "Covered by": "REQ-CAMP-001"
+            },
+            "field_ids": [
+              "REQ-CAMP-001"
+            ],
+            "mentions": [],
+            "file": "knowledge/00-discovery/coverage.md",
+            "line": 31
+          },
+          {
+            "id": "SRC-CAMP-002",
+            "title": "Campaigns per client, newest first",
+            "level": 3,
+            "fields": {
+              "Quote": "Planners see all campaigns of a client, newest first.",
+              "Covered by": "REQ-CAMP-002"
+            },
+            "field_ids": [
+              "REQ-CAMP-002"
+            ],
+            "mentions": [],
+            "file": "knowledge/00-discovery/coverage.md",
+            "line": 36
+          },
+          {
+            "id": "SRC-CAMP-003",
+            "title": "Calendar with drag between days",
+            "level": 3,
+            "fields": {
+              "Quote": "A calendar shows every scheduled post; planners drag posts between days.",
+              "Covered by": "REQ-CAMP-003, REQ-CAMP-004"
+            },
+            "field_ids": [
+              "REQ-CAMP-003",
+              "REQ-CAMP-004"
+            ],
+            "mentions": [],
+            "file": "knowledge/00-discovery/coverage.md",
+            "line": 41
+          },
+          {
+            "id": "SRC-CAMP-004",
+            "title": "Client approval by link",
+            "level": 3,
+            "fields": {
+              "Quote": "Clients approve posts through a link.",
+              "Covered by": "REQ-CAMP-005"
+            },
+            "field_ids": [
+              "REQ-CAMP-005"
+            ],
+            "mentions": [],
+            "file": "knowledge/00-discovery/coverage.md",
+            "line": 46
+          },
+          {
+            "id": "SRC-CAMP-005",
+            "title": "No AI features yet",
+            "level": 3,
+            "fields": {
+              "Quote": "No AI features yet.",
+              "Out of scope": "the request defers AI; CAP-CAMP-005 stays an idea in the backlog"
+            },
+            "field_ids": [
+              "CAP-CAMP-005"
+            ],
+            "mentions": [],
+            "file": "knowledge/00-discovery/coverage.md",
+            "line": 51
+          },
+          {
+            "id": "QST-CAMP-001",
+            "title": "Do clients need an account to approve?",
+            "level": 3,
+            "fields": {
+              "Topic": "users",
+              "Answer": "no, a private link per campaign is enough",
+              "Source": "chat 2026-09-19"
+            },
+            "field_ids": [],
+            "mentions": [],
+            "file": "knowledge/00-discovery/discovery.md",
+            "line": 59
+          },
+          {
+            "id": "ASM-CAMP-001",
+            "title": "Planners work on desktop, clients may use phones",
+            "level": 3,
+            "fields": {
+              "Topic": "constraints",
+              "Basis": "approvals are opened from email links"
+            },
+            "field_ids": [],
+            "mentions": [],
+            "file": "knowledge/00-discovery/discovery.md",
+            "line": 65
+          },
+          {
+            "id": "CAP-CAMP-001",
+            "title": "Create campaigns",
+            "level": 2,
+            "fields": {
+              "Owner": "product-owner",
+              "Priority": "must",
+              "Horizon": "now",
+              "Outcome": "OUT-CAMP-001"
+            },
+            "field_ids": [
+              "OUT-CAMP-001"
+            ],
+            "mentions": [
+              "SLC-CAMP-001-A",
+              "REQ-CAMP-001",
+              "REQ-CAMP-002"
+            ],
+            "file": "knowledge/00-roadmap/roadmap.md",
+            "line": 15
+          },
+          {
+            "id": "CAP-CAMP-002",
+            "title": "Schedule posts",
+            "level": 2,
+            "fields": {
+              "Owner": "product-owner",
+              "Priority": "must",
+              "Horizon": "now",
+              "Outcome": "OUT-CAMP-001"
+            },
+            "field_ids": [
+              "OUT-CAMP-001"
+            ],
+            "mentions": [
+              "SLC-CAMP-002-A",
+              "SLC-CAMP-001-A",
+              "REQ-CAMP-003",
+              "SLC-CAMP-002-B",
+              "REQ-CAMP-004"
+            ],
+            "file": "knowledge/00-roadmap/roadmap.md",
+            "line": 28
+          },
+          {
+            "id": "CAP-CAMP-003",
+            "title": "Client approval",
+            "level": 2,
+            "fields": {
+              "Owner": "product-owner",
+              "Priority": "should",
+              "Horizon": "next",
+              "Outcome": "OUT-CAMP-002"
+            },
+            "field_ids": [
+              "OUT-CAMP-002"
+            ],
+            "mentions": [
+              "SLC-CAMP-003-A",
+              "SLC-CAMP-002-A",
+              "REQ-CAMP-005"
+            ],
+            "file": "knowledge/00-roadmap/roadmap.md",
+            "line": 42
+          },
+          {
+            "id": "CAP-CAMP-004",
+            "title": "Campaign analytics",
+            "level": 2,
+            "fields": {
+              "Owner": "product-owner",
+              "Priority": "could",
+              "Horizon": "later"
+            },
+            "field_ids": [],
+            "mentions": [],
+            "file": "knowledge/00-roadmap/roadmap.md",
+            "line": 55
+          },
+          {
+            "id": "CAP-CAMP-005",
+            "title": "AI caption suggestions",
+            "level": 2,
+            "fields": {
+              "Owner": "product-owner",
+              "Priority": "could",
+              "Horizon": "backlog"
+            },
+            "field_ids": [],
+            "mentions": [],
+            "file": "knowledge/00-roadmap/roadmap.md",
+            "line": 63
+          },
+          {
+            "id": "OUT-CAMP-001",
+            "title": "Campaigns are planned in one place",
+            "level": 3,
+            "fields": {
+              "Owner": "product-owner"
+            },
+            "field_ids": [],
+            "mentions": [],
+            "file": "knowledge/01-business/brd.md",
+            "line": 18
+          },
+          {
+            "id": "OUT-CAMP-002",
+            "title": "Clients approve content faster",
+            "level": 3,
+            "fields": {
+              "Owner": "product-owner"
+            },
+            "field_ids": [],
+            "mentions": [],
+            "file": "knowledge/01-business/brd.md",
+            "line": 24
+          },
+          {
+            "id": "REQ-CAMP-001",
+            "title": "Create a campaign",
+            "level": 3,
+            "fields": {
+              "Priority": "must",
+              "Owner": "product-owner",
+              "Feature": "CAP-CAMP-001",
+              "Verified by": "TEST-CAMP-001"
+            },
+            "field_ids": [
+              "CAP-CAMP-001",
+              "TEST-CAMP-001"
+            ],
+            "mentions": [],
+            "file": "knowledge/02-requirements/requirements.md",
+            "line": 18
+          },
+          {
+            "id": "REQ-CAMP-002",
+            "title": "List campaigns per client",
+            "level": 3,
+            "fields": {
+              "Priority": "must",
+              "Owner": "product-owner",
+              "Feature": "CAP-CAMP-001"
+            },
+            "field_ids": [
+              "CAP-CAMP-001"
+            ],
+            "mentions": [],
+            "file": "knowledge/02-requirements/requirements.md",
+            "line": 31
+          },
+          {
+            "id": "REQ-CAMP-003",
+            "title": "Calendar shows scheduled posts",
+            "level": 3,
+            "fields": {
+              "Priority": "must",
+              "Owner": "product-owner",
+              "Feature": "CAP-CAMP-002"
+            },
+            "field_ids": [
+              "CAP-CAMP-002"
+            ],
+            "mentions": [],
+            "file": "knowledge/02-requirements/requirements.md",
+            "line": 39
+          },
+          {
+            "id": "REQ-CAMP-004",
+            "title": "Move a post to another day",
+            "level": 3,
+            "fields": {
+              "Priority": "should",
+              "Owner": "product-owner",
+              "Feature": "CAP-CAMP-002"
+            },
+            "field_ids": [
+              "CAP-CAMP-002"
+            ],
+            "mentions": [],
+            "file": "knowledge/02-requirements/requirements.md",
+            "line": 45
+          },
+          {
+            "id": "REQ-CAMP-005",
+            "title": "Client approves a post",
+            "level": 3,
+            "fields": {
+              "Priority": "should",
+              "Owner": "product-owner",
+              "Feature": "CAP-CAMP-003"
+            },
+            "field_ids": [
+              "CAP-CAMP-003"
+            ],
+            "mentions": [],
+            "file": "knowledge/02-requirements/requirements.md",
+            "line": 51
+          },
+          {
+            "id": "REQ-CAMP-006",
+            "title": "Reach per campaign",
+            "level": 3,
+            "fields": {
+              "Priority": "could",
+              "Owner": "product-owner",
+              "Feature": "CAP-CAMP-004"
+            },
+            "field_ids": [
+              "CAP-CAMP-004"
+            ],
+            "mentions": [],
+            "file": "knowledge/02-requirements/requirements.md",
+            "line": 57
+          },
+          {
+            "id": "TEST-CAMP-001",
+            "title": "Campaign form validation",
+            "level": 3,
+            "fields": {
+              "Owner": "roya-team",
+              "Check": "runner:test",
+              "Verifies": "REQ-CAMP-001"
+            },
+            "field_ids": [
+              "REQ-CAMP-001"
+            ],
+            "mentions": [],
+            "file": "knowledge/02-requirements/requirements.md",
+            "line": 63
+          },
+          {
+            "id": "TEST-CAMP-010",
+            "title": "Campaign list order",
+            "level": 3,
+            "fields": {
+              "Owner": "roya-team",
+              "Check": "manual",
+              "Verifies": "REQ-CAMP-002"
+            },
+            "field_ids": [
+              "REQ-CAMP-002"
+            ],
+            "mentions": [],
+            "file": "knowledge/02-requirements/requirements.md",
+            "line": 69
+          },
+          {
+            "id": "TEST-CAMP-011",
+            "title": "Calendar shows posts",
+            "level": 3,
+            "fields": {
+              "Owner": "roya-team",
+              "Check": "manual",
+              "Verifies": "REQ-CAMP-003"
+            },
+            "field_ids": [
+              "REQ-CAMP-003"
+            ],
+            "mentions": [],
+            "file": "knowledge/02-requirements/requirements.md",
+            "line": 75
+          },
+          {
+            "id": "TEST-CAMP-012",
+            "title": "Drag a post to another day",
+            "level": 3,
+            "fields": {
+              "Owner": "roya-team",
+              "Check": "manual",
+              "Verifies": "REQ-CAMP-004"
+            },
+            "field_ids": [
+              "REQ-CAMP-004"
+            ],
+            "mentions": [],
+            "file": "knowledge/02-requirements/requirements.md",
+            "line": 81
+          },
+          {
+            "id": "TEST-CAMP-013",
+            "title": "Client approves through the link",
+            "level": 3,
+            "fields": {
+              "Owner": "roya-team",
+              "Check": "manual",
+              "Verifies": "REQ-CAMP-005"
+            },
+            "field_ids": [
+              "REQ-CAMP-005"
+            ],
+            "mentions": [],
+            "file": "knowledge/02-requirements/requirements.md",
+            "line": 87
+          },
+          {
+            "id": "CON-CAMP-001",
+            "title": "Campaign",
+            "level": 3,
+            "fields": {
+              "Owner": "roya-team"
+            },
+            "field_ids": [],
+            "mentions": [],
+            "file": "knowledge/03-domain/domain.md",
+            "line": 15
+          },
+          {
+            "id": "INV-CAMP-001",
+            "title": "A post is scheduled inside its campaign dates",
+            "level": 3,
+            "fields": {
+              "Owner": "roya-team",
+              "Constrained by": "REQ-CAMP-003"
+            },
+            "field_ids": [
+              "REQ-CAMP-003"
+            ],
+            "mentions": [],
+            "file": "knowledge/03-domain/domain.md",
+            "line": 21
+          },
+          {
+            "id": "ADR-CAMP-001",
+            "title": "React and TypeScript web app",
+            "level": 3,
+            "fields": {
+              "Owner": "product-owner",
+              "Scope": "project",
+              "Supports": "CAP-CAMP-001, CAP-CAMP-002, CAP-CAMP-003"
+            },
+            "field_ids": [
+              "CAP-CAMP-001",
+              "CAP-CAMP-002",
+              "CAP-CAMP-003"
+            ],
+            "mentions": [],
+            "file": "knowledge/04-design/decisions.md",
+            "line": 15
+          },
+          {
+            "id": "RULE-CAMP-001",
+            "title": "Dates use the client time zone",
+            "level": 3,
+            "fields": {
+              "Owner": "roya-team",
+              "Applies to": "CMP-CAMP-CALENDAR"
+            },
+            "field_ids": [
+              "CMP-CAMP-CALENDAR"
+            ],
+            "mentions": [],
+            "file": "knowledge/04-design/rules.md",
+            "line": 17
+          },
+          {
+            "id": "CMP-CAMP-CAMPAIGNS",
+            "title": "Campaigns module",
+            "level": 3,
+            "fields": {
+              "Owner": "roya-team",
+              "Code": "apps/web/src/campaigns/**",
+              "Realizes": "REQ-CAMP-001, REQ-CAMP-002"
+            },
+            "field_ids": [
+              "REQ-CAMP-001",
+              "REQ-CAMP-002"
+            ],
+            "mentions": [],
+            "file": "knowledge/05-implementation/components/components.md",
+            "line": 15
+          },
+          {
+            "id": "CMP-CAMP-CALENDAR",
+            "title": "Calendar module",
+            "level": 3,
+            "fields": {
+              "Owner": "roya-team",
+              "Code": "apps/web/src/calendar/**",
+              "Realizes": "REQ-CAMP-003"
+            },
+            "field_ids": [
+              "REQ-CAMP-003"
+            ],
+            "mentions": [],
+            "file": "knowledge/05-implementation/components/components.md",
+            "line": 21
+          },
+          {
+            "id": "APP-CAMP-WEB",
+            "title": "Web app",
+            "level": 3,
+            "fields": {
+              "Path": "apps/web",
+              "Build": "npm run build",
+              "Typecheck": "npm run typecheck",
+              "Lint": "npm run lint",
+              "Test": "npm test"
+            },
+            "field_ids": [],
+            "mentions": [],
+            "file": "profile.md",
+            "line": 18
+          }
+        ],
+        "engine": "<engine-version>",
+        "links": [
+          {
+            "from": "CHG-CAMP-001",
+            "type": "slice",
+            "to": "SLC-CAMP-001-A",
+            "resolved": true
+          },
+          {
+            "from": "EVD-CAMP-001",
+            "type": "proves",
+            "to": "TEST-CAMP-001",
+            "resolved": true
+          },
+          {
+            "from": "EVD-CAMP-002",
+            "type": "proves",
+            "to": "REQ-CAMP-002",
+            "resolved": true
+          },
+          {
+            "from": "TASK-CAMP-001",
+            "type": "inputs",
+            "to": "REQ-CAMP-001",
+            "resolved": true
+          },
+          {
+            "from": "TASK-CAMP-001",
+            "type": "inputs",
+            "to": "CMP-CAMP-CAMPAIGNS",
+            "resolved": true
+          },
+          {
+            "from": "TASK-CAMP-002",
+            "type": "inputs",
+            "to": "REQ-CAMP-002",
+            "resolved": true
+          },
+          {
+            "from": "TASK-CAMP-002",
+            "type": "inputs",
+            "to": "CMP-CAMP-CAMPAIGNS",
+            "resolved": true
+          },
+          {
+            "from": "TASK-CAMP-002",
+            "type": "depends_on",
+            "to": "TASK-CAMP-001",
+            "resolved": true
+          },
+          {
+            "from": "CHG-CAMP-002",
+            "type": "slice",
+            "to": "SLC-CAMP-002-A",
+            "resolved": true
+          },
+          {
+            "from": "TASK-CAMP-003",
+            "type": "inputs",
+            "to": "REQ-CAMP-003",
+            "resolved": true
+          },
+          {
+            "from": "TASK-CAMP-003",
+            "type": "inputs",
+            "to": "CMP-CAMP-CALENDAR",
+            "resolved": true
+          },
+          {
+            "from": "TASK-CAMP-004",
+            "type": "inputs",
+            "to": "REQ-CAMP-003",
+            "resolved": true
+          },
+          {
+            "from": "TASK-CAMP-004",
+            "type": "inputs",
+            "to": "CMP-CAMP-CALENDAR",
+            "resolved": true
+          },
+          {
+            "from": "TASK-CAMP-004",
+            "type": "depends_on",
+            "to": "TASK-CAMP-003",
+            "resolved": true
+          },
+          {
+            "from": "CHG-CAMP-003",
+            "type": "affects",
+            "to": "REQ-CAMP-001",
+            "resolved": true
+          },
+          {
+            "from": "TASK-CAMP-005",
+            "type": "inputs",
+            "to": "REQ-CAMP-001",
+            "resolved": true
+          },
+          {
+            "from": "SRC-CAMP-001",
+            "type": "covered_by",
+            "to": "REQ-CAMP-001",
+            "resolved": true
+          },
+          {
+            "from": "SRC-CAMP-002",
+            "type": "covered_by",
+            "to": "REQ-CAMP-002",
+            "resolved": true
+          },
+          {
+            "from": "SRC-CAMP-003",
+            "type": "covered_by",
+            "to": "REQ-CAMP-003",
+            "resolved": true
+          },
+          {
+            "from": "SRC-CAMP-003",
+            "type": "covered_by",
+            "to": "REQ-CAMP-004",
+            "resolved": true
+          },
+          {
+            "from": "SRC-CAMP-004",
+            "type": "covered_by",
+            "to": "REQ-CAMP-005",
+            "resolved": true
+          },
+          {
+            "from": "CAP-CAMP-001",
+            "type": "outcome",
+            "to": "OUT-CAMP-001",
+            "resolved": true
+          },
+          {
+            "from": "SLC-CAMP-001-A",
+            "type": "feature",
+            "to": "CAP-CAMP-001",
+            "resolved": true
+          },
+          {
+            "from": "SLC-CAMP-001-A",
+            "type": "delivers",
+            "to": "REQ-CAMP-001",
+            "resolved": true
+          },
+          {
+            "from": "SLC-CAMP-001-A",
+            "type": "delivers",
+            "to": "REQ-CAMP-002",
+            "resolved": true
+          },
+          {
+            "from": "CAP-CAMP-002",
+            "type": "outcome",
+            "to": "OUT-CAMP-001",
+            "resolved": true
+          },
+          {
+            "from": "SLC-CAMP-002-A",
+            "type": "feature",
+            "to": "CAP-CAMP-002",
+            "resolved": true
+          },
+          {
+            "from": "SLC-CAMP-002-A",
+            "type": "depends_on",
+            "to": "SLC-CAMP-001-A",
+            "resolved": true
+          },
+          {
+            "from": "SLC-CAMP-002-A",
+            "type": "delivers",
+            "to": "REQ-CAMP-003",
+            "resolved": true
+          },
+          {
+            "from": "SLC-CAMP-002-B",
+            "type": "feature",
+            "to": "CAP-CAMP-002",
+            "resolved": true
+          },
+          {
+            "from": "SLC-CAMP-002-B",
+            "type": "depends_on",
+            "to": "SLC-CAMP-002-A",
+            "resolved": true
+          },
+          {
+            "from": "SLC-CAMP-002-B",
+            "type": "delivers",
+            "to": "REQ-CAMP-004",
+            "resolved": true
+          },
+          {
+            "from": "CAP-CAMP-003",
+            "type": "outcome",
+            "to": "OUT-CAMP-002",
+            "resolved": true
+          },
+          {
+            "from": "SLC-CAMP-003-A",
+            "type": "feature",
+            "to": "CAP-CAMP-003",
+            "resolved": true
+          },
+          {
+            "from": "SLC-CAMP-003-A",
+            "type": "depends_on",
+            "to": "SLC-CAMP-002-A",
+            "resolved": true
+          },
+          {
+            "from": "SLC-CAMP-003-A",
+            "type": "delivers",
+            "to": "REQ-CAMP-005",
+            "resolved": true
+          },
+          {
+            "from": "REQ-CAMP-001",
+            "type": "feature",
+            "to": "CAP-CAMP-001",
+            "resolved": true
+          },
+          {
+            "from": "REQ-CAMP-001",
+            "type": "verified_by",
+            "to": "TEST-CAMP-001",
+            "resolved": true
+          },
+          {
+            "from": "REQ-CAMP-002",
+            "type": "feature",
+            "to": "CAP-CAMP-001",
+            "resolved": true
+          },
+          {
+            "from": "REQ-CAMP-003",
+            "type": "feature",
+            "to": "CAP-CAMP-002",
+            "resolved": true
+          },
+          {
+            "from": "REQ-CAMP-004",
+            "type": "feature",
+            "to": "CAP-CAMP-002",
+            "resolved": true
+          },
+          {
+            "from": "REQ-CAMP-005",
+            "type": "feature",
+            "to": "CAP-CAMP-003",
+            "resolved": true
+          },
+          {
+            "from": "REQ-CAMP-006",
+            "type": "feature",
+            "to": "CAP-CAMP-004",
+            "resolved": true
+          },
+          {
+            "from": "TEST-CAMP-001",
+            "type": "verifies",
+            "to": "REQ-CAMP-001",
+            "resolved": true
+          },
+          {
+            "from": "TEST-CAMP-010",
+            "type": "verifies",
+            "to": "REQ-CAMP-002",
+            "resolved": true
+          },
+          {
+            "from": "TEST-CAMP-011",
+            "type": "verifies",
+            "to": "REQ-CAMP-003",
+            "resolved": true
+          },
+          {
+            "from": "TEST-CAMP-012",
+            "type": "verifies",
+            "to": "REQ-CAMP-004",
+            "resolved": true
+          },
+          {
+            "from": "TEST-CAMP-013",
+            "type": "verifies",
+            "to": "REQ-CAMP-005",
+            "resolved": true
+          },
+          {
+            "from": "INV-CAMP-001",
+            "type": "constrained_by",
+            "to": "REQ-CAMP-003",
+            "resolved": true
+          },
+          {
+            "from": "ADR-CAMP-001",
+            "type": "supports",
+            "to": "CAP-CAMP-001",
+            "resolved": true
+          },
+          {
+            "from": "ADR-CAMP-001",
+            "type": "supports",
+            "to": "CAP-CAMP-002",
+            "resolved": true
+          },
+          {
+            "from": "ADR-CAMP-001",
+            "type": "supports",
+            "to": "CAP-CAMP-003",
+            "resolved": true
+          },
+          {
+            "from": "RULE-CAMP-001",
+            "type": "applies_to",
+            "to": "CMP-CAMP-CALENDAR",
+            "resolved": true
+          },
+          {
+            "from": "CMP-CAMP-CAMPAIGNS",
+            "type": "realizes",
+            "to": "REQ-CAMP-001",
+            "resolved": true
+          },
+          {
+            "from": "CMP-CAMP-CAMPAIGNS",
+            "type": "realizes",
+            "to": "REQ-CAMP-002",
+            "resolved": true
+          },
+          {
+            "from": "CMP-CAMP-CALENDAR",
+            "type": "realizes",
+            "to": "REQ-CAMP-003",
+            "resolved": true
+          }
+        ],
+        "status": {
+          "features": {
+            "CAP-CAMP-001": {
+              "id": "CAP-CAMP-001",
+              "state": "done",
+              "depth": "designed",
+              "horizon": "now",
+              "slicesDone": 1,
+              "slicesTotal": 1,
+              "requirementsDone": 2,
+              "requirementsTotal": 2,
+              "requirements": [
+                "REQ-CAMP-001",
+                "REQ-CAMP-002"
+              ],
+              "openFixes": [
+                "CHG-CAMP-003"
+              ],
+              "unprovenNfrs": [],
+              "approval": "approved"
+            },
+            "CAP-CAMP-002": {
+              "id": "CAP-CAMP-002",
+              "state": "building",
+              "depth": "designed",
+              "horizon": "now",
+              "slicesDone": 0,
+              "slicesTotal": 2,
+              "requirementsDone": 0,
+              "requirementsTotal": 2,
+              "requirements": [
+                "REQ-CAMP-003",
+                "REQ-CAMP-004"
+              ],
+              "openFixes": [],
+              "unprovenNfrs": [],
+              "approval": "approved"
+            },
+            "CAP-CAMP-003": {
+              "id": "CAP-CAMP-003",
+              "state": "planned",
+              "depth": "sliced",
+              "horizon": "next",
+              "slicesDone": 0,
+              "slicesTotal": 1,
+              "requirementsDone": 0,
+              "requirementsTotal": 1,
+              "requirements": [
+                "REQ-CAMP-005"
+              ],
+              "openFixes": [],
+              "unprovenNfrs": [],
+              "approval": "approved"
+            },
+            "CAP-CAMP-004": {
+              "id": "CAP-CAMP-004",
+              "state": "outlined",
+              "depth": "outlined",
+              "horizon": "later",
+              "slicesDone": 0,
+              "slicesTotal": 0,
+              "requirementsDone": 0,
+              "requirementsTotal": 1,
+              "requirements": [
+                "REQ-CAMP-006"
+              ],
+              "openFixes": [],
+              "unprovenNfrs": [],
+              "approval": "none"
+            },
+            "CAP-CAMP-005": {
+              "id": "CAP-CAMP-005",
+              "state": "idea",
+              "depth": "idea",
+              "horizon": "backlog",
+              "slicesDone": 0,
+              "slicesTotal": 0,
+              "requirementsDone": 0,
+              "requirementsTotal": 0,
+              "requirements": [],
+              "openFixes": [],
+              "unprovenNfrs": [],
+              "approval": "none"
+            }
+          },
+          "requirements": {
+            "REQ-CAMP-001": {
+              "id": "REQ-CAMP-001",
+              "state": "done",
+              "measure": null,
+              "slices": [
+                "SLC-CAMP-001-A"
+              ],
+              "baseline": [],
+              "evidence": [
+                "EVD-CAMP-001"
+              ],
+              "missingEvidence": false,
+              "openFixes": [
+                "CHG-CAMP-003"
+              ]
+            },
+            "REQ-CAMP-002": {
+              "id": "REQ-CAMP-002",
+              "state": "done",
+              "measure": null,
+              "slices": [
+                "SLC-CAMP-001-A"
+              ],
+              "baseline": [],
+              "evidence": [
+                "EVD-CAMP-002"
+              ],
+              "missingEvidence": false,
+              "openFixes": []
+            },
+            "REQ-CAMP-003": {
+              "id": "REQ-CAMP-003",
+              "state": "building",
+              "measure": null,
+              "slices": [
+                "SLC-CAMP-002-A"
+              ],
+              "baseline": [],
+              "evidence": [],
+              "missingEvidence": false,
+              "openFixes": []
+            },
+            "REQ-CAMP-004": {
+              "id": "REQ-CAMP-004",
+              "state": "planned",
+              "measure": null,
+              "slices": [
+                "SLC-CAMP-002-B"
+              ],
+              "baseline": [],
+              "evidence": [],
+              "missingEvidence": false,
+              "openFixes": []
+            },
+            "REQ-CAMP-005": {
+              "id": "REQ-CAMP-005",
+              "state": "planned",
+              "measure": null,
+              "slices": [
+                "SLC-CAMP-003-A"
+              ],
+              "baseline": [],
+              "evidence": [],
+              "missingEvidence": false,
+              "openFixes": []
+            },
+            "REQ-CAMP-006": {
+              "id": "REQ-CAMP-006",
+              "state": "outlined",
+              "measure": null,
+              "slices": [],
+              "baseline": [],
+              "evidence": [],
+              "missingEvidence": false,
+              "openFixes": []
+            }
+          },
+          "slices": {
+            "SLC-CAMP-001-A": {
+              "id": "SLC-CAMP-001-A",
+              "feature": "CAP-CAMP-001",
+              "state": "done",
+              "change": "CHG-CAMP-001",
+              "needsRefinement": null,
+              "approval": "approved"
+            },
+            "SLC-CAMP-002-A": {
+              "id": "SLC-CAMP-002-A",
+              "feature": "CAP-CAMP-002",
+              "state": "building",
+              "change": "CHG-CAMP-002",
+              "needsRefinement": null,
+              "approval": "approved"
+            },
+            "SLC-CAMP-002-B": {
+              "id": "SLC-CAMP-002-B",
+              "feature": "CAP-CAMP-002",
+              "state": "planned",
+              "change": null,
+              "needsRefinement": null,
+              "approval": "approved"
+            },
+            "SLC-CAMP-003-A": {
+              "id": "SLC-CAMP-003-A",
+              "feature": "CAP-CAMP-003",
+              "state": "planned",
+              "change": null,
+              "needsRefinement": null,
+              "approval": "approved"
+            }
+          },
+          "changes": {
+            "CHG-CAMP-001": {
+              "id": "CHG-CAMP-001",
+              "stage": "closed",
+              "stageLabel": "Closed",
+              "blocked": false,
+              "tasksDone": 2,
+              "tasksTotal": 2,
+              "released": false,
+              "last": {
+                "id": "EVT-CHG-CAMP-001-0008",
+                "index": 7,
+                "when": "2026-09-10T12:20Z",
+                "event": "change.advanced",
+                "target": "CHG-CAMP-001",
+                "by": "islam",
+                "git": "c3d4e5f",
+                "note": "verified → closed",
+                "line": 14
+              }
+            },
+            "CHG-CAMP-002": {
+              "id": "CHG-CAMP-002",
+              "stage": "build",
+              "stageLabel": "4 Build",
+              "blocked": false,
+              "tasksDone": 1,
+              "tasksTotal": 2,
+              "released": false,
+              "last": {
+                "id": "EVT-CHG-CAMP-002-0007",
+                "index": 6,
+                "when": "2026-09-22T09:20Z",
+                "event": "check.red",
+                "target": "CHG-CAMP-002",
+                "by": "ai:claude",
+                "git": "e5f6a7b",
+                "note": "tests fail before the work: APP-CAMP-WEB — test ✗",
+                "line": 13
+              }
+            },
+            "CHG-CAMP-003": {
+              "id": "CHG-CAMP-003",
+              "stage": "build",
+              "stageLabel": "4 Build",
+              "blocked": false,
+              "tasksDone": 0,
+              "tasksTotal": 1,
+              "released": false,
+              "last": {
+                "id": "EVT-CHG-CAMP-003-0002",
+                "index": 1,
+                "when": "2026-09-23T10:15Z",
+                "event": "task.started",
+                "target": "TASK-CAMP-005",
+                "by": "islam",
+                "git": "e5f6a7b",
+                "note": "fixing by hand",
+                "line": 8
+              }
+            }
+          },
+          "tasks": {
+            "TASK-CAMP-001": {
+              "id": "TASK-CAMP-001",
+              "change": "CHG-CAMP-001",
+              "state": "done",
+              "last": {
+                "id": "EVT-CHG-CAMP-001-0004",
+                "index": 3,
+                "when": "2026-09-10T11:00Z",
+                "event": "task.done",
+                "target": "TASK-CAMP-001",
+                "by": "ai:claude",
+                "git": "b2c3d4e",
+                "note": "form with date validation",
+                "line": 10
+              }
+            },
+            "TASK-CAMP-002": {
+              "id": "TASK-CAMP-002",
+              "change": "CHG-CAMP-001",
+              "state": "done",
+              "last": {
+                "id": "EVT-CHG-CAMP-001-0006",
+                "index": 5,
+                "when": "2026-09-10T12:00Z",
+                "event": "task.done",
+                "target": "TASK-CAMP-002",
+                "by": "ai:claude",
+                "git": "c3d4e5f",
+                "note": "list newest first",
+                "line": 12
+              }
+            },
+            "TASK-CAMP-003": {
+              "id": "TASK-CAMP-003",
+              "change": "CHG-CAMP-002",
+              "state": "done",
+              "last": {
+                "id": "EVT-CHG-CAMP-002-0005",
+                "index": 4,
+                "when": "2026-09-21T12:00Z",
+                "event": "task.done",
+                "target": "TASK-CAMP-003",
+                "by": "ai:claude",
+                "git": "e5f6a7b",
+                "note": "month grid renders the campaign dates",
+                "line": 11
+              }
+            },
+            "TASK-CAMP-004": {
+              "id": "TASK-CAMP-004",
+              "change": "CHG-CAMP-002",
+              "state": "doing",
+              "last": {
+                "id": "EVT-CHG-CAMP-002-0006",
+                "index": 5,
+                "when": "2026-09-22T09:00Z",
+                "event": "task.started",
+                "target": "TASK-CAMP-004",
+                "by": "ai:claude",
+                "git": "e5f6a7b",
+                "note": "",
+                "line": 12
+              }
+            },
+            "TASK-CAMP-005": {
+              "id": "TASK-CAMP-005",
+              "change": "CHG-CAMP-003",
+              "state": "doing",
+              "last": {
+                "id": "EVT-CHG-CAMP-003-0002",
+                "index": 1,
+                "when": "2026-09-23T10:15Z",
+                "event": "task.started",
+                "target": "TASK-CAMP-005",
+                "by": "islam",
+                "git": "e5f6a7b",
+                "note": "fixing by hand",
+                "line": 8
+              }
+            }
+          }
+        },
+        "evidence": [
+          {
+            "id": "EVD-CAMP-001",
+            "change": "CHG-CAMP-001",
+            "result": "pass",
+            "proves": [
+              "TEST-CAMP-001"
+            ],
+            "metrics": {},
+            "git": "c3d4e5f",
+            "file": "changes/CHG-CAMP-001/evidence/evidence.md",
+            "line": 3
+          },
+          {
+            "id": "EVD-CAMP-002",
+            "change": "CHG-CAMP-001",
+            "result": "pass",
+            "proves": [
+              "REQ-CAMP-002"
+            ],
+            "metrics": {},
+            "git": "c3d4e5f",
+            "file": "changes/CHG-CAMP-001/evidence/evidence.md",
+            "line": 10
+          }
+        ],
+        "issues": [],
+        "board": "# Campaign Planner — Status\n\n_Generated by `royascaff index` — do not edit. As of the last recorded event: 2026-09-23T10:15Z._\n\n## ▶ Next up\n\n1. Continue TASK-CAMP-005 · Validate date order (CHG-CAMP-003, tasks 0/1)\n2. Continue TASK-CAMP-004 · Posts on the grid (CHG-CAMP-002, tasks 1/2)\n\n_Say \"royascaff continue\" to start the first item._\n\n## Features\n\n| Horizon | Feature | State | Depth | Slices done | Requirements done | Notes |\n|---|---|---|---|---|---|---|\n| Now | CAP-CAMP-001 · Create campaigns | ✅ Done | Designed | 1/1 | 2/2 | open fix: CHG-CAMP-003 |\n| Now | CAP-CAMP-002 · Schedule posts | 🔨 Building | Designed | 0/2 | 0/2 | — |\n| Next | CAP-CAMP-003 · Client approval | 🗺 Planned | Sliced | 0/1 | 0/1 | — |\n| Later | CAP-CAMP-004 · Campaign analytics | 📝 Outlined | Outlined | 0/0 | 0/1 | — |\n| Backlog | CAP-CAMP-005 · AI caption suggestions | 💡 Idea | Idea | 0/0 | 0/0 | — |\n\n## Outcomes\n\n| Outcome | Features done | State | Measured |\n|---|---|---|---|\n| OUT-CAMP-001 · Campaigns are planned in one place | 1/2 | open | — |\n| OUT-CAMP-002 · Clients approve content faster | 0/1 | open | — |\n\n## Active work\n\n| Change | Slice | Stage | Tasks done | Last activity |\n|---|---|---|---|---|\n| CHG-CAMP-002 · Calendar with posts | SLC-CAMP-002-A | 4 Build | 1/2 | 2026-09-22 · check.red CHG-CAMP-002 — tests fail before the work: APP-CAMP-WEB — test ✗ |\n\n## Fixes\n\n| Change | Kind | Affects | Stage | Tasks done | Last activity |\n|---|---|---|---|---|---|\n| CHG-CAMP-003 · End date accepted before start date | bug | REQ-CAMP-001 | 4 Build | 0/1 | 2026-09-23 · task.started TASK-CAMP-005 — fixing by hand |\n\n## Planned slices (not started)\n\n| Slice | Feature | Horizon | Depends on | Ready? |\n|---|---|---|---|---|\n| SLC-CAMP-002-B · Drag posts between days | CAP-CAMP-002 | Now | SLC-CAMP-002-A | waits for SLC-CAMP-002-A |\n| SLC-CAMP-003-A · Approval link for clients | CAP-CAMP-003 | Next | SLC-CAMP-002-A | waits for SLC-CAMP-002-A |\n\n## Recently closed\n\n| Change | Slice / affects | Closed |\n|---|---|---|\n| CHG-CAMP-001 · Campaign form and list | SLC-CAMP-001-A | 2026-09-10 |\n\n## Health\n\n- Validation: 0 errors · 0 warnings (run `royascaff validate` for details)\n- Discovery: 1 question(s), 0 open · 1 assumption(s) · project approved by islam (2026-09-19)\n- Brief: 4 of 5 demand(s) covered · 2 delivered · 1 out of scope\n- Docs vs code: 654 doc lines / 0 app lines\n- Largest open context pack: TASK-CAMP-004 ~996 of 12,000 tokens\n- Records: 60 · features 5 · slices 4 · changes 3 · tasks 5\n"
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "export --out",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "export",
+      "data": {
+        "out": "<tmp>/exchange.json",
+        "files": 25,
+        "records": 39
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

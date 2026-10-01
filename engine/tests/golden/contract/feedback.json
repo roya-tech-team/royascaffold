@@ -1,0 +1,18 @@
+[
+  {
+    "scenario": "feedback",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "feedback",
+      "data": {
+        "file": "project/.usage/feedback-<stamp>-praise.md",
+        "kind": "praise"
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

@@ -1,0 +1,21 @@
+[
+  {
+    "scenario": "open --kind chore",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "open",
+      "data": {
+        "id": "CHG-CAMP-004",
+        "dir": "changes/CHG-CAMP-004",
+        "risk": "low"
+      },
+      "warnings": [],
+      "events": [
+        "EVT-CHG-CAMP-004-0001"
+      ]
+    }
+  }
+]

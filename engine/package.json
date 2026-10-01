@@ -1,6 +1,6 @@
 {
   "name": "royascaff",
-  "version": "1.4.0-beta.4",
+  "version": "1.5.0-alpha.1",
   "description": "RoyaScaff engine 1.4 — navigate and trace AI-assisted software delivery",
   "bin": {
     "royascaff": "bin/royascaff.cjs",

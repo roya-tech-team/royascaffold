@@ -1,0 +1,69 @@
+[
+  {
+    "scenario": "advance (already there)",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "advance",
+      "data": {
+        "id": "CHG-CAMP-001",
+        "from": "closed",
+        "reached": "closed",
+        "steps": [],
+        "message": "CHG-CAMP-001 is already closed"
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "advance (a gate refuses)",
+    "exit": 1,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": false,
+      "command": "advance",
+      "error": {
+        "code": "GATE_REFUSED",
+        "message": "CHG-CAMP-004 cannot move to analyzed: stopped at draft",
+        "missing": [
+          "classify every layer as changed / referenced / unchanged / not-applicable; not classified: Business, Requirements, Domain, Architecture, Data, Contracts, Experience, Security, Components & tests, Quality & operations"
+        ],
+        "details": {
+          "id": "CHG-CAMP-004",
+          "from": "draft",
+          "reached": "draft",
+          "steps": [
+            {
+              "to": "analyzed",
+              "ok": false,
+              "checks": [
+                {
+                  "id": "impact",
+                  "ok": false,
+                  "message": "classify every layer as changed / referenced / unchanged / not-applicable; not classified: Business, Requirements, Domain, Architecture, Data, Contracts, Experience, Security, Components & tests, Quality & operations"
+                },
+                {
+                  "id": "impact-named",
+                  "ok": true,
+                  "message": "every changed or referenced layer names what it touches"
+                },
+                {
+                  "id": "risk",
+                  "ok": true,
+                  "message": "risk: low"
+                }
+              ]
+            }
+          ],
+          "ok": false
+        }
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

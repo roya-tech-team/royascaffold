@@ -1,0 +1,78 @@
+[
+  {
+    "scenario": "contract",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "contract",
+      "data": {
+        "contract": "1.0",
+        "engine": "<engine-version>",
+        "commands": [
+          "adopt",
+          "advance",
+          "approve",
+          "backups",
+          "block",
+          "brief",
+          "cache",
+          "check",
+          "context",
+          "continue",
+          "contract",
+          "events",
+          "export",
+          "feedback",
+          "index",
+          "init",
+          "install",
+          "log",
+          "measure",
+          "migrate",
+          "new",
+          "next",
+          "open",
+          "record",
+          "refine",
+          "render",
+          "roundtrip",
+          "show",
+          "smoke",
+          "status",
+          "task",
+          "tasks",
+          "trace",
+          "unblock",
+          "usage",
+          "validate",
+          "where"
+        ],
+        "adapters": [
+          "generic",
+          "node",
+          "web-3d",
+          "web-api",
+          "web-ui"
+        ],
+        "error_codes": [
+          "NOT_A_PROJECT",
+          "UNKNOWN_ID",
+          "GATE_REFUSED",
+          "HUMAN_REQUIRED",
+          "STALE_APPROVAL",
+          "OUTSIDE_PATHS",
+          "CHECK_FAILED",
+          "VERSION_MISMATCH",
+          "ALREADY_EXISTS",
+          "INVALID_INPUT",
+          "UNKNOWN_COMMAND",
+          "INTERNAL"
+        ]
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

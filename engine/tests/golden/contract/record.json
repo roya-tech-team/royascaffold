@@ -1,0 +1,26 @@
+[
+  {
+    "scenario": "record --files",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "record",
+      "data": {
+        "id": "CHG-CAMP-005",
+        "kind": "chore",
+        "commits": [],
+        "files": [
+          "apps/web/x.txt"
+        ]
+      },
+      "warnings": [],
+      "events": [
+        "EVT-CHG-CAMP-005-0001",
+        "EVT-CHG-CAMP-005-0002",
+        "EVT-CHG-CAMP-005-0003"
+      ]
+    }
+  }
+]

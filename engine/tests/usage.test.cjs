@@ -68,7 +68,7 @@ test("feedback writes a report to review; usage shows what is counted; nothing i
   const text = fs.readFileSync(path.join(root, file), "utf8");
   assert.match(text, /^# RoyaScaff feedback · confusing/);
   assert.match(text, /The approval step confused my team/);
-  assert.match(text, /RoyaScaff 1\.4\.0-beta\.\d+ · Node v\d+/);
+  assert.match(text, /RoyaScaff \d+\.\d+\.\d+(-[a-z]+\.\d+)? · Node v\d+/);
   assert.match(text, /\| draft \| 1 \| 0\.5 \| 0\.5 \|/);
   assert.match(text, /- advance: 1 runs, 1 refused/);
   assert.match(text, /- checks: 1\n- evidence: 1/);

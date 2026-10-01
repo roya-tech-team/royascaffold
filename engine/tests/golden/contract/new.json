@@ -1,0 +1,90 @@
+[
+  {
+    "scenario": "new task",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "new",
+      "data": {
+        "id": "TASK-CAMP-006",
+        "change": "CHG-CAMP-004",
+        "file": "changes/CHG-CAMP-004/plan.md"
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "new record",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "new",
+      "data": {
+        "id": "QST-CAMP-002",
+        "kind": "question",
+        "file": "knowledge/00-discovery/discovery.md"
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "new feature",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "new",
+      "data": {
+        "id": "CAP-CAMP-006",
+        "horizon": "backlog",
+        "file": "knowledge/00-roadmap/roadmap.md"
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "new slice",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "new",
+      "data": {
+        "id": "SLC-CAMP-001-B",
+        "feature": "CAP-CAMP-001",
+        "order": 2,
+        "delivers": [],
+        "depends": [],
+        "planned_at": "—",
+        "file": "knowledge/00-roadmap/roadmap.md"
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "new doc",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "new",
+      "data": {
+        "kind": "security",
+        "file": "knowledge/04-design/security.md"
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

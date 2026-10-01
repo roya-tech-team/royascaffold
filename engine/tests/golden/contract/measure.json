@@ -1,0 +1,18 @@
+[
+  {
+    "scenario": "measure (an outcome that does not exist)",
+    "exit": 1,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": false,
+      "command": "measure",
+      "error": {
+        "code": "UNKNOWN_ID",
+        "message": "OUT-CAMP-404 is not an outcome (OUT-)"
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

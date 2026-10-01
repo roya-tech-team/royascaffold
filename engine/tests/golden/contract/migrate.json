@@ -1,0 +1,75 @@
+[
+  {
+    "scenario": "migrate (dry run, 1.3)",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "migrate",
+      "data": {
+        "action": "dry-run",
+        "from": "1.3",
+        "to": "1.4",
+        "code": "KUNI",
+        "moves": 32,
+        "edits": 26,
+        "creates": 5,
+        "features": 7,
+        "slices": 7,
+        "changes": [
+          {
+            "id": "CHG-KUNI-001",
+            "kind": "feature",
+            "status": "reconciled",
+            "slices": [
+              "SLC-KUNI-001-A",
+              "SLC-KUNI-002-A",
+              "SLC-KUNI-003-A",
+              "SLC-KUNI-004-A"
+            ]
+          },
+          {
+            "id": "CHG-KUNI-002",
+            "kind": "feature",
+            "status": "reconciled",
+            "slices": [
+              "SLC-KUNI-005-A",
+              "SLC-KUNI-006-A",
+              "SLC-KUNI-007-A"
+            ]
+          }
+        ],
+        "apps": [
+          "APP-KUNI-WEB (src)"
+        ],
+        "archived": [
+          "CTX-KUNI-TASK-001",
+          "CTX-KUNI-TASK-002",
+          "CTX-KUNI-TASK-003",
+          "CTX-KUNI-TASK-004"
+        ],
+        "lost": [],
+        "validation": {
+          "ok": true,
+          "errors": 0,
+          "warnings": 36,
+          "records": 163,
+          "features": 7,
+          "slices": 7,
+          "changes": 2,
+          "tasks": 6
+        },
+        "errors": [],
+        "notes": [
+          "CHG-KUNI-001 already has a log.md: left as is",
+          "Discovery, architecture and project log pages were added: complete the discovery with the person, then a person runs royascaff approve project and royascaff approve roadmap before new work opens."
+        ],
+        "manifest": "project/_legacy/1.3/migration",
+        "before_records": 157
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

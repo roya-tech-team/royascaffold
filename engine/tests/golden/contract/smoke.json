@@ -1,0 +1,22 @@
+[
+  {
+    "scenario": "smoke init",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "smoke",
+      "data": {
+        "app": "APP-DEMO-WEB",
+        "file": "apps/web/scripts/royascaff-smoke.mjs",
+        "kept": false,
+        "command": "node scripts/royascaff-smoke.mjs",
+        "installed": false,
+        "install": "npm i -D playwright && npx playwright install chromium"
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

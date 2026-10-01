@@ -1,0 +1,18 @@
+[
+  {
+    "scenario": "cache clear",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.0",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "cache",
+      "data": {
+        "removed": true,
+        "path": "project/.cache"
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]
