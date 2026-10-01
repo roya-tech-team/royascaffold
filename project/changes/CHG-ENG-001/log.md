@@ -13,3 +13,4 @@
 | 2026-10-01T02:25:05Z | task.started | TASK-ENG-001 | ai:claude | 9c0e5c3 | tests first: the guard tests exist and fail without the wiring |
 | 2026-10-01T02:25:56Z | task.done | TASK-ENG-001 | ai:claude | 3686242 | guard.cjs and the entry wiring are in; the e43 tests pass (the guard, the pinned tool script, the tag rule, the project itself) |
 | 2026-10-01T02:26:10Z | task.started | TASK-ENG-002 | ai:claude | 3686242 | bump to 1.5.0, accept a stable version in the package test |
+| 2026-10-01T02:26:48Z | task.done | TASK-ENG-002 | ai:claude | 7da2d25 | package.json is 1.5.0; contract-package accepts 1.5.0 and its pre-releases; the full suite runs in verify |

@@ -16,7 +16,7 @@
 
 - **Goal:** the package is 1.5.0, its tests accept a stable version, and the progress log records the gate
 - **Inputs:** REQ-ENG-002, CMP-ENG-004
-- **Allowed paths:** engine/package*, engine/tests/contract-package*, engine/README*, engine/docs/**, docs/**
+- **Allowed paths:** engine/package*, engine/tests/contract-package*, engine/README*, engine/docs/**, engine/skill/**, docs/**
 - **Checks:** test
 - **Done when:** version 1.5.0, the full suite passes and the acceptance table is recorded
 - **Depends on:** TASK-ENG-001
