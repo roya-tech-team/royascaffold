@@ -118,6 +118,11 @@ test("migrate on the engine's own project (this repository's dogfood project/) a
     fs.cpSync(own, path.join(dir, "project"), { recursive: true, filter: (src) => !/[\\/]\.(backups|cache|usage)([\\/]|$)/.test(src) });
     fs.cpSync(path.join(REPO, "engine", "lib"), path.join(dir, "engine", "lib"), { recursive: true });
     fs.cpSync(path.join(REPO, "engine", "bin"), path.join(dir, "engine", "bin"), { recursive: true });
+    // Once the repository has migrated its own project, test the migration from the state before it: a 1.5 project.
+    const profile = path.join(dir, "project", "profile.md");
+    fs.writeFileSync(profile, fs.readFileSync(profile, "utf8").replace(/^royascaff: 1\.[46]$/m, "royascaff: 1.4"));
+    fs.rmSync(path.join(dir, "project", "_legacy", "1.5"), { recursive: true, force: true });
+    fs.rmSync(path.join(dir, "project", "baselines"), { recursive: true, force: true });
     cases.push(["the engine's own project", dir]);
   }
   cases.push(["a generated project", withReleases(makeProject({ features: 25 }))]);
