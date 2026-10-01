@@ -1,0 +1,156 @@
+[
+  {
+    "scenario": "claim a task",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.2",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "claim",
+      "data": {
+        "ok": true,
+        "task": "TASK-CAMP-004",
+        "change": "CHG-CAMP-002",
+        "agent": "ai:alpha",
+        "paths": [
+          "apps/web/src/calendar/**"
+        ],
+        "lease_minutes": 30,
+        "lease_until": "<now>",
+        "renewed": false
+      },
+      "warnings": [],
+      "events": [
+        "EVT-CHG-CAMP-002-0012"
+      ]
+    }
+  },
+  {
+    "scenario": "claim (an overlapping path is refused)",
+    "exit": 1,
+    "envelope": {
+      "contract": "1.2",
+      "engine": "<engine-version>",
+      "ok": false,
+      "command": "claim",
+      "error": {
+        "code": "CLAIM_CONFLICT",
+        "message": "TASK-CAMP-005 overlaps a claim held by ai:alpha (apps/web/src/calendar/**) until <now>",
+        "missing": [
+          "TASK-CAMP-004 held by ai:alpha: apps/web/src/calendar/x.ts ~ apps/web/src/calendar/**"
+        ],
+        "details": {
+          "ok": false,
+          "task": "TASK-CAMP-005",
+          "agent": "ai:beta",
+          "paths": [
+            "apps/web/src/calendar/x.ts"
+          ],
+          "conflicts": [
+            {
+              "task": "TASK-CAMP-004",
+              "change": "CHG-CAMP-002",
+              "holder": "ai:alpha",
+              "paths": [
+                "apps/web/src/calendar/**"
+              ],
+              "lease_until": "<now>",
+              "overlap": [
+                "apps/web/src/calendar/x.ts ~ apps/web/src/calendar/**"
+              ]
+            }
+          ],
+          "holder": "ai:alpha",
+          "holder_paths": [
+            "apps/web/src/calendar/**"
+          ],
+          "lease_until": "<now>"
+        }
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "claim --list",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.2",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "claim",
+      "data": {
+        "claims": [
+          {
+            "task": "TASK-CAMP-004",
+            "change": "CHG-CAMP-002",
+            "agent": "ai:alpha",
+            "paths": [
+              "apps/web/src/calendar/**"
+            ],
+            "lease_until": "<now>",
+            "claimed_at": "<now>",
+            "event": "EVT-CHG-CAMP-002-0012"
+          }
+        ]
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "claim --release (not the holder)",
+    "exit": 1,
+    "envelope": {
+      "contract": "1.2",
+      "engine": "<engine-version>",
+      "ok": false,
+      "command": "claim",
+      "error": {
+        "code": "NOT_CLAIM_HOLDER",
+        "message": "TASK-CAMP-004 is claimed by ai:alpha until <now>, not by ai:beta",
+        "missing": [
+          "ask ai:alpha to release it, or wait for the lease to end"
+        ]
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "claim --release",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.2",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "claim",
+      "data": {
+        "released": true,
+        "task": "TASK-CAMP-004",
+        "change": "CHG-CAMP-002",
+        "agent": "ai:alpha"
+      },
+      "warnings": [],
+      "events": [
+        "EVT-CHG-CAMP-002-0013"
+      ]
+    }
+  },
+  {
+    "scenario": "claim (a task that does not exist)",
+    "exit": 1,
+    "envelope": {
+      "contract": "1.2",
+      "engine": "<engine-version>",
+      "ok": false,
+      "command": "claim",
+      "error": {
+        "code": "UNKNOWN_ID",
+        "message": "TASK-CAMP-404 is not a task in this project"
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

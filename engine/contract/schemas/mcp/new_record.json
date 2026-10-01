@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.2/mcp/new_record.json",
+  "title": "new_record",
+  "description": "Create a record (source, question, assumption, outcome, requirement, nfr, concept, invariant, workflow, decision, contract, component, rule, test, release, flag, experiment) and return its ID.",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "type": "string",
+      "description": "The record kind.",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string",
+      "description": "The record title.",
+      "minLength": 1
+    },
+    "agent": {
+      "type": "string",
+      "description": "Who is acting, for example claude or cursor. The engine records it as ai:<agent> and never as a person. Default: mcp."
+    },
+    "fields": {
+      "type": "object",
+      "description": "Optional fields, the same as the options of `new record`: quote, covered, feature, topic, basis, scope, includes, applies, priority, code, realizes, verifies, check, hides, remove-by, hypothesis, variants, metric, outcome, source-file.",
+      "properties": {
+        "quote": {
+          "type": "string"
+        },
+        "covered": {
+          "type": "string"
+        },
+        "feature": {
+          "type": "string"
+        },
+        "topic": {
+          "type": "string"
+        },
+        "basis": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "includes": {
+          "type": "string"
+        },
+        "applies": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "realizes": {
+          "type": "string"
+        },
+        "verifies": {
+          "type": "string"
+        },
+        "check": {
+          "type": "string"
+        },
+        "hides": {
+          "type": "string"
+        },
+        "remove-by": {
+          "type": "string"
+        },
+        "hypothesis": {
+          "type": "string"
+        },
+        "variants": {
+          "type": "string"
+        },
+        "metric": {
+          "type": "string"
+        },
+        "outcome": {
+          "type": "string"
+        },
+        "source-file": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "kind",
+    "title"
+  ],
+  "additionalProperties": false
+}

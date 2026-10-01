@@ -3,7 +3,7 @@
     "scenario": "install",
     "exit": 0,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": true,
       "command": "install",
@@ -12,6 +12,13 @@
           "claude"
         ],
         "cli": "node <engine>/bin/royascaff.cjs",
+        "mcp": [
+          {
+            "tool": "claude",
+            "file": ".mcp.json",
+            "action": "created"
+          }
+        ],
         "skill_files": [
           ".claude/skills/royascaff/cards/adopt.md",
           ".claude/skills/royascaff/cards/build.md",

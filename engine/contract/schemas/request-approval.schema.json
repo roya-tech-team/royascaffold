@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.2/request-approval.schema.json",
+  "title": "royascaff request-approval: data",
+  "description": "The `data` of the contract envelope for `request-approval`. It only records a request for a person; `approved` is always false. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": ["requested", "approved", "id", "target", "act", "requested_by"],
+  "properties": {
+    "requested": { "type": "boolean" },
+    "approved": { "type": "boolean", "const": false },
+    "id": { "type": "string", "pattern": "^EVT-" },
+    "target": { "type": "string" },
+    "act": { "type": "string", "enum": ["approve-project", "approve-roadmap", "approve-change", "person-check", "measure"] },
+    "requested_by": { "type": "string" },
+    "note": { "type": "string" },
+    "answer": { "type": "string" }
+  }
+}

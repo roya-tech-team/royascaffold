@@ -3,7 +3,7 @@
     "scenario": "adapter new",
     "exit": 0,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": true,
       "command": "adapter",
@@ -25,7 +25,7 @@
     "scenario": "adapter test",
     "exit": 0,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": true,
       "command": "adapter",
@@ -81,7 +81,7 @@
     "scenario": "adapter test (a manifest that does not fit)",
     "exit": 1,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": false,
       "command": "adapter",

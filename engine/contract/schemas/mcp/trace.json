@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.2/mcp/trace.json",
+  "title": "trace",
+  "description": "Follow a feature or requirement: slices, changes, tasks, tests, evidence and code (the same as `trace <ID> --json`).",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "A feature (CAP-) or requirement (REQ-) ID.",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "id"
+  ],
+  "additionalProperties": false
+}

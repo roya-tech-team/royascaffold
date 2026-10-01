@@ -3,7 +3,7 @@
     "scenario": "adopt docs",
     "exit": 0,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": true,
       "command": "adopt",
@@ -46,7 +46,7 @@
     "scenario": "adopt --plan (a module no component owns)",
     "exit": 0,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": true,
       "command": "adopt",
@@ -97,7 +97,7 @@
     "scenario": "adopt --plan (again: nothing new)",
     "exit": 0,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": true,
       "command": "adopt",
@@ -148,7 +148,7 @@
     "scenario": "adopt",
     "exit": 0,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": true,
       "command": "adopt",

@@ -72,7 +72,13 @@ test("install puts the navigator into Cursor and Claude Code, fills the CLI, nev
     assert.equal(fs.readdirSync(path.join(repo, tool, "skills/royascaff/cards")).length, 12);
   }
   assert.equal(fs.readFileSync(path.join(repo, "project/PLAYBOOK.md"), "utf8"), "# Our playbook\n");
-  assert.deepEqual(install(repo, { cursor: true }).tools, ["cursor"]);
+  // Same entry as before, so nothing is asked; a different one would need a person to say yes (see e7b1-mcp.test.cjs).
+  process.env.ROYASCAFF_CLI = "npx royascaff@beta";
+  try {
+    assert.deepEqual(install(repo, { cursor: true }).tools, ["cursor"]);
+  } finally {
+    delete process.env.ROYASCAFF_CLI;
+  }
 });
 
 test("walkthrough through the CLI: init → plan → open → design → plan → build → check → Done", () => {

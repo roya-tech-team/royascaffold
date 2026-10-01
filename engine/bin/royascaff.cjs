@@ -73,6 +73,16 @@ Commands:
   usage [path] [--json]        What the local usage counters hold (they never leave this machine)
   contract [path] [--json]     The machine contract: version, commands, adapters, error codes
 
+AI tools and several agents at once (see docs/MCP.md):
+  mcp [path] [--http :7410] [--token-file FILE] [--describe]
+                               Serve the project over the Model Context Protocol: stdio by default; --http needs a bearer token
+  claim <TASK-…> [--agent NAME] [--lease MINUTES] [--paths globs] [path]
+                               Claim a task and its paths for a lease; CLAIM_CONFLICT when another live claim overlaps
+  claim <TASK-…> --release · claim --list     Release a claim you hold · list the live claims
+  request-approval <target> --act approve-project|approve-roadmap|approve-change|person-check|measure [--note "…"]
+                               Ask a person to approve or look (never approves anything)
+  events --follow [--since …] [--timeout SEC]   Print each new event as one JSON line, until stopped
+
 Work (every command records an event and refreshes STATUS.md):
   open <SLC-…> [path] [--risk low|medium|high|critical] [--force]
                                Start the change that delivers a planned slice (Next/Later slices wait
@@ -165,7 +175,7 @@ Options:
   --help        Show this help
 `;
 
-const VALUE_FLAGS = new Set(["out", "path", "horizon", "outcome", "priority", "owner", "delivers", "depends", "order", "change", "feature", "since", "limit", "to", "reason", "by", "note", "kind", "affects", "risk", "result", "goal", "inputs", "paths", "checks", "done", "as", "slice", "files", "name", "code", "app", "skip-checks", "realizes", "verifies", "check", "from", "topic", "basis", "scope", "outside-ok", "adapter", "includes", "applies", "quote", "covered", "bar", "approval-token", "verdict-file", "verdict", "line", "source-file", "before", "after", "why", "title", "budget", "hides", "remove-by", "hypothesis", "variants", "metric"]);
+const VALUE_FLAGS = new Set(["out", "path", "horizon", "outcome", "priority", "owner", "delivers", "depends", "order", "change", "feature", "since", "limit", "to", "reason", "by", "note", "kind", "affects", "risk", "result", "goal", "inputs", "paths", "checks", "done", "as", "slice", "files", "name", "code", "app", "skip-checks", "realizes", "verifies", "check", "from", "topic", "basis", "scope", "outside-ok", "adapter", "includes", "applies", "quote", "covered", "bar", "approval-token", "verdict-file", "verdict", "line", "source-file", "before", "after", "why", "title", "budget", "hides", "remove-by", "hypothesis", "variants", "metric", "act", "agent", "lease", "http", "token-file", "timeout"]);
 const SUBCOMMANDS = new Set(["new", "task", "backups"]);
 
 function parseArgs(argv) {
@@ -304,6 +314,18 @@ function main() {
       return reply({ events: r.events }, `${r.text}\n`);
     }
     case "events": {
+      if (flags.follow) {
+        // events --follow: every new event as one JSON line (not an envelope: a stream has no end to wrap), until stopped.
+        const where = flags.path || target || ".";
+        const projectDir = findProject(where).projectDir;
+        const line = (e) => process.stdout.write(`${JSON.stringify(e)}\n`);
+        const { watchEvents } = require("../lib/follow.cjs");
+        const w = watchEvents(projectDir, (events) => events.forEach(line));
+        if (flags.since) eventsCommand(where, { since: flags.since }).events.forEach(line);
+        if (flags.timeout) setTimeout(() => { w.stop(); process.exit(0); }, Number(flags.timeout) * 1000);
+        process.on("SIGINT", () => process.exit(0));
+        return undefined;
+      }
       const r = eventsCommand(flags.path || target || ".", flags);
       return reply(r, r.events.map((e) => JSON.stringify(e)).join("\n") + (r.events.length ? "\n" : ""));
     }
@@ -561,6 +583,33 @@ function main() {
       const r = historyCommand(flags.path || positional[2] || ".", target);
       const { text, ...data } = r;
       return reply(data, `${text}\n`);
+    }
+    case "claim": {
+      // claim <TASK-…> [--agent N] [--lease MIN] [--paths globs] | --release | --list: who works on which paths (E7b.2).
+      const claims = require("../lib/claims.cjs");
+      const where = flags.path || positional[2] || ".";
+      if (flags.list || !target) {
+        const r = claims.listClaims(flags.path || target || ".");
+        return reply(r, r.claims.length ? `${r.claims.map((c) => `${c.task}  ${c.agent}  until ${c.lease_until}  ${c.paths.join(", ")}`).join("\n")}\n` : "No live claims.\n");
+      }
+      if (flags.release) {
+        const r = claims.releaseTask(where, target, flags);
+        return reply(r, r.released ? `${r.task}: released by ${r.agent}\n` : `${r.task}: ${r.reason}\n`);
+      }
+      const r = claims.claimTask(where, target, flags);
+      if (r.ok) return reply(r, `${r.task} claimed by ${r.agent} until ${r.lease_until} (${r.paths.join(", ")})${r.renewed ? " — renewed" : ""}\n`);
+      return reply(r, `${r.task}: ${r.holder} holds ${r.holder_paths.join(", ")} until ${r.lease_until}\n`, { refuse: { code: "CLAIM_CONFLICT", message: `${r.task} overlaps a claim held by ${r.holder} (${r.holder_paths.join(", ")}) until ${r.lease_until}`, missing: r.conflicts.map((c) => `${c.task} held by ${c.holder}: ${c.overlap.join(", ")}`) } });
+    }
+    case "request-approval": {
+      // request-approval <target> --act …: ask a person; never approves (E7b.1).
+      const r = require("../lib/approvalrequest.cjs").requestApproval(flags.path || positional[2] || ".", target, flags);
+      return reply(r, `Asked a person to ${r.act} ${r.target} (${r.id}). ${r.answer}\n`);
+    }
+    case "mcp": {
+      // mcp [path] [--http :7410] [--token-file FILE] [--describe]: the Model Context Protocol server (E7b.1).
+      const r = require("../lib/mcp/command.cjs").runMcp(flags.path || target || ".", flags);
+      if (!r) return undefined;
+      return reply(r, `royascaff mcp ${r.server.version} · ${r.tools.length} tools · transports ${r.transports.join(", ")}\nTools: ${r.tools.map((t) => t.name).join(", ")}\nResources: ${r.resources.join(", ")}\n`);
     }
     case "inventory": {
       const { inventoryCommand } = require("../lib/commands/inventory.cjs");

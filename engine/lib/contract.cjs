@@ -7,7 +7,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const CONTRACT_VERSION = "1.1";
+const CONTRACT_VERSION = "1.2";
 
 // The stable error codes. This table is the source: the CLI must run from a copied bin/lib with no
 // package folders beside it (tests/boundary), so it cannot read a file at load time. The published
@@ -29,6 +29,8 @@ const ERRORS = {
   TOKEN_INVALID: { exit: 1, description: "The signed approval token is malformed, its signature or issuer is not trusted, or its claims are not valid." },
   WRONG_TARGET: { exit: 1, description: "The signed approval token is for another target, another act or another bar than this call." },
   HASH_MISMATCH: { exit: 1, description: "What the token approved has changed since the person saw it: the hash in the token no longer matches the repository." },
+  CLAIM_CONFLICT: { exit: 1, description: "Another agent holds a live claim on an overlapping path; the details name the holder, the task and its paths." },
+  NOT_CLAIM_HOLDER: { exit: 1, description: "The task is claimed by another identity; only the holder may work on it or release it." },
   ALREADY_EXISTS: { exit: 1, description: "What the call would create, or the state it would set, is already there." },
   INVALID_INPUT: { exit: 2, description: "The call is malformed: a missing argument, a bad option value or wrong usage." },
   UNKNOWN_COMMAND: { exit: 2, description: "The command does not exist in this engine version." },
@@ -54,9 +56,9 @@ try {
 
 // Every command the CLI dispatches (a test keeps this in step with bin/royascaff.cjs).
 const COMMANDS = [
-  "adapter", "adopt", "advance", "approve", "backups", "block", "brief", "cache", "change", "check", "ci", "confirm", "context", "continue", "contract",
-  "deprecate", "diff", "events", "export", "feedback", "history", "index", "init", "install", "inventory", "judge", "log", "measure", "migrate", "new", "next", "open", "record",
-  "refine", "release", "render", "rollback", "roundtrip", "scan", "show", "smoke", "status", "task", "tasks", "trace", "unblock", "usage", "validate", "verify", "where",
+  "adapter", "adopt", "advance", "approve", "backups", "block", "brief", "cache", "change", "check", "ci", "claim", "confirm", "context", "continue", "contract",
+  "deprecate", "diff", "events", "export", "feedback", "history", "index", "init", "install", "inventory", "judge", "log", "mcp", "measure", "migrate", "new", "next", "open", "record",
+  "refine", "release", "render", "request-approval", "rollback", "roundtrip", "scan", "show", "smoke", "status", "task", "tasks", "trace", "unblock", "usage", "validate", "verify", "where",
 ];
 
 // The schema file of a command's `data` is contract/schemas/<name>.schema.json. `adapter.schema.json` is the

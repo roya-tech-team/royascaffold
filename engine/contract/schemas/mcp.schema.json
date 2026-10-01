@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.2/mcp.schema.json",
+  "title": "royascaff mcp: data",
+  "description": "The `data` of the contract envelope for `mcp --describe`: what the MCP server offers. Serving itself has no envelope (it speaks JSON-RPC). The tools' input schemas are contract/schemas/mcp/<tool>.json. Extra fields are allowed: adding a field is a minor change.",
+  "type": "object",
+  "required": ["server", "transports", "project", "tools", "resources"],
+  "properties": {
+    "server": {
+      "type": "object",
+      "required": ["name", "version", "contract", "protocol_versions"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "contract": { "type": "string" },
+        "protocol_versions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "transports": { "type": "array", "items": { "type": "string" } },
+    "project": { "type": "string" },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "command", "description"],
+        "properties": {
+          "name": { "type": "string" },
+          "command": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "resources": { "type": "array", "items": { "type": "string" } }
+  }
+}

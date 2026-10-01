@@ -13,7 +13,8 @@ function runsOnItself(engineDir, repoRoot) {
   if (!engineDir || !repoRoot) return false;
   const rel = path.relative(path.resolve(repoRoot), path.resolve(engineDir));
   if (path.isAbsolute(rel) || rel.split(path.sep)[0] === "..") return false;
-  return !rel.split(path.sep).includes("node_modules");
+  // A pinned copy: the package manager's node_modules, or the `.tool/` snapshot made by scripts/tool.cjs.
+  return !rel.split(path.sep).some((part) => part === "node_modules" || part === ".tool");
 }
 
 const MESSAGE = (engineDir, repoRoot) => `You are running the engine you are changing (${engineDir} is part of ${repoRoot}). Run the pinned copy instead: npx royascaff (the royascaff-tool alias in node_modules) or node scripts/tool.cjs. The engine that judges a change must not change under it.`;

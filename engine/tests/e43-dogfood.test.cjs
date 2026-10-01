@@ -26,6 +26,10 @@ test("runsOnItself: the engine inside the repository it works on warns; a pinned
   assert.equal(runsOnItself(path.join(repo, "node_modules", "royascaff-tool"), repo), false, "the pinned alias");
   assert.equal(runsOnItself(path.join(repo, "node_modules", "royascaff"), repo), false);
   assert.equal(runsOnItself(path.join(repo, "tools", "node_modules", "royascaff-tool"), repo), false);
+  // Regression (1.7): the `.tool/` snapshot is a pinned copy too and must not warn.
+  assert.equal(runsOnItself(path.join(repo, ".tool", "abc1234"), repo), false, ".tool/<ref> snapshot");
+  assert.equal(runsOnItself(path.join(repo, ".tool", "current", "engine"), repo), false, ".tool/current");
+  assert.equal(runsOnItself(path.join(repo, "tool", "engine"), repo), true, "a folder merely named tool still warns");
   assert.equal(runsOnItself(path.join(os.tmpdir(), "elsewhere", "engine"), repo), false);
   assert.equal(runsOnItself(path.join(os.tmpdir(), "repo2"), repo), false, "a sibling whose name starts the same");
   assert.equal(runsOnItself(path.dirname(repo), repo), false, "the parent folder");

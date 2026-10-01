@@ -3,7 +3,7 @@
     "scenario": "diff two baselines",
     "exit": 0,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": true,
       "command": "diff",
@@ -47,7 +47,7 @@
     "scenario": "diff a baseline and now",
     "exit": 0,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": true,
       "command": "diff",
@@ -91,7 +91,7 @@
     "scenario": "diff (no baseline)",
     "exit": 1,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": false,
       "command": "diff",

@@ -1,0 +1,58 @@
+[
+  {
+    "scenario": "request-approval",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.2",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "request-approval",
+      "data": {
+        "requested": true,
+        "approved": false,
+        "id": "EVT-CHG-CAMP-004-0005",
+        "target": "CHG-CAMP-004",
+        "act": "approve-change",
+        "requested_by": "ai:claude",
+        "note": "Please look at the design.",
+        "answer": "A person answers with royascaff approve / check --bar / measure, in a terminal or with a signed token. Nothing is approved by this request."
+      },
+      "warnings": [],
+      "events": [
+        "EVT-CHG-CAMP-004-0005"
+      ]
+    }
+  },
+  {
+    "scenario": "request-approval (not an act)",
+    "exit": 2,
+    "envelope": {
+      "contract": "1.2",
+      "engine": "<engine-version>",
+      "ok": false,
+      "command": "request-approval",
+      "error": {
+        "code": "INVALID_INPUT",
+        "message": "--act must be one of: approve-project, approve-roadmap, approve-change, person-check, measure"
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "request-approval (unknown target)",
+    "exit": 1,
+    "envelope": {
+      "contract": "1.2",
+      "engine": "<engine-version>",
+      "ok": false,
+      "command": "request-approval",
+      "error": {
+        "code": "UNKNOWN_ID",
+        "message": "CHG-CAMP-404 not found"
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

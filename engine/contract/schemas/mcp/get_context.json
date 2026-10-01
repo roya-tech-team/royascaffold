@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.2/mcp/get_context.json",
+  "title": "get_context",
+  "description": "The budgeted context pack of one task: everything it needs, with what was left out. Use this instead of reading the repository.",
+  "type": "object",
+  "properties": {
+    "task": {
+      "type": "string",
+      "description": "A task ID, for example TASK-PORT-001.",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "task"
+  ],
+  "additionalProperties": false
+}

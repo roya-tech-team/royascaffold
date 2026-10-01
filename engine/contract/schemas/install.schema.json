@@ -20,6 +20,19 @@
     "cli": {
       "type": "string"
     },
+    "mcp": {
+      "description": "Added in contract 1.2: the MCP server registration per tool (.mcp.json, .cursor/mcp.json).",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["tool", "file", "action"],
+        "properties": {
+          "tool": { "type": "string" },
+          "file": { "type": "string" },
+          "action": { "type": "string", "enum": ["created", "added", "replaced", "kept", "unchanged"] }
+        }
+      }
+    },
     "skill_files": {
       "type": "array",
       "items": {

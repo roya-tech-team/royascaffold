@@ -1,0 +1,111 @@
+[
+  {
+    "scenario": "mcp --describe",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.2",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "mcp",
+      "data": {
+        "server": {
+          "name": "royascaff",
+          "version": "<engine-version>",
+          "contract": "1.2",
+          "protocol_versions": [
+            "2025-11-25",
+            "2025-06-18",
+            "2025-03-26",
+            "2024-11-05"
+          ]
+        },
+        "transports": [
+          "stdio",
+          "http"
+        ],
+        "project": "<root>",
+        "tools": [
+          {
+            "name": "next_action",
+            "command": "next",
+            "description": "The single next action of the project (the same as `next --json`): the action, the stage card, whether a person must act (`human`), and what to say."
+          },
+          {
+            "name": "get_context",
+            "command": "context",
+            "description": "The budgeted context pack of one task: everything it needs, with what was left out. Use this instead of reading the repository."
+          },
+          {
+            "name": "claim_task",
+            "command": "claim",
+            "description": "Claim a task with a lease and its file paths, so other agents cannot take overlapping paths. Fails with CLAIM_CONFLICT (holder and paths) when another live claim overlaps."
+          },
+          {
+            "name": "release_task",
+            "command": "claim",
+            "description": "Release a claim you hold. Marking the task done releases it too."
+          },
+          {
+            "name": "task_start",
+            "command": "task",
+            "description": "Start a task (the same gates as `task <ID> start`). If the task is claimed, only the holder may start it."
+          },
+          {
+            "name": "task_done",
+            "command": "task",
+            "description": "Mark a task done with a hand-off note (the same gates as `task <ID> done`: tests first, commit, allowed paths, quick checks)."
+          },
+          {
+            "name": "run_verify",
+            "command": "verify",
+            "description": "Run the checks of a change and write evidence. `quick` runs only the fast checks (`check --quick`); otherwise the full `verify`, which judges every typed acceptance line and writes evidence with a fingerprint."
+          },
+          {
+            "name": "record_evidence",
+            "command": "check",
+            "description": "Record a check that ran outside the engine (for example a test run you did) as evidence. A pass recorded here is a check, never a person's look."
+          },
+          {
+            "name": "advance",
+            "command": "advance",
+            "description": "Move a change to the next status through its gates. Returns the new status, or GATE_REFUSED with `missing` saying what to do first."
+          },
+          {
+            "name": "status",
+            "command": "status",
+            "description": "The project status: features, changes, next actions, issues (the same as `status --json`)."
+          },
+          {
+            "name": "show",
+            "command": "show",
+            "description": "One record with its fields, links, slices, changes and backlinks (the same as `show <ID> --json`)."
+          },
+          {
+            "name": "trace",
+            "command": "trace",
+            "description": "Follow a feature or requirement: slices, changes, tasks, tests, evidence and code (the same as `trace <ID> --json`)."
+          },
+          {
+            "name": "new_record",
+            "command": "new",
+            "description": "Create a record (source, question, assumption, outcome, requirement, nfr, concept, invariant, workflow, decision, contract, component, rule, test, release, flag, experiment) and return its ID."
+          },
+          {
+            "name": "request_approval",
+            "command": "request-approval",
+            "description": "Ask a person to approve or look. It only creates a request in the log; it never approves anything. A person answers in a terminal or with a signed token."
+          }
+        ],
+        "resources": [
+          "royascaff://board",
+          "royascaff://events",
+          "royascaff://architecture",
+          "royascaff://{id}",
+          "royascaff://context/{task}"
+        ]
+      },
+      "warnings": [],
+      "events": []
+    }
+  }
+]

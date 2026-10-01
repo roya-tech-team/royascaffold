@@ -3,7 +3,7 @@
     "scenario": "export",
     "exit": 0,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": true,
       "command": "export",
@@ -2691,7 +2691,7 @@
     "scenario": "export --out",
     "exit": 0,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": true,
       "command": "export",

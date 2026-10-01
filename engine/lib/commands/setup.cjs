@@ -88,8 +88,47 @@ function copySkill(target, cli) {
   return written;
 }
 
+// The MCP server entry the AI tools start (E7b.1): the same CLI as the skill uses, with `mcp`.
+function mcpEntry() {
+  if (process.env.ROYASCAFF_CLI) {
+    const [command, ...args] = process.env.ROYASCAFF_CLI.split(/\s+/).filter(Boolean);
+    return { command, args: [...args, "mcp"] };
+  }
+  if (ENGINE.split(path.sep).includes("node_modules")) return { command: "npx", args: ["royascaff", "mcp"] };
+  return { command: "node", args: [path.join(ENGINE, "bin", "royascaff.cjs"), "mcp"] };
+}
+
+const MCP_FILES = { claude: ".mcp.json", cursor: path.join(".cursor", "mcp.json") };
+
+// Reads an MCP config and decides what to do with the `royascaff` entry. Nothing is written here.
+function planMcp(repo, tool, entry, ask) {
+  const file = path.join(repo, MCP_FILES[tool]);
+  let config = { mcpServers: {} };
+  if (fs.existsSync(file)) {
+    try {
+      config = JSON.parse(fs.readFileSync(file, "utf8"));
+    } catch {
+      throw Object.assign(new Error(`${slash(path.relative(repo, file))} is not valid JSON: fix or remove it, then install again (nothing was overwritten)`), { code: "ALREADY_EXISTS" });
+    }
+    if (!config || typeof config !== "object" || Array.isArray(config)) throw Object.assign(new Error(`${slash(path.relative(repo, file))} is not a JSON object: nothing was overwritten`), { code: "ALREADY_EXISTS" });
+  }
+  const servers = config.mcpServers && typeof config.mcpServers === "object" ? config.mcpServers : {};
+  const have = servers.royascaff;
+  const rel = slash(path.relative(repo, file));
+  if (have && JSON.stringify(have) === JSON.stringify(entry)) return { tool, file, rel, action: "unchanged", config };
+  if (have) {
+    const answer = ask(`\n${rel} already has a "royascaff" server:\n  ${JSON.stringify(have)}\nReplace it with:\n  ${JSON.stringify(entry)}\nType yes to overwrite: `);
+    if (answer === null) throw Object.assign(new Error(`${rel} already has a different "royascaff" entry and there is no terminal to ask in: nothing was overwritten. Change it by hand, or run install in a terminal and answer yes`), { code: "ALREADY_EXISTS", missing: [`edit ${rel}, or run royascaff install in a terminal`] });
+    if (!/^\s*y(es)?\s*$/i.test(answer)) return { tool, file, rel, action: "kept", config };
+    return { tool, file, rel, action: "replaced", config };
+  }
+  return { tool, file, rel, action: fs.existsSync(file) ? "added" : "created", config };
+}
+
 // install [path] [--cursor] [--claude]: both when neither is given. Engine-owned skill files are
 // replaced on every install (they follow the engine version); project docs are never overwritten.
+// It also registers the MCP server in .mcp.json / .cursor/mcp.json; an existing different entry is only
+// replaced after a person types yes (no terminal = refused, and nothing at all is written).
 function install(start, flags = {}) {
   const repo = path.resolve(start || ".");
   const tools = [];
@@ -97,7 +136,19 @@ function install(start, flags = {}) {
   if (flags.claude) tools.push("claude");
   if (!tools.length) tools.push("cursor", "claude");
   const cli = cliCommand();
+  const entry = mcpEntry();
+  const ask = typeof flags.confirm === "function" ? flags.confirm : require("./work.cjs").ttyConfirm;
+  const mcpPlans = tools.map((tool) => planMcp(repo, tool, entry, ask));
   const written = [];
+  const mcp = [];
+  for (const p of mcpPlans) {
+    if (["created", "added", "replaced"].includes(p.action)) {
+      const config = { ...p.config, mcpServers: { ...(p.config.mcpServers || {}), royascaff: entry } };
+      fs.mkdirSync(path.dirname(p.file), { recursive: true });
+      fs.writeFileSync(p.file, `${JSON.stringify(config, null, 2)}\n`);
+    }
+    mcp.push({ tool: p.tool, file: p.rel, action: p.action });
+  }
   for (const tool of tools) {
     const target = path.join(repo, `.${tool}`, "skills", "royascaff");
     written.push(...copySkill(target, cli));
@@ -112,7 +163,7 @@ function install(start, flags = {}) {
   const created = [];
   const projectDir = path.join(repo, "project");
   if (fs.existsSync(projectDir)) for (const d of ["PLAYBOOK.md", "GLOSSARY.md"]) writeNew(path.join(projectDir, d), fs.readFileSync(path.join(ENGINE, "docs", d), "utf8"), created);
-  return { tools, cli, skill_files: written.map((f) => slash(path.relative(repo, f))), docs_created: created.map((f) => slash(path.relative(repo, f))) };
+  return { tools, cli, mcp, skill_files: written.map((f) => slash(path.relative(repo, f))), docs_created: created.map((f) => slash(path.relative(repo, f))) };
 }
 
 module.exports = { initProject, install, cliCommand };

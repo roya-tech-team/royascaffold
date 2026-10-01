@@ -32,6 +32,9 @@ const EVENT_TYPES = [
   "experiment.decided",
   "record.deprecated",
   "adoption.planned",
+  "claim.acquired",
+  "claim.released",
+  "approval.requested",
 ];
 
 const COLUMNS = ["When", "Event", "Target", "By", "Git", "Note"];

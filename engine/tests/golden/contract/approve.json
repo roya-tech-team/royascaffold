@@ -3,7 +3,7 @@
     "scenario": "approve (an AI may not)",
     "exit": 1,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": false,
       "command": "approve",
@@ -23,7 +23,7 @@
     "scenario": "approve a design",
     "exit": 0,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": true,
       "command": "approve",

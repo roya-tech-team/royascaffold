@@ -35,7 +35,7 @@ test("docs/CONTRACT.md names every error code and every command, and states the 
   assert.match(doc, /ROYASCAFF_NONINTERACTIVE/);
 });
 
-test("the package is 1.6 (a stable release or one of its pre-releases) and its version is the engine version in every envelope", () => {
-  assert.match(pkg.version, /^1\.6\.0(-(alpha|beta|rc)\.\d+)?$/);
+test("the package is 1.7 (a stable release or one of its pre-releases) and its version is the engine version in every envelope", () => {
+  assert.match(pkg.version, /^1\.7\.0(-(alpha|beta|rc)\.\d+)?$/);
   assert.equal(contract.ENGINE_VERSION, pkg.version);
 });

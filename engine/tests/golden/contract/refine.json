@@ -3,7 +3,7 @@
     "scenario": "refine (a 1.3 project)",
     "exit": 0,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": true,
       "command": "refine",

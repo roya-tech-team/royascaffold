@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.2/mcp/claim_task.json",
+  "title": "claim_task",
+  "description": "Claim a task with a lease and its file paths, so other agents cannot take overlapping paths. Fails with CLAIM_CONFLICT (holder and paths) when another live claim overlaps.",
+  "type": "object",
+  "properties": {
+    "task": {
+      "type": "string",
+      "description": "A task ID.",
+      "minLength": 1
+    },
+    "agent": {
+      "type": "string",
+      "description": "Who is acting, for example claude or cursor. The engine records it as ai:<agent> and never as a person. Default: mcp."
+    },
+    "lease_minutes": {
+      "type": "number",
+      "minimum": 0.01,
+      "maximum": 1440,
+      "description": "How long the claim lasts (default 30). Renew by claiming again."
+    },
+    "paths": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "File globs the task will touch. Default: the task's allowed paths."
+    }
+  },
+  "required": [
+    "task"
+  ],
+  "additionalProperties": false
+}

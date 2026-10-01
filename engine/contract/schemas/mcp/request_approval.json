@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.2/mcp/request_approval.json",
+  "title": "request_approval",
+  "description": "Ask a person to approve or look. It only creates a request in the log; it never approves anything. A person answers in a terminal or with a signed token.",
+  "type": "object",
+  "properties": {
+    "target": {
+      "type": "string",
+      "description": "What to approve: a change ID, a feature ID, project, roadmap, or an outcome/experiment ID.",
+      "minLength": 1
+    },
+    "act": {
+      "type": "string",
+      "enum": [
+        "approve-project",
+        "approve-roadmap",
+        "approve-change",
+        "person-check",
+        "measure"
+      ]
+    },
+    "note": {
+      "type": "string",
+      "description": "What the person should look at."
+    },
+    "agent": {
+      "type": "string",
+      "description": "Who is acting, for example claude or cursor. The engine records it as ai:<agent> and never as a person. Default: mcp."
+    }
+  },
+  "required": [
+    "target",
+    "act"
+  ],
+  "additionalProperties": false
+}

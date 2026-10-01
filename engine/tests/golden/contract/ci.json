@@ -3,7 +3,7 @@
     "scenario": "ci",
     "exit": 0,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": true,
       "command": "ci",
@@ -44,7 +44,7 @@
     "scenario": "ci (a gate fails)",
     "exit": 1,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": false,
       "command": "ci",

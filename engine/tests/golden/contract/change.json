@@ -3,7 +3,7 @@
     "scenario": "change a requirement",
     "exit": 0,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": true,
       "command": "change",
@@ -68,7 +68,7 @@
     "scenario": "change (not a requirement, workflow or contract)",
     "exit": 2,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": false,
       "command": "change",

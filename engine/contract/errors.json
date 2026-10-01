@@ -1,5 +1,5 @@
 {
-  "contract": "1.1",
+  "contract": "1.2",
   "note": "Stable error codes of the machine contract. Adding a code is a minor change; removing or renaming one is a major change (docs/CONTRACT.md). `exit` is the process exit status in --json mode: 1 = the work was refused or failed, 2 = the call itself was wrong. Generated from lib/contract.cjs.",
   "codes": {
     "NOT_A_PROJECT": {
@@ -57,6 +57,14 @@
     "HASH_MISMATCH": {
       "exit": 1,
       "description": "What the token approved has changed since the person saw it: the hash in the token no longer matches the repository."
+    },
+    "CLAIM_CONFLICT": {
+      "exit": 1,
+      "description": "Another agent holds a live claim on an overlapping path; the details name the holder, the task and its paths."
+    },
+    "NOT_CLAIM_HOLDER": {
+      "exit": 1,
+      "description": "The task is claimed by another identity; only the holder may work on it or release it."
     },
     "ALREADY_EXISTS": {
       "exit": 1,

@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.2/mcp/record_evidence.json",
+  "title": "record_evidence",
+  "description": "Record a check that ran outside the engine (for example a test run you did) as evidence. A pass recorded here is a check, never a person's look.",
+  "type": "object",
+  "properties": {
+    "change": {
+      "type": "string",
+      "description": "A change ID.",
+      "minLength": 1
+    },
+    "kind": {
+      "type": "string",
+      "description": "What kind of check: unit, e2e, metric, manual, inspection, or your own word.",
+      "minLength": 1
+    },
+    "result": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "fail"
+      ]
+    },
+    "note": {
+      "type": "string",
+      "description": "What ran and what it showed.",
+      "minLength": 1
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number"
+      },
+      "description": "Measured values, for example { \"lcp_ms\": 1800 }."
+    },
+    "agent": {
+      "type": "string",
+      "description": "Who is acting, for example claude or cursor. The engine records it as ai:<agent> and never as a person. Default: mcp."
+    }
+  },
+  "required": [
+    "change",
+    "kind",
+    "result",
+    "note"
+  ],
+  "additionalProperties": false
+}

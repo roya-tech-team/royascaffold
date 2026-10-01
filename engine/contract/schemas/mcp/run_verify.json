@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.2/mcp/run_verify.json",
+  "title": "run_verify",
+  "description": "Run the checks of a change and write evidence. `quick` runs only the fast checks (`check --quick`); otherwise the full `verify`, which judges every typed acceptance line and writes evidence with a fingerprint.",
+  "type": "object",
+  "properties": {
+    "change": {
+      "type": "string",
+      "description": "A change ID, for example CHG-PORT-001.",
+      "minLength": 1
+    },
+    "quick": {
+      "type": "boolean",
+      "description": "Only the quick checks."
+    },
+    "agent": {
+      "type": "string",
+      "description": "Who is acting, for example claude or cursor. The engine records it as ai:<agent> and never as a person. Default: mcp."
+    }
+  },
+  "required": [
+    "change"
+  ],
+  "additionalProperties": false
+}

@@ -298,6 +298,7 @@ function taskAction(start, taskId, action, note, flags = {}) {
   const c = status.changes.get(change.id);
   const state = status.tasks.get(taskId).state;
   if (!["ready", "in-progress"].includes(change.status)) throw new Error(`${change.id} is ${change.status}: tasks run only when it is ready or in progress (royascaff advance ${change.id} --to ready)`);
+  if (action === "start" || action === "done") require("../claims.cjs").assertHolder(model, taskId, who(flags, model.repo));
   if (action === "start") {
     const lastChangeBlock = (change.events || []).filter((e) => e.target === change.id && /^change\.(un)?blocked$/.test(e.event)).pop();
     if (lastChangeBlock && lastChangeBlock.event === "change.blocked") throw new Error(`${change.id} is blocked: ${lastChangeBlock.note}. Unblock it first.`);
@@ -758,4 +759,4 @@ function backups(start, action, id) {
   return listBackups(model);
 }
 
-module.exports = { createChange, nextId, setStatus, record, refreshBoard, openSlice, openOther, newTask, advance, approve, setBlocked, taskAction, recordCheck, verify, judge, recordWork, refine, backups };
+module.exports = { ttyConfirm, createChange, nextId, setStatus, record, refreshBoard, openSlice, openOther, newTask, advance, approve, setBlocked, taskAction, recordCheck, verify, judge, recordWork, refine, backups };

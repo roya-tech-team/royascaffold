@@ -1,4 +1,4 @@
-# The RoyaScaff machine contract (version 1.1)
+# The RoyaScaff machine contract (version 1.2)
 
 Other programs (Studio, scripts, CI, AI tools) can drive RoyaScaff without reading its Markdown or
 guessing at its text. This page is the promise they can rely on. It is short on purpose.
@@ -67,6 +67,8 @@ The codes are listed, with their exit status and a description, in `contract/err
 | `TOKEN_INVALID` | 1 | The token is malformed, its signature or issuer is not trusted, or its claims are not valid. |
 | `WRONG_TARGET` | 1 | The token is for another target, another act or another bar than this call. |
 | `HASH_MISMATCH` | 1 | What the token approved has changed since the person saw it. |
+| `CLAIM_CONFLICT` | 1 | Another agent holds a live claim on an overlapping path. `error.details` names the holder, the task and its paths (section 11). |
+| `NOT_CLAIM_HOLDER` | 1 | The task is claimed by another identity: only the holder may start it, finish it or release the claim (section 11). |
 | `ALREADY_EXISTS` | 1 | What the call would create, or the state it would set, is already there. |
 | `INVALID_INPUT` | 2 | The call is malformed: a missing argument, a bad option value or wrong usage. |
 | `UNKNOWN_COMMAND` | 2 | The command does not exist in this engine version. |
@@ -81,9 +83,9 @@ This is the rule for gates and checks: `advance` refused is `GATE_REFUSED`; `che
 
 ## 3. Commands
 
-`contract.commands` lists them. Today: adapter, adopt, advance, approve, backups, block, brief, cache, change, check, ci, confirm, context,
-continue, contract, deprecate, diff, events, export, feedback, history, index, init, install, inventory, judge, log, measure, migrate, new, next, open,
-record, refine, release, render, rollback, roundtrip, scan, show, smoke, status, task, tasks, trace, unblock, usage, validate, verify, where.
+`contract.commands` lists them. Today: adapter, adopt, advance, approve, backups, block, brief, cache, change, check, ci, claim, confirm, context,
+continue, contract, deprecate, diff, events, export, feedback, history, index, init, install, inventory, judge, log, mcp, measure, migrate, new, next, open,
+record, refine, release, render, request-approval, rollback, roundtrip, scan, show, smoke, status, task, tasks, trace, unblock, usage, validate, verify, where.
 
 Each one has a schema for its `data`. (`adapter.schema.json` is the schema of an adapter manifest, so the data of the
 `adapter` command is described by `adapter-result.schema.json`; `contract.schemaName` gives the file for a command.) The schemas list the fields a program may rely on. They allow
@@ -293,3 +295,42 @@ keeps working if it ignores what it does not know.
   component now owns completely, and the board has a `## Modules` summary per module.
 - **`scan`** keeps its cache per file: a file whose size and modification time did not change since it was scanned is not read
   at all (`data.reads` counts the files actually read; `data.cache` still counts blob-hash hits and misses).
+
+## 11. Agents: MCP, claims, the event stream (added in 1.7; contract 1.2)
+
+Contract 1.2 is additions only: two error codes, three commands (`mcp`, `claim`, `request-approval`), three event
+types, one field of `install` (`mcp`) and the flag `events --follow`.
+
+- **`royascaff mcp [path] [--http :7410] [--token-file FILE] [--describe]`** serves the project over the Model Context
+  Protocol (see `docs/MCP.md`). Serving speaks JSON-RPC, not the envelope. `mcp --describe --json` is an envelope
+  (schema `mcp.schema.json`): the server version, the protocol versions, the transports, the tools and the resources.
+- **Tools return the same envelope as the CLI.** A tool call runs the CLI command with `--json`; the tool result's
+  `structuredContent` is that envelope, unchanged, and `isError` is `!ok`. The input schema of each tool is
+  `contract/schemas/mcp/<tool>.json`. Tool to command: `next_action` = `next`, `get_context` = `context`, `claim_task` and
+  `release_task` = `claim`, `task_start` and `task_done` = `task`, `run_verify` = `verify` (or `check --quick`),
+  `record_evidence` = `check --result`, `advance`, `status`, `show`, `trace`, `new_record` = `new record`,
+  `request_approval` = `request-approval`. An MCP agent is always recorded as `ai:<agent>`, never as a person.
+  There is no tool that approves.
+- **`request-approval <target> --act approve-project|approve-roadmap|approve-change|person-check|measure [--note "…"]`**
+  writes one `approval.requested` event (in the change's log, or the project log) and nothing else. Its `data.approved`
+  is always `false`. A person answers with `approve`, `check … --bar` or `measure`, in a terminal or with a signed token.
+- **Claims.** `claim <TASK-…> [--agent NAME] [--lease MINUTES] [--paths globs]` writes a `claim.acquired` event whose note is
+  JSON: `{ "agent", "paths", "lease_until", "lease_minutes" }`. The paths default to the task's allowed paths; the lease
+  to 30 minutes (at most 24 hours). `claim <TASK-…> --release` writes `claim.released`; `claim --list` returns the live
+  claims. A claim is live until it is released, its task is done (`task done` releases it), or its lease ends. A claim
+  that overlaps another live claim (the folders before the first wildcard of two globs are nested, so the check can
+  raise a false alarm but never miss) fails with `CLAIM_CONFLICT`; `error.details` is the refused claim with `holder`,
+  `holder_paths`, `lease_until` and `conflicts`. The holder claiming again renews. `task start` and `task done` by
+  an identity that is not the holder of a live claim fail with `NOT_CLAIM_HOLDER`; so does `claim --release`. A task
+  nobody claimed is open to everyone. The log is the only store, so claims travel with git; two branches can still
+  conflict, and the events that are merged win.
+- **`events --follow [--since …] [--timeout SEC]`** prints each new event as one JSON line (the shape of
+  `data.events[]`; no envelope, because a stream has no end to wrap), watching `project/log.md` and
+  `project/changes/*/log.md`. Events already in the logs are not repeated unless `--since` asks for them.
+  The MCP resource `royascaff://events` holds the latest events; subscribers get `notifications/resources/updated`.
+- **`install`** also registers the server in `.mcp.json` (Claude Code) and `.cursor/mcp.json` (Cursor):
+  `data.mcp[]` has `tool`, `file` and `action` (`created`, `added`, `replaced`, `kept`, `unchanged`). A different existing
+  `royascaff` entry is replaced only when a person types `yes`; with no terminal the call fails with `ALREADY_EXISTS` and
+  nothing is written.
+- **The runner protocol** (a machine that takes jobs from a queue) is in `docs/RUNNER-PROTOCOL.md`; its message schemas
+  are in `contract/schemas/runner/` and are versioned with this contract.

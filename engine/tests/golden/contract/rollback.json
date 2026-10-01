@@ -3,7 +3,7 @@
     "scenario": "rollback a change",
     "exit": 0,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": true,
       "command": "rollback",
@@ -52,7 +52,7 @@
     "scenario": "rollback (the change is still open)",
     "exit": 1,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": false,
       "command": "rollback",

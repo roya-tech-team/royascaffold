@@ -24,10 +24,11 @@ function normalizer(ctx) {
   const text = (s) => {
     let out = slash(s);
     for (const [from, to] of places) out = out.split(from).join(to);
-    return out.split(contract.ENGINE_VERSION).join("<engine-version>").replace(/\d{8}T\d{6}Z/g, "<stamp>").replace(/fingerprint [0-9a-f]{12}/g, "fingerprint <fingerprint>");
+    return out.split(contract.ENGINE_VERSION).join("<engine-version>").replace(/\d{8}T\d{6}Z/g, "<stamp>").replace(/\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z/g, "<now>").replace(/fingerprint [0-9a-f]{12}/g, "fingerprint <fingerprint>");
   };
   const walk = (v, key) => {
     if (typeof v === "string" && key === "fingerprint") return "<fingerprint>"; // it covers the engine version
+    if (typeof v === "string" && (key === "lease_until" || key === "claimed_at")) return "<now>"; // a claim carries the clock
     // An event the scenario itself wrote (a few seconds old) carries the clock; the fixtures' events are old.
     if (typeof v === "string" && key === "when" && /^\d{4}-\d\d-\d\dT[\d:]+Z$/.test(v) && Math.abs(Date.now() - Date.parse(v)) < 6 * 3600 * 1000) return "<now>";
     if (typeof v === "string") return text(v);

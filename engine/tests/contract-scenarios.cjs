@@ -128,6 +128,16 @@ function scenarios() {
     fs.writeFileSync(path.join(c.root, "project", "adapters", "broken-stack.json"), JSON.stringify({ adapter: "broken-stack", checks: { unit: "no-such-program-xyz" } }));
     fs.writeFileSync(path.join(c.root, "project", "adapters", "broken-stack.md"), "# Adapter · broken-stack\n\n## Design\n\n- A line.\n\n## Rules\n\n- A rule.\n\n## Check\n\n- A check.\n");
   });
+  add("claim", "claim a task", (c) => ["claim", "TASK-CAMP-004", "--agent", "ai:alpha", "--lease", "30", c.root]);
+  add("claim", "claim (an overlapping path is refused)", (c) => ["claim", "TASK-CAMP-005", "--agent", "ai:beta", "--paths", "apps/web/src/calendar/x.ts", c.root], "CLAIM_CONFLICT");
+  add("claim", "claim --list", (c) => ["claim", "--list", c.root]);
+  add("claim", "claim --release (not the holder)", (c) => ["claim", "TASK-CAMP-004", "--release", "--agent", "ai:beta", c.root], "NOT_CLAIM_HOLDER");
+  add("claim", "claim --release", (c) => ["claim", "TASK-CAMP-004", "--release", "--agent", "ai:alpha", c.root]);
+  add("claim", "claim (a task that does not exist)", (c) => ["claim", "TASK-CAMP-404", c.root], "UNKNOWN_ID");
+  add("request-approval", "request-approval", (c) => ["request-approval", "CHG-CAMP-004", "--act", "approve-change", "--note", "Please look at the design.", "--by", "ai:claude", c.root]);
+  add("request-approval", "request-approval (not an act)", (c) => ["request-approval", "CHG-CAMP-004", "--act", "approve-everything", c.root], "INVALID_INPUT");
+  add("request-approval", "request-approval (unknown target)", (c) => ["request-approval", "CHG-CAMP-404", "--act", "approve-change", c.root], "UNKNOWN_ID");
+  add("mcp", "mcp --describe", (c) => ["mcp", "--describe", c.root]);
   add("continue", "continue", (c) => ["continue", c.root]);
   add("adopt", "adopt", (c) => ["adopt", c.root]);
   add("migrate", "migrate (dry run, 1.3)", (c) => ["migrate", c.old, "--from", "1.3", "--code", "KUNI"]);

@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.2/mcp/task_start.json",
+  "title": "task_start",
+  "description": "Start a task (the same gates as `task <ID> start`). If the task is claimed, only the holder may start it.",
+  "type": "object",
+  "properties": {
+    "task": {
+      "type": "string",
+      "description": "A task ID.",
+      "minLength": 1
+    },
+    "agent": {
+      "type": "string",
+      "description": "Who is acting, for example claude or cursor. The engine records it as ai:<agent> and never as a person. Default: mcp."
+    },
+    "note": {
+      "type": "string",
+      "description": "What you are about to do."
+    }
+  },
+  "required": [
+    "task"
+  ],
+  "additionalProperties": false
+}

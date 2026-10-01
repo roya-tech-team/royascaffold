@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.2/mcp/task_done.json",
+  "title": "task_done",
+  "description": "Mark a task done with a hand-off note (the same gates as `task <ID> done`: tests first, commit, allowed paths, quick checks).",
+  "type": "object",
+  "properties": {
+    "task": {
+      "type": "string",
+      "description": "A task ID.",
+      "minLength": 1
+    },
+    "note": {
+      "type": "string",
+      "description": "What was done and what is left.",
+      "minLength": 1
+    },
+    "agent": {
+      "type": "string",
+      "description": "Who is acting, for example claude or cursor. The engine records it as ai:<agent> and never as a person. Default: mcp."
+    },
+    "skip_checks": {
+      "type": "string",
+      "description": "Mark done although the quick checks failed; the reason is recorded."
+    }
+  },
+  "required": [
+    "task",
+    "note"
+  ],
+  "additionalProperties": false
+}

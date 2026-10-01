@@ -1,0 +1,9 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.2/mcp/status.json",
+  "title": "status",
+  "description": "The project status: features, changes, next actions, issues (the same as `status --json`).",
+  "type": "object",
+  "properties": {},
+  "additionalProperties": false
+}

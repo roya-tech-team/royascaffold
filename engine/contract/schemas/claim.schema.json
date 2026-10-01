@@ -1,0 +1,72 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.2/claim.schema.json",
+  "title": "royascaff claim: data",
+  "description": "The `data` of the contract envelope for `claim`: a claim made, a claim released, or the list of live claims. A refused claim (CLAIM_CONFLICT) carries the first form in `error.details`, with `conflicts`. Extra fields are allowed: adding a field is a minor change.",
+  "anyOf": [
+    {
+      "type": "object",
+      "required": ["ok", "task", "agent", "paths"],
+      "properties": {
+        "ok": { "type": "boolean" },
+        "task": { "type": "string" },
+        "change": { "type": "string" },
+        "agent": { "type": "string" },
+        "paths": { "type": "array", "items": { "type": "string" } },
+        "lease_minutes": { "type": "number" },
+        "lease_until": { "type": "string" },
+        "renewed": { "type": "boolean" },
+        "holder": { "type": "string" },
+        "holder_paths": { "type": "array", "items": { "type": "string" } },
+        "conflicts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["task", "holder", "paths", "lease_until"],
+            "properties": {
+              "task": { "type": "string" },
+              "change": { "type": "string" },
+              "holder": { "type": "string" },
+              "paths": { "type": "array", "items": { "type": "string" } },
+              "lease_until": { "type": "string" },
+              "overlap": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "object",
+      "required": ["released", "task", "agent"],
+      "properties": {
+        "released": { "type": "boolean" },
+        "task": { "type": "string" },
+        "change": { "type": "string" },
+        "agent": { "type": "string" },
+        "reason": { "type": "string" }
+      }
+    },
+    {
+      "type": "object",
+      "required": ["claims"],
+      "properties": {
+        "claims": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["task", "change", "agent", "paths", "lease_until"],
+            "properties": {
+              "task": { "type": "string" },
+              "change": { "type": "string" },
+              "agent": { "type": "string" },
+              "paths": { "type": "array", "items": { "type": "string" } },
+              "lease_until": { "type": "string" },
+              "claimed_at": { "type": "string" },
+              "event": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

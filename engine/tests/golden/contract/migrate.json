@@ -3,7 +3,7 @@
     "scenario": "migrate (dry run, 1.3)",
     "exit": 0,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": true,
       "command": "migrate",
@@ -76,7 +76,7 @@
     "scenario": "migrate (dry run, 1.5 → 1.6)",
     "exit": 0,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": true,
       "command": "migrate",
@@ -172,7 +172,7 @@
     "scenario": "migrate (a 1.4/1.5 project is not moved unless asked)",
     "exit": 1,
     "envelope": {
-      "contract": "1.1",
+      "contract": "1.2",
       "engine": "<engine-version>",
       "ok": false,
       "command": "migrate",

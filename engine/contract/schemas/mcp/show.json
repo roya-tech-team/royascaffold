@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.2/mcp/show.json",
+  "title": "show",
+  "description": "One record with its fields, links, slices, changes and backlinks (the same as `show <ID> --json`).",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "A record ID, for example REQ-READ-002.",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "id"
+  ],
+  "additionalProperties": false
+}

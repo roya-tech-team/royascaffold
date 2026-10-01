@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://royascaff.dev/contract/1.2/mcp/advance.json",
+  "title": "advance",
+  "description": "Move a change to the next status through its gates. Returns the new status, or GATE_REFUSED with `missing` saying what to do first.",
+  "type": "object",
+  "properties": {
+    "change": {
+      "type": "string",
+      "description": "A change ID.",
+      "minLength": 1
+    },
+    "to": {
+      "type": "string",
+      "description": "The status to reach, for example ready or closed.",
+      "minLength": 1
+    },
+    "reason": {
+      "type": "string",
+      "description": "Needed to go back or to cancel."
+    },
+    "agent": {
+      "type": "string",
+      "description": "Who is acting, for example claude or cursor. The engine records it as ai:<agent> and never as a person. Default: mcp."
+    }
+  },
+  "required": [
+    "change",
+    "to"
+  ],
+  "additionalProperties": false
+}
