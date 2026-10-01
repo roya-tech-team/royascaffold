@@ -71,5 +71,117 @@
       "warnings": [],
       "events": []
     }
+  },
+  {
+    "scenario": "migrate (dry run, 1.5 → 1.6)",
+    "exit": 0,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": true,
+      "command": "migrate",
+      "data": {
+        "action": "dry-run",
+        "from": "1.5",
+        "to": "1.6",
+        "code": "CAMP",
+        "moves": 0,
+        "edits": 2,
+        "creates": 0,
+        "features": 6,
+        "slices": 7,
+        "changes": [
+          {
+            "id": "CHG-CAMP-001",
+            "kind": "feature",
+            "status": "closed",
+            "slices": [
+              "SLC-CAMP-001-A"
+            ]
+          },
+          {
+            "id": "CHG-CAMP-002",
+            "kind": "feature",
+            "status": "in-progress",
+            "slices": [
+              "SLC-CAMP-002-A"
+            ]
+          },
+          {
+            "id": "CHG-CAMP-003",
+            "kind": "bug",
+            "status": "in-progress",
+            "slices": []
+          },
+          {
+            "id": "CHG-CAMP-004",
+            "kind": "chore",
+            "status": "analyzed",
+            "slices": []
+          },
+          {
+            "id": "CHG-CAMP-005",
+            "kind": "chore",
+            "status": "in-progress",
+            "slices": []
+          },
+          {
+            "id": "CHG-CAMP-006",
+            "kind": "knowledge",
+            "status": "draft",
+            "slices": []
+          },
+          {
+            "id": "CHG-CAMP-007",
+            "kind": "rollback",
+            "status": "draft",
+            "slices": []
+          },
+          {
+            "id": "CHG-CAMP-008",
+            "kind": "evolve",
+            "status": "draft",
+            "slices": []
+          }
+        ],
+        "apps": [],
+        "archived": [],
+        "lost": [],
+        "validation": {
+          "ok": true,
+          "errors": 0,
+          "warnings": 1,
+          "records": 81,
+          "features": 6,
+          "slices": 7,
+          "changes": 8,
+          "tasks": 7
+        },
+        "errors": [],
+        "notes": [
+          "No release records: no baselines to write (royascaff release <REL-…> writes one when you ship)."
+        ],
+        "manifest": "project/_legacy/1.5/migration",
+        "before_records": 81
+      },
+      "warnings": [],
+      "events": []
+    }
+  },
+  {
+    "scenario": "migrate (a 1.4/1.5 project is not moved unless asked)",
+    "exit": 1,
+    "envelope": {
+      "contract": "1.1",
+      "engine": "<engine-version>",
+      "ok": false,
+      "command": "migrate",
+      "error": {
+        "code": "VERSION_MISMATCH",
+        "message": "This project is already on RoyaScaff 1.4 (profile.md has royascaff: 1.4); to mark it 1.6 and write baselines for its releases: royascaff migrate --from 1.5"
+      },
+      "warnings": [],
+      "events": []
+    }
   }
 ]

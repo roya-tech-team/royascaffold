@@ -69,7 +69,7 @@ const schemaName = (command) => SCHEMA_NAMES[command] || command;
 // with a valid `code` of its own always wins over the table.
 const RULES = [
   ["NOT_A_PROJECT", /No RoyaScaff project found|Path does not exist/],
-  ["VERSION_MISMATCH", /already on RoyaScaff 1\.4|Unknown source version|does not match the project|Plan approvals are for RoyaScaff 1\.4|Could not tell whether this is a 1\.3/],
+  ["VERSION_MISMATCH", /already on RoyaScaff 1\.[46]|Unknown source version|does not match the project|Plan approvals are for RoyaScaff 1\.4|Could not tell whether this is a 1\.3/],
   ["OUTSIDE_PATHS", /outside its allowed paths/],
   ["CHECK_FAILED", /quick checks failed/],
   ["HUMAN_REQUIRED", /must come from a person|[Oo]nly a person|confirmed in a terminal|Look not recorded/],

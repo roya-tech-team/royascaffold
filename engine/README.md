@@ -1,5 +1,12 @@
-# RoyaScaff Engine 1.5
+# RoyaScaff Engine 1.6
 
+> **1.6 in one paragraph.** Changing a product that exists is as safe and traceable as building it. `change` opens a delta
+> (Before / After / Why) on a requirement, workflow or contract and lists every test, evidence, slice and component that
+> depended on the old wording; evidence of the old version turns stale. `release` freezes a baseline, `diff` compares two,
+> `history` shows every version of a record. Flags (FLAG-), experiments (EXP-), `rollback` and `deprecate` are first-class.
+> `scan` reads only what changed, and `adopt --plan` splits a big code base into checkpoints no session overflows. Contract
+> `1.1` (additions only); `migrate --from 1.5` moves a project to 1.6 and can undo it.
+>
 > **1.5 in one paragraph.** Every command speaks JSON in a published contract (`docs/CONTRACT.md`, `contract/`). Done is
 > proven by machines (`verify`: typed acceptance lines, evidence with a fingerprint) and stays true while the code
 > changes (stale evidence shows ⚠️ Stale, not ✅ Done). A separate judge reads the pack (`judge`); a failed verify has a

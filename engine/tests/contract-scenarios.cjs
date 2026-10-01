@@ -131,6 +131,8 @@ function scenarios() {
   add("continue", "continue", (c) => ["continue", c.root]);
   add("adopt", "adopt", (c) => ["adopt", c.root]);
   add("migrate", "migrate (dry run, 1.3)", (c) => ["migrate", c.old, "--from", "1.3", "--code", "KUNI"]);
+  add("migrate", "migrate (dry run, 1.5 → 1.6)", (c) => ["migrate", c.root, "--from", "1.5"]);
+  add("migrate", "migrate (a 1.4/1.5 project is not moved unless asked)", (c) => ["migrate", c.root], "VERSION_MISMATCH");
   add("init", "init", (c) => ["init", c.fresh, "--name", "Demo", "--code", "DEMO", "--app", "web=apps/web", "--adapter", "web-ui"]);
   add("smoke", "smoke init", (c) => ["smoke", "init", c.fresh]);
   add("install", "install", (c) => ["install", c.fresh, "--claude"]);

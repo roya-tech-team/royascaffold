@@ -10,7 +10,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const { git, isRepo, prefixOf, headShort, resolve, isAncestor, commitsSince, workingChanges, filesChangedSince, showFile } = require("../git.cjs");
+const { git, isRepo, prefixOf, headShort, resolve, prime, isAncestor, commitsSince, workingChanges, filesChangedSince, showFile } = require("../git.cjs");
 const { patternList, matchesAny } = require("../glob.cjs");
 const { recordText } = require("../parse/markdown.cjs");
 
@@ -80,6 +80,9 @@ function computeDrift(model, status) {
   out.head = headShort(model.repo);
   const comps = componentIndex(model);
   const changes = [...model.changes.values()];
+
+  // The commits the logs and the evidence name are looked up in one go.
+  prime(model.repo, [...changes.flatMap((c) => (c.events || []).map((e) => e.git)), ...[...model.evidence.values()].map((e) => e.git)]);
 
   // 1. Untracked commits.
   const resolved = [];

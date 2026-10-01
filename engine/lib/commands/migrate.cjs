@@ -17,6 +17,7 @@ const path = require("path");
 const { applyPlan, rollbackPlan } = require("../migrate/plan.cjs");
 const { buildPlan13 } = require("../migrate/from13.cjs");
 const { buildPlan12 } = require("../migrate/from12.cjs");
+const { buildPlan15 } = require("../migrate/from15.cjs");
 const { parseMarkdown } = require("../parse/markdown.cjs");
 
 const SKIP_COPY = new Set([".git", "node_modules", "dist", "build", "coverage", ".next", ".turbo", ".cache"]);
@@ -54,7 +55,8 @@ function copyTree(from, to) {
 function build(repo, from, flags) {
   if (from === "1.3") return buildPlan13(repo, flags);
   if (from === "1.2") return buildPlan12(repo, flags);
-  throw new Error(`Unknown source version "${from}" (use --from 1.3 or --from 1.2)`);
+  if (from === "1.5") return buildPlan15(repo, flags);
+  throw new Error(`Unknown source version "${from}" (use --from 1.3, --from 1.2 or --from 1.5)`);
 }
 
 // Applies to `repo`, runs index, checks that no ID was lost. Returns the outcome.
@@ -70,10 +72,12 @@ function applyAt(repo, from, flags, before) {
     }
   };
   const statusFiles = ["project/STATUS.md", "STATUS.md"].filter((f) => !existsExact(f));
-  const manifest = applyPlan(built.plan, built.manifestDir, { royascaff_migration: `${from} → 1.4`, code: built.code });
+  const manifest = applyPlan(built.plan, built.manifestDir, { royascaff_migration: `${from} → ${targetOf(from)}`, code: built.code });
   let indexError = null;
   try {
-    require("./views.cjs").indexCommand(repo);
+    // A 1.5 project already has its board and summary blocks, and index would rewrite them: they are not part of the
+    // manifest, so rollback could not restore them. The next command refreshes the board.
+    if (from !== "1.5") require("./views.cjs").indexCommand(repo);
   } catch (e) {
     indexError = e.message;
   }
@@ -90,13 +94,16 @@ function applyAt(repo, from, flags, before) {
   return { built, manifest, lost, validation, indexError, after };
 }
 
+// 1.5 projects move to 1.6; older projects to the 1.4 file format.
+const targetOf = (from) => (from === "1.5" ? "1.6" : "1.4");
+
 function summarize(from, built, outcome) {
   const s = built.plan.summary();
   const r = built.report;
   const v = outcome.validation.counts;
   return {
     from,
-    to: "1.4",
+    to: targetOf(from),
     code: built.code,
     moves: s.moves,
     edits: s.edits,
@@ -119,17 +126,19 @@ function migrateCommand(start, flags = {}) {
   const repo = findProject(start || ".").repo;
 
   if (flags.rollback) {
-    const found = ["1.3", "1.2"].map((v) => `project/_legacy/${v}/migration`).find((d) => fs.existsSync(path.join(repo, d, "manifest.json")));
+    const found = ["1.3", "1.2", "1.5"].map((v) => `project/_legacy/${v}/migration`).find((d) => fs.existsSync(path.join(repo, d, "manifest.json")));
     if (!found) throw new Error("No migration to roll back (no project/_legacy/<version>/migration/manifest.json)");
     const r = rollbackPlan(repo, found);
     return { action: "rollback", manifest: found, restored: r.restored, removed: r.removed };
   }
 
   const detected = detect(repo);
-  if (detected === "1.4") throw new Error("This project is already on RoyaScaff 1.4 (profile.md has royascaff: 1.4)");
-  const from = String(flags.from || detected || "");
+  if (detected === "1.6") throw new Error("This project is already on RoyaScaff 1.6 (profile.md has royascaff: 1.6)");
+  // A 1.4 or 1.5 project is in the 1.4 file format; it moves to 1.6 only when asked (--from 1.5).
+  if (detected === "1.4" && String(flags.from || "") !== "1.5") throw new Error("This project is already on RoyaScaff 1.4 (profile.md has royascaff: 1.4); to mark it 1.6 and write baselines for its releases: royascaff migrate --from 1.5");
+  const from = detected === "1.4" ? "1.5" : String(flags.from || detected || "");
   if (!from) throw new Error("Could not tell whether this is a 1.3 or 1.2 project: pass --from 1.3 or --from 1.2");
-  if (detected && flags.from && String(flags.from) !== detected) throw new Error(`--from ${flags.from} does not match the project, which looks like ${detected}`);
+  if (detected && detected !== "1.4" && flags.from && String(flags.from) !== detected) throw new Error(`--from ${flags.from} does not match the project, which looks like ${detected}`);
 
   if (!flags.apply) {
     // Dry run on a temporary copy, so the developer sees the real result before anything moves.
@@ -161,7 +170,7 @@ function migrateCommand(start, flags = {}) {
 function renderMigrate(r) {
   if (r.action === "rollback") return `Rolled back the migration: ${r.restored} file(s) restored, ${r.removed.length} created file(s) removed. The tree is as it was before --apply.\n`;
   const lines = [
-    `${r.action === "dry-run" ? "Dry run (nothing changed)" : "Migrated"}: RoyaScaff ${r.from} → 1.4 · project code ${r.code}`,
+    `${r.action === "dry-run" ? "Dry run (nothing changed)" : "Migrated"}: RoyaScaff ${r.from} → ${r.to} · project code ${r.code}`,
     `  files: ${r.moves} moved · ${r.edits} edited · ${r.creates} created · 0 deleted`,
     `  records: ${r.before_records} before → ${r.validation.records} after${r.archived.length ? ` (${r.archived.length} archived under _legacy: ${r.archived.slice(0, 5).join(", ")}${r.archived.length > 5 ? ", …" : ""})` : ""}${r.lost.length ? ` · LOST ${r.lost.length}: ${r.lost.slice(0, 5).join(", ")}` : " · none lost"}`,
     `  roadmap: ${r.features} features · ${r.slices} slices · ${r.changes.length} changes${r.apps.length ? ` · apps ${r.apps.join(", ")}` : ""}`,
@@ -171,7 +180,7 @@ function renderMigrate(r) {
     ...(r.notes.length ? ["  check by hand:", ...r.notes.map((n) => `    - ${n}`)] : []),
   ];
   if (r.action === "dry-run") lines.push("", "Apply with: royascaff migrate --apply   (commit or stash your work first; undo with: royascaff migrate --rollback)");
-  else lines.push("", `Report: ${r.manifest.replace(/\/migration$/, "/MIGRATION.md")} · undo: royascaff migrate --rollback`, `Next: review, then commit ("chore: migrate RoyaScaff ${r.from} → 1.4") and run royascaff next`);
+  else lines.push("", `Report: ${r.manifest.replace(/\/migration$/, "/MIGRATION.md")} · undo: royascaff migrate --rollback`, `Next: review, then commit ("chore: migrate RoyaScaff ${r.from} → ${r.to}") and run royascaff next`);
   return `${lines.join("\n")}\n`;
 }
 

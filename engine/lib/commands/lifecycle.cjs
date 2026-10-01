@@ -45,7 +45,7 @@ function rollbackCommand(start, target, flags = {}) {
     commits: plan.commits,
     requirements: plan.requirements,
     task,
-    next: `Revert the commits in the task (git revert, newest first), edit the records back to the baseline, then: royascaff verify ${created.id} and royascaff advance ${created.id} --to closed`,
+    next: `Revert the commits in the task (git revert, newest first; if it conflicts in project/, keep the current project files), edit the records back to the baseline wording, commit, then: royascaff verify ${created.id} and royascaff advance ${created.id} --to closed`,
   };
 }
 

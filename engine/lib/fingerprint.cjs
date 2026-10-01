@@ -108,6 +108,7 @@ function staleEvidence(model) {
     if (!e.fingerprint || !e.change) continue;
     const change = model.changes.get(e.change);
     if (!change) continue;
+    if (model.reverted && model.reverted.has(e.change)) continue; // a reverted change proves nothing, so its evidence is not "stale", it is history
     if (!current.has(e.change)) {
       try {
         current.set(e.change, fingerprintOf(model, change).hash);

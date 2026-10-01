@@ -24,9 +24,32 @@ function headShort(dir) {
 }
 
 // Full hash of a commit-ish, or null if it does not exist in this repository.
+// A commit never changes, so the answer is kept for the life of the process (a log names the same few commits again and
+// again: each lookup is a process on Windows).
+const RESOLVED = new Map();
 function resolve(dir, rev) {
   if (!rev || !/^[0-9a-f]{4,40}$/i.test(rev)) return null;
-  return git(dir, ["rev-parse", "--verify", "--quiet", `${rev}^{commit}`]);
+  const key = `${dir}\0${rev}`;
+  if (RESOLVED.has(key)) return RESOLVED.get(key);
+  const full = git(dir, ["rev-parse", "--verify", "--quiet", `${rev}^{commit}`]);
+  // A hash of 7+ characters that names no commit now will not name one later (a commit cannot be looked up before it exists).
+  if (rev.length >= 7) RESOLVED.set(key, full || null);
+  return full;
+}
+
+// Resolves many short hashes in one process (git cat-file --batch-check) and keeps the hits, so the lookups that follow are free.
+function prime(dir, revs) {
+  const todo = [...new Set((revs || []).filter((r) => r && /^[0-9a-f]{7,40}$/i.test(r) && !RESOLVED.has(`${dir}\0${r}`)))];
+  if (!todo.length) return;
+  try {
+    const out = execFileSync("git", ["-C", dir, "cat-file", "--batch-check"], { input: `${todo.map((r) => `${r}^{commit}`).join("\n")}\n`, encoding: "utf8", stdio: ["pipe", "pipe", "ignore"], maxBuffer: 16 * 1024 * 1024 });
+    out.split("\n").forEach((line, i) => {
+      const m = line.match(/^([0-9a-f]{40}) commit /);
+      if (todo[i]) RESOLVED.set(`${dir}\0${todo[i]}`, m ? m[1] : /missing$/.test(line) ? null : undefined);
+    });
+  } catch {
+    // not a repository, or git is missing: the single lookups say the same
+  }
 }
 
 function isAncestor(dir, a, b) {
@@ -74,4 +97,4 @@ function showFile(dir, commit, repoPath) {
   return git(dir, ["show", `${commit}:./${repoPath}`]);
 }
 
-module.exports = { git, isRepo, prefixOf, headShort, resolve, isAncestor, commitsSince, workingChanges, filesChangedSince, showFile };
+module.exports = { git, isRepo, prefixOf, headShort, resolve, prime, isAncestor, commitsSince, workingChanges, filesChangedSince, showFile };

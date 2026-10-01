@@ -272,6 +272,14 @@ keeps working if it ignores what it does not know.
   the code of a deprecated component as scheduled for removal.
 - **Events** gain `experiment.decided`, `record.deprecated` and `adoption.planned` (the project log).
 
+### Upgrading a project (engine 1.6)
+
+`migrate --from 1.5` (dry run; `--apply`; `--rollback`) moves a project in the 1.4 file format to 1.6: the profile says
+`royascaff: 1.6`, every release (REL-) gets a baseline from the knowledge as it is now, and the project log records it
+(`data.from` is `1.5`, `data.to` is `1.6`). Nothing is deleted or moved; every edited file is saved under
+`project/_legacy/1.5/migration/` and `--rollback` restores the tree byte for byte. A project is only moved when asked: without
+`--from 1.5` a 1.4 or 1.5 project answers `VERSION_MISMATCH`, as before. Nothing in 1.6 needs the migration to work.
+
 ### Large code bases (engine 1.6)
 
 - **`adopt --plan [--budget N]`** opens one `knowledge` change per module that is not fully owned (`data.created`; a module that

@@ -12,5 +12,5 @@
 A fix never changes approved behavior silently. If it changes what a requirement, workflow or contract says, use a delta instead:
 
 - **Change what exists:** `royascaff change REQ-… --after "<new wording>" --why "<SRC- or reason>" --by ai:<tool>` opens an `evolve` change and lists every test, evidence, slice and component that depended on the old wording. Mark each in the change: `update`, or `still valid (reason)`. A contract that loses a field is breaking: risk high, a person approves. Evidence of the old version turns stale; `royascaff verify` proves the new one. `royascaff history REQ-…` shows every version; `royascaff diff REL-A REL-B` compares releases.
-- **Roll back:** `royascaff rollback CHG-…|REL-…` opens a rollback change: revert the commits it lists (you run `git revert`), edit the records back to the baseline, then `royascaff verify`.
+- **Roll back:** `royascaff rollback CHG-…|REL-…` opens a rollback change: revert the commits it lists (you run `git revert`; on a conflict in `project/` keep the current project files), edit the records back to the baseline wording, then `royascaff verify`.
 - **Remove:** `royascaff deprecate REQ-…|CMP-…` schedules it for removal; its code shows as scheduled in every pack.

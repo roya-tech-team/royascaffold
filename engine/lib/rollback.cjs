@@ -37,6 +37,14 @@ function commitsOf(model, change) {
   const opened = (change.events || []).find((e) => e.event === "change.opened");
   const base = opened && opened.git ? resolve(model.repo, opened.git) : null;
   if (base) found.delete(base); // the commit the change was opened on is not part of it
+  // The work to revert is code: a commit that touches only the project folder (the change's folder, the log, the board, the
+  // baselines, the records) is not listed. Records go back through the Restore table, which the gate checks.
+  const projectRel = path.relative(model.repo, model.root).split(path.sep).join("/");
+  const insideProject = (f) => f === "STATUS.md" || (projectRel ? f === projectRel || f.startsWith(`${projectRel}/`) : false); // STATUS.md at the root is the board's pointer
+  for (const h of [...found]) {
+    const files = String(git(model.repo, ["show", "--name-only", "--format=", h]) || "").split("\n").filter(Boolean);
+    if (!files.some((f) => !insideProject(f))) found.delete(h);
+  }
   if (!found.size) return [];
   const rows = git(model.repo, ["log", "--no-walk=sorted", "--format=%h%x09%s", ...found]);
   return String(rows || "").split("\n").filter(Boolean).map((l) => {

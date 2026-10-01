@@ -155,7 +155,7 @@ function repo() {
   return { root, commit };
 }
 // A person approves a delta of REQ-CAMP-001 and the requirement says it (as in e62).
-function evolveRequirement(root) {
+function evolveRequirement(root, afterDesign = null) {
   const r = changeCommand(root, ["REQ-CAMP-001"], { ...ME, after: NEW_WORDING, why: "SRC-CAMP-003 (the agency asked for a limit)" });
   const rel = `changes/${r.id}/change.md`;
   edit(root, rel, (s) => s.replace(/\| \? \|/g, "| unchanged |").replace("_How the system will look after this change: decisions and links to ADR- / CMP- / CTR- records._", "The form limits the name."));
@@ -164,7 +164,10 @@ function evolveRequirement(root) {
   assert.equal(work.advance(root, r.id, "analyzed", ME).reached, "analyzed");
   work.approve(root, r.id, ME);
   assert.equal(work.advance(root, r.id, "approved", ME).reached, "approved");
+  if (afterDesign) afterDesign(r.id); // the change's own bookkeeping, committed on its own
   edit(root, "knowledge/02-requirements/requirements.md", (t) => t.replace(OLD_WORDING, NEW_WORDING));
+  fs.mkdirSync(path.join(root, "apps/web/src/campaigns"), { recursive: true });
+  fs.appendFileSync(path.join(root, "apps/web/src/campaigns/form.js"), "// the name is limited to 80 characters\n"); // the code of the work
   edit(root, rel, (s) => s.replace(/^status: .*$/m, "status: closed")); // it shipped (the build is not the subject here)
   return r.id;
 }
@@ -172,7 +175,7 @@ function evolveRequirement(root) {
 test("B3: a rolled-back change restores the previous baseline state after a passing verify", () => {
   const { root, commit } = repo();
   newRecord(root, "release", "1.0.0", { includes: "CHG-CAMP-001", by: "islam" }); // REL-CAMP-001: version 1
-  const chg = evolveRequirement(root);
+  const chg = evolveRequirement(root, (id) => commit(`${id}: designed and approved`));
   commit(`${chg}: limit the length of the campaign name`);
   newRecord(root, "release", "1.1.0", { includes: chg, by: "islam" }); // REL-CAMP-002: version 2
   assert.equal(evolve.versionOf(model(root), "REQ-CAMP-001"), 2);
@@ -181,7 +184,7 @@ test("B3: a rolled-back change restores the previous baseline state after a pass
   assert.throws(() => rollbackCommand(root, "CHG-CAMP-002", ME), /CHG-CAMP-002 is in-progress: a rollback reverts work that was verified or closed/);
   const rb = rollbackCommand(root, chg, ME);
   assert.deepEqual([rb.id, rb.kind, rb.reverts, rb.baseline, rb.risk], ["CHG-CAMP-005", "rollback", [chg], "REL-CAMP-001", "medium"]);
-  assert.deepEqual(rb.commits.map((c) => c.subject), [`${chg}: limit the length of the campaign name`]);
+  assert.deepEqual(rb.commits.map((c) => c.subject), [`${chg}: limit the length of the campaign name`], "a commit that only holds records and the change's own bookkeeping is not work to revert");
   assert.deepEqual(rb.requirements.map((r) => [r.id, r.now_version, r.back_version, r.in_baseline]), [["REQ-CAMP-001", 2, 1, true]]);
   assert.match(read(root, `changes/${rb.id}/change.md`), /## Revert[\s\S]*\| [0-9a-f]{7} \| CHG-CAMP-004: limit the length of the campaign name \| CHG-CAMP-004 \|[\s\S]*## Restore[\s\S]*\| REQ-CAMP-001 \| v2, \w+ \| v1, \w+ \| [0-9a-f]{12} \|/);
   assert.equal(model(root).changes.get(rb.id).kind, "rollback");
